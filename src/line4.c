@@ -1,7 +1,10 @@
-/* $Id: line4.c,v 1.3 2004-12-17 09:17:27 masamic Exp $ */
+/* $Id: line4.c,v 1.4 2004-12-17 10:29:20 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2004/12/17 09:17:27  masamic
+ * Delete Miscopied Lines.
+ *
  * Revision 1.2  2004/12/17 07:51:06  masamic
  * Support TRAP instraction widely. (but not be tested)
  *
@@ -1049,7 +1052,7 @@ static	int	Trap( char code )
 
 	if ( (code & 0x0F) == 15 ) {
 		return( iocs_call() ) ;
-	} else if ((code & 0xff >= 0x20) && (code & 0xff <= 0x08)) {
+	} else if ((code & 0x0f >= 0x0) && (code & 0x0f <= 0x8)) {
 
 		ra [ 7 ] -= 4 ;
 		mem_set( ra [ 7 ], pc, S_LONG ) ;
