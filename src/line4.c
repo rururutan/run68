@@ -1,7 +1,10 @@
-/* $Id: line4.c,v 1.2 2004-12-17 07:51:06 masamic Exp $ */
+/* $Id: line4.c,v 1.3 2004-12-17 09:17:27 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2004/12/17 07:51:06  masamic
+ * Support TRAP instraction widely. (but not be tested)
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
  * First imported source code and docs
  *
@@ -1057,11 +1060,6 @@ static	int	Trap( char code )
 		vector = mem_get((0x80 + ((code & 0x0f) << 2)), S_LONG ) ;
 		
 		pc = vector;
-
-#if defined(DEBUG_JSR)
-			printf("%8d: %8d: $%06x JSR    TO $%06x, TOS = $%06x\n", sub_num++, sub_level++, save_pc - 2, pc, mem_get(ra[7], S_LONG));
-#endif
-
 		return( FALSE ) ;
 	} else {
 		err68a( "–¢’è‹`‚Ì—áŠOˆ—‚ðŽÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
