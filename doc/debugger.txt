@@ -1,5 +1,5 @@
 run68簡易デバッガの使い方 run68 version0.7
-Dec.1999 by Yoshimi FUJII(yfujii@kke.co.jp)
+Dec.1999 by Chack'n
 
 1.はじめに
 

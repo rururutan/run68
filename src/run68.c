@@ -1,7 +1,10 @@
-/* $Id: run68.c,v 1.1.1.1 2001-05-23 11:22:08 masamic Exp $ */
+/* $Id: run68.c,v 1.2 2004-12-16 12:25:11 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
+ * First imported source code and docs
+ *
  * Revision 1.15  2000/01/16  05:38:16  yfujii
  * 'Program not found' message is changed.
  *
@@ -182,15 +185,16 @@ Restart:
 #endif
 		fprintf(stderr, "X68000エミュレータ Ver.%s %s (for ", RUN68VERSION, fname) ;
 #if defined(WIN32)
-		fprintf(stderr, "Windows95/98/NT") ;
+		fprintf(stderr, "Windows 95/98/NT/2000/XP") ;
 #elif defined(DOSX)
 		fprintf(stderr, "32bitDOS") ;
 #else
 		fprintf(stderr, "Win95") ;
 #endif
 		fprintf(stderr, ")\n");
+        fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
         fprintf(stderr, "          %s\n", "Created in 1996 by Ｙｏｋｋｏ");
-        fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by M.Beppu and Y.Fujii");
+        fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
     }
 	if ( argc - argbase == 0 ) {
 		fprintf(stderr, "使用法： %s {オプション} 実行ファイル名 [コマンドライン]\n", fname) ;

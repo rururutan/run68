@@ -1,7 +1,10 @@
-/* $Id: run68.h,v 1.1.1.1 2001-05-23 11:22:08 masamic Exp $ */
+/* $Id: run68.h,v 1.2 2004-12-16 12:25:12 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
+ * First imported source code and docs
+ *
  * Revision 1.14  1999/12/07  12:47:54  yfujii
  * *** empty log message ***
  *
@@ -46,7 +49,7 @@
  *
  */
 
-#define RUN68VERSION "0.08"
+#define RUN68VERSION "0.08a"
 #if !defined(_RUN68_H_)
 #define _RUN68_H_
 

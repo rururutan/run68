@@ -4,9 +4,9 @@ run68障害情報記録(サンプル)
 報告年月日:
   1999/12/21
 障害報告者氏名:*2
-  Yoshimi FUJII
+  masamic
 連絡先:*3
-  yfujii@kke.co.jp
+  masamic@masamic.net
 情報公開:*4
   条件付き公開可
   氏名と連絡先は公開しないで欲しい。
