@@ -1,7 +1,12 @@
-/* $Id: run68.c,v 1.2 2004-12-16 12:25:11 masamic Exp $ */
+/* $Id: run68.c,v 1.3 2004-12-17 07:51:06 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2004/12/16 12:25:11  masamic
+ * It has become under GPL.
+ * Maintenor name has changed.
+ * Modify codes for aboves.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
  * First imported source code and docs
  *
@@ -638,8 +643,15 @@ void	trap_table_make()
 	/* äÑÇËçûÇ›ÉãÅ[É`ÉìÇÃèàóùêÊê›íË */
 	mem_set( 0x28, HUMAN_WORK, S_LONG ) ;		/* AånóÒñΩóﬂ */
 	mem_set( 0x2C, HUMAN_WORK, S_LONG ) ;		/* FånóÒñΩóﬂ */
-	mem_set( 0x88, HUMAN_WORK, S_LONG ) ;		/* trap2 */
-	mem_set( 0x8C, HUMAN_WORK, S_LONG ) ;		/* trap3 */
+	mem_set( 0x80, TRAP0_WORK, S_LONG ) ;		/* trap0 */
+	mem_set( 0x84, TRAP1_WORK, S_LONG ) ;		/* trap1 */
+	mem_set( 0x88, TRAP2_WORK, S_LONG ) ;		/* trap2 */
+	mem_set( 0x8C, TRAP3_WORK, S_LONG ) ;		/* trap3 */
+	mem_set( 0x90, TRAP4_WORK, S_LONG ) ;		/* trap4 */
+	mem_set( 0x94, TRAP5_WORK, S_LONG ) ;		/* trap5 */
+	mem_set( 0x98, TRAP6_WORK, S_LONG ) ;		/* trap6 */
+	mem_set( 0x9C, TRAP7_WORK, S_LONG ) ;		/* trap7 */
+	mem_set( 0xA0, TRAP8_WORK, S_LONG ) ;		/* trap8 */
 	mem_set( 0x118, 0, S_LONG ) ;			/* vdisp */
 	mem_set( 0x138, 0, S_LONG ) ;			/* crtc */
 	mem_set( HUMAN_WORK    , 0x4e73, S_WORD ) ;	/* 0x4e73 = rte */

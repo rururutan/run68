@@ -1,7 +1,10 @@
-/* $Id: line4.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line4.c,v 1.2 2004-12-17 07:51:06 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.8  2000/01/09  06:48:03  yfujii
  * PC relative addressing for movem instruction is fixed.
  *
@@ -1039,8 +1042,27 @@ static	int	Jsr( char code )
 */
 static	int	Trap( char code )
 {
+	int vector;
+
 	if ( (code & 0x0F) == 15 ) {
 		return( iocs_call() ) ;
+	} else if ((code & 0xff >= 0x20) && (code & 0xff <= 0x08)) {
+
+		ra [ 7 ] -= 4 ;
+		mem_set( ra [ 7 ], pc, S_LONG ) ;
+
+		ra [ 7 ] -= 2 ;
+		mem_set( ra [ 7 ], sr, S_WORD ) ;
+
+		vector = mem_get((0x80 + ((code & 0x0f) << 2)), S_LONG ) ;
+		
+		pc = vector;
+
+#if defined(DEBUG_JSR)
+			printf("%8d: %8d: $%06x JSR    TO $%06x, TOS = $%06x\n", sub_num++, sub_level++, save_pc - 2, pc, mem_get(ra[7], S_LONG));
+#endif
+
+		return( FALSE ) ;
 	} else {
 		err68a( "–¢’è‹`‚Ì—áŠOˆ—‚ðŽÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;

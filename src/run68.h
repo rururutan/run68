@@ -1,7 +1,12 @@
-/* $Id: run68.h,v 1.2 2004-12-16 12:25:12 masamic Exp $ */
+/* $Id: run68.h,v 1.3 2004-12-17 07:51:06 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2004/12/16 12:25:12  masamic
+ * It has become under GPL.
+ * Maintenor name has changed.
+ * Modify codes for aboves.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
  * First imported source code and docs
  *
@@ -49,7 +54,7 @@
  *
  */
 
-#define RUN68VERSION "0.08a"
+#define RUN68VERSION "0.08a-1"
 #if !defined(_RUN68_H_)
 #define _RUN68_H_
 
@@ -86,6 +91,15 @@
 #define	HUMAN_HEAD	0x6800		/* Humanのメモリ管理ブロック位置 */
 #define	FCB_WORK	0x20F00		/* DOSCALL GETFCB用ワーク領域 */
 #define	HUMAN_WORK	0x21000		/* 割り込み処理先等のワーク領域 */
+#define	TRAP0_WORK	0x20FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP1_WORK	0x21FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP2_WORK	0x22FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP3_WORK	0x23FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP4_WORK	0x24FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP5_WORK	0x25FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP6_WORK	0x26FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP7_WORK	0x27FF0000	/* TRAP割り込み処理先等のワーク領域 */
+#define	TRAP8_WORK	0x28FF0000	/* TRAP割り込み処理先等のワーク領域 */
 #define	ENV_TOP		0x21C00
 #define	ENV_SIZE	0x2000
 #define	STACK_TOP	ENV_TOP + ENV_SIZE
