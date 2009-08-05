@@ -1,7 +1,10 @@
-/* $Id: run68.h,v 1.3 2004-12-17 07:51:06 masamic Exp $ */
+/* $Id: run68.h,v 1.4 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2004/12/17 07:51:06  masamic
+ * Support TRAP instraction widely. (but not be tested)
+ *
  * Revision 1.2  2004/12/16 12:25:12  masamic
  * It has become under GPL.
  * Maintenor name has changed.
@@ -54,7 +57,7 @@
  *
  */
 
-#define RUN68VERSION "0.08a-1"
+#define RUN68VERSION "0.09"
 #if !defined(_RUN68_H_)
 #define _RUN68_H_
 

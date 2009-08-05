@@ -1,7 +1,10 @@
-/* $Id: linec.c,v 1.1.1.1 2001-05-23 11:22:08 masamic Exp $ */
+/* $Id: linec.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
+ * First imported source code and docs
+ *
  * Revision 1.7  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -53,8 +56,111 @@ int	linec( char *pc_ptr )
 		if ( (code2 & 0xC0) == 0xC0 )
 			return( Muls( code1, code2 ) ) ;
 		if ( (code2 & 0xF0) == 0x00 ) {
+			/* abcd */
+			char	src_reg = (code2 & 0x7);
+			char	dst_reg = ((code1 & 0xE) >> 1);
+			char	size = 0;	/* S_BYTE 固定 */
+			long	src_data;
+			long	dst_data;
+			long	low;
+			long	high;
+			long	kekka;
+			long	X;
+
+			if ( (code2 & 0x8) != 0 ) {
+				/* -(am),-(an); */
+				if ( get_data_at_ea(EA_All, EA_AIPD, src_reg, size, &src_data) ) {
+					return( TRUE );
+				}
+				if ( get_data_at_ea(EA_All, EA_AIPD, dst_reg, size, &dst_data) ) {
+					return( TRUE );
+				}
+			}else{
+				/* dm,dn; */
+				if ( get_data_at_ea(EA_All, EA_DD, src_reg, size, &src_data) ) {
+					return( TRUE );
+				}
+				if ( get_data_at_ea(EA_All, EA_DD, dst_reg, size, &dst_data) ) {
+					return( TRUE );
+				}
+			}
+
+			X = (CCR_X_REF() != 0) ? 1 : 0;
+
+			low = (src_data & 0x0f) + (dst_data & 0x0f) + X;
+			if ( low >= 0x0a ) {
+				low += 0x06;
+			}
+
+			high = (src_data & 0xf0) + (dst_data & 0xf0) + (low & 0xf0);
+			if ( high >= 0xa0 ) {
+				high += 0x60;
+			}
+
+			if ( high >= 0x100 ) {
+				CCR_X_ON();
+				CCR_C_ON();
+			}else{
+				CCR_X_OFF();
+				CCR_C_OFF();
+			}
+
+			kekka = (high & 0xf0) | (low & 0x0f);
+
+			/* 0 以外の値になった時のみ、Z フラグをリセットする */
+			if ( kekka != 0 ) {
+				CCR_Z_OFF();
+			}
+
+			/* Nフラグは結果に応じて立てる */
+			if ( kekka & 0x80 ) {
+				CCR_N_ON();
+			}else{
+				CCR_N_OFF();
+			}
+
+			/* Vフラグ */
+			if ( dst_data < 0x80 ) {
+				if ( 5 <= (dst_data & 0x0f) ) {
+					if ( (0x80 <= kekka) && (kekka <= 0x85) ) {
+						CCR_V_ON();
+					}else{
+						CCR_V_OFF();
+					}
+				}else{
+					if ( (0x80 <= kekka) && (kekka <= (0x80 + (dst_data & 0x0f))) ) {
+						CCR_V_ON();
+					}else{
+						CCR_V_OFF();
+					}
+				}
+			}else{
+				if ( (0x80 <= kekka) && (kekka <= dst_data) ) {
+					CCR_V_ON();
+				}else{
+					CCR_V_OFF();
+				}
+			}
+
+			dst_data = kekka;
+
+			if ( (code2 & 0x8) != 0 ) {
+				/* -(am),-(an); */
+				if ( set_data_at_ea(EA_All, EA_AI, dst_reg, size, dst_data) ) {
+					return( TRUE );
+				}
+			}else{
+				/* dm,dn; */
+				if ( set_data_at_ea(EA_All, EA_DD, dst_reg, size, dst_data) ) {
+					return( TRUE );
+				}
+			}
+
+			return( FALSE );
+/*
 			err68a( "未定義命令(abcd)を実行しました", __FILE__, __LINE__ ) ;
-			return( TRUE ) ;	/* abcd */
+			return( TRUE ) ;	 abcd 
+*/
 		}
 		if ( (code2 & 0x30) == 0x00 ) {
 			return( Exg( code1, code2 ) ) ;

@@ -1,7 +1,10 @@
-/* $Id: line9.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line9.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.6  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -304,7 +307,8 @@ static	int	Sub2( char code1, char code2 )
 		return(TRUE);
 	}
 
-	if (get_data_at_ea(EA_All, EA_DD, dst_reg, size, &dest_data)) {
+	/* レジスタへの格納である為、long で値を得ておかないと、格納時に上位ワードを破壊してしまう */
+	if (get_data_at_ea(EA_All, EA_DD, dst_reg, S_LONG /*size*/, &dest_data)) {
 		return(TRUE);
 	}
 
@@ -322,7 +326,6 @@ static	int	Sub2( char code1, char code2 )
 	check("sub2", src_data, dest_data, rd[dst_reg], size, before);
 #endif
 
-
 #ifdef	TRACE
 	switch( size ) {
 		case S_BYTE:
@@ -338,7 +341,6 @@ static	int	Sub2( char code1, char code2 )
 	printf( "trace: sub.%c    src=%d dst=%d PC=%06lX\n",
 		size_char [ size ], src_data, rd [ 8 ], save_pc ) ;
 #endif
-
 
 	return( FALSE ) ;
 }

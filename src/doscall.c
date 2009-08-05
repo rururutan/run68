@@ -1,7 +1,10 @@
-/* $Id: doscall.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: doscall.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.14  2000/01/19  03:51:39  yfujii
  * NFILES is debugged.
  *
@@ -260,8 +263,8 @@ int    dos_call( UChar code )
     }
             rd [ 0 ] = Gets( buf ) ;
             break ;
-#if defined(WIN32)
-#elif defined(DOSX)
+#if defined(WIN32) || defined(DOSX)
+//#elif defined(DOSX)
         case 0x0B:    /* KEYSNS */
     if (func_trace_f) {
             printf("%-10s\n", "KEYSNS");

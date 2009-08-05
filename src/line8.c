@@ -1,7 +1,10 @@
-/* $Id: line8.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line8.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.6  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -48,10 +51,93 @@ int	line8( char *pc_ptr )
 		else
 			return( Divs( code1, code2 ) ) ;
 	}
-	if ( (code1 & 0x01) == 0x01 && (code2 & 0xF0) == 0 ) {
+	if ( ((code1 & 0x01) == 0x01) && ((code2 & 0xF0) == 0) ) {
 		/* sbcd */
+		char	src_reg = (code2 & 0x7);
+		char	dst_reg = ((code1 & 0xE) >> 1);
+		char	size = 0;	/* S_BYTE 固定 */
+		long	src_data;
+		long	dst_data;
+		long	kekka;
+		long	X;
+
+		if ( (code2 & 0x8) != 0 ) {
+			/* -(am),-(an); */
+			if ( get_data_at_ea(EA_All, EA_AIPD, src_reg, size, &src_data) ) {
+				return( TRUE );
+			}
+			if ( get_data_at_ea(EA_All, EA_AIPD, dst_reg, size, &dst_data) ) {
+				return( TRUE );
+			}
+		}else{
+			/* dm,dn; */
+			if ( get_data_at_ea(EA_All, EA_DD, src_reg, size, &src_data) ) {
+				return( TRUE );
+			}
+			if ( get_data_at_ea(EA_All, EA_DD, dst_reg, size, &dst_data) ) {
+				return( TRUE );
+			}
+		}
+
+		X = (CCR_X_REF() != 0) ? 1 : 0;
+
+		kekka = dst_data - src_data - X;
+
+		if ( (dst_data & 0xff) < ((src_data & 0xff) + X) )
+			kekka -= 0x60;
+
+		if ( (dst_data & 0x0f) < ((src_data & 0x0f) + X) )
+			kekka -= 0x06;
+
+		if ( (dst_data ^ kekka) & 0x100 ) {
+			CCR_X_ON();
+			CCR_C_ON();
+		}else{
+			CCR_X_OFF();
+			CCR_C_OFF();
+		}
+
+		kekka &= 0xff;
+
+		/* 0 以外の値になった時のみ、Z フラグをリセットする */
+		if ( kekka != 0 ) {
+			CCR_Z_OFF();
+		}
+
+		/* Nフラグは結果に応じて立てる */
+		if ( kekka & 0x80 ) {
+			CCR_N_ON();
+		}else{
+			CCR_N_OFF();
+		}
+
+		/* Vフラグ */
+		if ( (dst_data <= kekka) && (0x20 <= kekka) && (kekka < 0x80) ) {
+			CCR_V_ON();
+		}else{
+			CCR_V_OFF();
+		}
+
+		dst_data = kekka;
+
+		if ( (code2 & 0x8) != 0 ) {
+			/* -(am),-(an); */
+			if ( set_data_at_ea(EA_All, EA_AI, dst_reg, size, dst_data) ) {
+				return( TRUE );
+			}
+		}else{
+			/* dm,dn; */
+			if ( set_data_at_ea(EA_All, EA_DD, dst_reg, size, dst_data) ) {
+				return( TRUE );
+			}
+		}
+
+		return( FALSE );
+
+/*
 		err68a( "未定義命令を実行しました", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;
+*/
 	}
 
 	if ( (code1 & 0x01) == 0x01 )

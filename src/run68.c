@@ -1,7 +1,10 @@
-/* $Id: run68.c,v 1.3 2004-12-17 07:51:06 masamic Exp $ */
+/* $Id: run68.c,v 1.4 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2004/12/17 07:51:06  masamic
+ * Support TRAP instraction widely. (but not be tested)
+ *
  * Revision 1.2  2004/12/16 12:25:11  masamic
  * It has become under GPL.
  * Maintenor name has changed.
@@ -190,7 +193,7 @@ Restart:
 #endif
 		fprintf(stderr, "X68000エミュレータ Ver.%s %s (for ", RUN68VERSION, fname) ;
 #if defined(WIN32)
-		fprintf(stderr, "Windows 95/98/NT/2000/XP") ;
+		fprintf(stderr, "Windows 95/98/NT/2000/XP/Vista") ;
 #elif defined(DOSX)
 		fprintf(stderr, "32bitDOS") ;
 #else

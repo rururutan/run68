@@ -1,7 +1,10 @@
-/* $Id: conditions.c,v 1.1.1.1 2001-05-23 11:22:05 masamic Exp $ */
+/* $Id: conditions.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:05  masamic
+ * First imported source code and docs
+ *
  * Revision 1.2  1999/12/07  12:39:54  yfujii
  * *** empty log message ***
  *
@@ -29,7 +32,7 @@ void ccr2bitmap(short ccr, char *bitmap) {
 
 	ccr &= 0x1f;
 
-	for (i = 7; i--; i >= 0) {
+	for (i = 6; i >= 0; i--) {
 		flag = (ccr >> i) & 1;
 		if (flag == 1) {
 			bitmap[j++] = '1';

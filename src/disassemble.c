@@ -1,7 +1,10 @@
-/* $Id: disassemble.c,v 1.1.1.1 2001-05-23 11:22:06 masamic Exp $ */
+/* $Id: disassemble.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:06  masamic
+ * First imported source code and docs
+ *
  * Revision 1.5  2000/01/09  04:22:42  yfujii
  * Automaton for making register list is fixed for buginfo0002.
  *
@@ -1483,19 +1486,34 @@ static char *disae(long addr, unsigned short code, long *next_addr, char *mnemon
     }
     if ((code & 0xf0c0) == 0xe0c0)
     {
+        switch((code & 0xc0) >> 6)
+        {
+        case 0:
+            size = 'b';
+            break;
+        case 1:
+            size = 'w';
+            break;
+        case 2:
+            size = 'l';
+            break;
+        default:
+            goto ErrorReturn;
+        }
+
         switch((code & 0x0600) >> 9)
         {
         case 0:
-            sprintf(mnemonic, "as%c.w   ", dir);
+            sprintf(mnemonic, "as%c.%c   ", dir, size);
             break;
         case 1:
-            sprintf(mnemonic, "ls%c.w   ", dir);
+            sprintf(mnemonic, "ls%c.%c   ", dir, size);
             break;
         case 2:
-            sprintf(mnemonic, "ro%cx.w  ", dir);
+            sprintf(mnemonic, "ro%cx.%c  ", dir, size);
             break;
         case 3:
-            sprintf(mnemonic, "ro%c.w   ", dir);
+            sprintf(mnemonic, "ro%c.%c   ", dir, size);
             break;
         }
         p = mnemonic + strlen(mnemonic);
@@ -1518,26 +1536,32 @@ static char *disae(long addr, unsigned short code, long *next_addr, char *mnemon
         default:
             goto ErrorReturn;
         }
+
         if (code & 0x20)
         {
-            sprintf(count, "d%1d", (code & 0x0e00) >> 9);
+            int iw = (code & 0x0e00) >> 9;
+
+            sprintf(count, "d%1d", iw);
         } else
         {
-            sprintf(count, "#%1d", (code & 0x0e00) >> 9);
+            int iw = (code & 0x0e00) >> 9;
+
+            iw = (iw == 0) ? 8 : iw;
+            sprintf(count, "#%1d", iw);
         }
         switch((code & 0x0018) >> 3)
         {
         case 0:
-            sprintf(mnemonic, "as%c.w   %s,d%1d", dir, count, code & 0x7);
+            sprintf(mnemonic, "as%c.%c   %s,d%1d", dir, size, count, code & 0x7);
             break;
         case 1:
-            sprintf(mnemonic, "ls%c.w   %s,d%1d", dir, count, code & 0x7);
+            sprintf(mnemonic, "ls%c.%c   %s,d%1d", dir, size, count, code & 0x7);
             break;
         case 2:
-            sprintf(mnemonic, "ro%cx.w  %s,d%1d", dir, count, code & 0x7);
+            sprintf(mnemonic, "ro%cx.%c  %s,d%1d", dir, size, count, code & 0x7);
             break;
         case 3:
-            sprintf(mnemonic, "ro%c.w   %s,d%1d", dir, count, code & 0x7);
+            sprintf(mnemonic, "ro%c.%c   %s,d%1d", dir, size, count, code & 0x7);
             break;
         }
         *next_addr = addr + 2;

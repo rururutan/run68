@@ -1,7 +1,10 @@
-/* $Id: line4.c,v 1.4 2004-12-17 10:29:20 masamic Exp $ */
+/* $Id: line4.c,v 1.5 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2004/12/17 10:29:20  masamic
+ * Fixed a if-expression.
+ *
  * Revision 1.3  2004/12/17 09:17:27  masamic
  * Delete Miscopied Lines.
  *
@@ -64,6 +67,7 @@ static	int	Jsr( char ) ;
 static	int	Trap( char ) ;
 static	int	Rte( void ) ;
 static	int	Rts( void ) ;
+static	int	Nbcd( char ) ;
 
 #if defined(DEBUG_JSR)
 static int sub_level = 0;
@@ -116,8 +120,15 @@ int	line4( char *pc_ptr )
 				else
 					return( Pea( code2 ) ) ;
 			} else {
-				if ((code2 & 0xC0) == 0 )
-					;	/* nbcd */
+				if ((code2 & 0xC0) == 0 ) {
+					if ( ((code2 & 0x38) >> 3) == 0x01 ) {
+						/* link.l am,$12345678 等 未実装 */ 
+						;
+					}else{
+						/* nbcd */
+						return( Nbcd( code2 ) );
+					}
+				}
 				if ((code2 & 0x38) == 0 )
 					return( Ext( code2 ) ) ;
 				if ((code2 & 0x80) != 0 )
@@ -1052,7 +1063,7 @@ static	int	Trap( char code )
 
 	if ( (code & 0x0F) == 15 ) {
 		return( iocs_call() ) ;
-	} else if ((code & 0x0f >= 0x0) && (code & 0x0f <= 0x8)) {
+	} else if (((code & 0x0f) >= 0x0) && ((code & 0x0f) <= 0x8)) {
 
 		ra [ 7 ] -= 4 ;
 		mem_set( ra [ 7 ], pc, S_LONG ) ;
@@ -1118,3 +1129,114 @@ static	int	Rts()
 
 	return( FALSE ) ;
 }
+
+/*
+	Nbcd
+
+	4805		0100_1000_00 00_0 mmm	nbcd dm
+	4808 1234 5678	0100_1000_00 00_1 000	link.l a0,$12345678
+	4813		0100_1000_00 01_0 mmm	nbcd (am)
+	481c		0100_1000_00 01_1 mmm	nbcd (am)+
+	4824		0100_1000_00 10_0 mmm	nbcd -(am)
+	482c 000a	0100_1000_00 10_1 mmm	nbcd 10(am)
+	4834 3005	0100_1000_00 11_0 mmm	nbcd 5(am,d3.w)
+	4834 3805	0100_1000_00 11_0 mmm	nbcd 5(am,d3.l)
+	4839 1234 5678	0100_1000_00 11_1 001	nbcd $12345678
+*/
+static	int	Nbcd( char code2 )
+{
+	/* nbcd */
+	char	src_reg  = (code2 & 0x7);
+	char	mode = (code2 & 0x38) >> 3;
+	char	work_mode;
+	char	size = 0;	/* S_BYTE 固定 */
+	long	src_data;
+	long	dst_data;
+	long	kekka;
+	long	X;
+	long	h,l;
+
+/*
+	0: 2byte: dm
+	1: 6byte: Link命令
+	2: 2byte: (am)
+	3: 2byte: (am)+
+	4: 2byte: -(am)
+	5: 4byte: 10(am)
+	6: 4byte: 5(am,d3.w)  5(am,d3.l)
+	7: 6byte: 絶対アドレスロング
+*/
+
+	/* アドレッシングモードがポストインクリメント間接の場合は間接でデータの取得 */
+	if (mode == EA_AIPI) {
+		work_mode = EA_AI;
+	} else {
+		work_mode = mode;
+	}
+
+	/* ソースのアドレッシングモードに応じた処理 */
+	if ( work_mode == EA_AD ) {
+		err68a( "nbcd には アドレスレジスタ直接はありません。", __FILE__, __LINE__ ) ;
+		return(TRUE);
+	} else if (get_data_at_ea(EA_All, work_mode, src_reg, size, &src_data)) {
+		return(TRUE);
+	}
+
+#ifdef	TRACE
+	printf( "trace: nbcd     src=%d PC=%06lX\n", src_data, save_pc ) ;
+#endif
+
+	/* 0 - <ea> - X  */
+	dst_data = 0;
+	X = (CCR_X_REF() != 0) ? 1 : 0;
+	kekka = dst_data - src_data - X;
+
+	if ( (dst_data & 0xff) < ((src_data & 0xff) + X) )
+		kekka -= 0x60;
+
+	if ( (dst_data & 0x0f) < ((src_data & 0x0f) + X) )
+		kekka -= 0x06;
+
+	if ( (dst_data ^ kekka) & 0x100 ) {
+		CCR_X_ON();
+		CCR_C_ON();
+	}else{
+		CCR_X_OFF();
+		CCR_C_OFF();
+	}
+
+	dst_data = kekka & 0xff;
+
+	/* 0 以外の値になった時のみ、Z フラグをリセットする */
+	if ( dst_data != 0 ) {
+		CCR_Z_OFF();
+	}
+
+	/* Nフラグは結果に応じて立てる */
+	if ( dst_data & 0x80 ) {
+		CCR_N_ON();
+	}else{
+		CCR_N_OFF();
+	}
+
+	/* Vフラグ */
+	if ( (dst_data ^ src_data) & 0x80 ) {
+		CCR_V_OFF();
+	}else{
+		CCR_V_ON();
+	}
+
+	/* アドレッシングモードがプレデクリメント間接の場合は間接でデータの設定 */
+	if (mode == EA_AIPD) {
+		work_mode = EA_AI;
+	} else {
+		work_mode = mode;
+	}
+
+	if ( set_data_at_ea(EA_All, work_mode, src_reg, size, dst_data) ) {
+		return( TRUE );
+	}
+
+	return( FALSE );
+}
+

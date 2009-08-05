@@ -1,7 +1,10 @@
-/* $Id: eaaccess.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: eaaccess.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.6  2000/01/09  06:49:20  yfujii
  * Push/Pop instruction's word alignment is adjusted.
  *
@@ -57,7 +60,7 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 
 	/* AceptAdrMode で許されたアドレッシングモードでなければエラー */
 
-	if (AceptAdrMode & (1 << gmode) == 0) {
+	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
 		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;
@@ -139,7 +142,7 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 
 	/* AceptAdrMode で許されたアドレッシングモードでなければエラー */
 
-	if (AceptAdrMode & (1 << gmode) == 0) {
+	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
 		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;
@@ -267,7 +270,7 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 
 	/* AceptAdrMode で許されたアドレッシングモードでなければエラー */
 
-	if (AceptAdrMode & (1 << gmode) == 0) {
+	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
 		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;

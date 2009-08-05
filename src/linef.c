@@ -1,7 +1,10 @@
-/* $Id: linef.c,v 1.1.1.1 2001-05-23 11:22:08 masamic Exp $ */
+/* $Id: linef.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
+ * First imported source code and docs
+ *
  * Revision 1.4  1999/12/07  12:46:15  yfujii
  * *** empty log message ***
  *
@@ -38,6 +41,9 @@ static	int	fefunc( UChar ) ;
 static	long	Lmul( long, long ) ;
 static	long	Ldiv( long, long ) ;
 static	long	Lmod( long, long ) ;
+static	unsigned long	Umul( unsigned long, unsigned long ) ;
+static	unsigned long	Udiv( unsigned long, unsigned long ) ;
+static	unsigned long	Umod( unsigned long, unsigned long ) ;
 static	long	Dtol( long, long ) ;
 static	long	Ltof( long ) ;
 static	long	Ftol( long ) ;
@@ -77,6 +83,9 @@ static	long	Fdiv( long, long ) ;
 static	void	Clmul( long ) ;
 static	void	Cldiv( long ) ;
 static	void	Clmod( long ) ;
+static	void	Cumul( unsigned long ) ;
+static	void	Cudiv( unsigned long ) ;
+static	void	Cumod( unsigned long ) ;
 static	void	Cltod( long ) ;
 static	void	Cdtol( long ) ;
 static	void	Cftod( long ) ;
@@ -152,12 +161,33 @@ static	int	fefunc( UChar code )
 		case 0x02:
 			rd [ 0 ] = Lmod( rd [ 0 ], rd [ 1 ] ) ;
 			break ;
+		case 0x04:
+			rd [ 0 ] = Umul( (ULong)rd [ 0 ], (ULong)rd [ 1 ] ) ;
+			break ;
+		case 0x05:
+			rd [ 0 ] = Udiv( (ULong)rd [ 0 ], (ULong)rd [ 1 ] ) ;
+			break ;
+		case 0x06:
+			rd [ 0 ] = Umod( (ULong)rd [ 0 ], (ULong)rd [ 1 ] ) ;
+			break ;
 		case 0x08:	/* _IMUL */
 			rd [ 1 ] = (ULong)rd [ 0 ] * (ULong)rd [ 1 ] ;
 			if ( rd [ 1 ] < 0 )
 				rd [ 0 ] = -1 ;	/* 本当は上位4バイトが入る */
 			else
 				rd [ 0 ] = 0 ;	/* 本当は上位4バイトが入る */
+			break ;
+		case 0x09:	/* _IDIV */ /* unsigned int 除算 d0..d1 d0/d1 */
+			{
+				ULong	d0;
+				ULong	d1;
+
+				d0 = (ULong)rd [ 0 ];
+				d1 = (ULong)rd [ 1 ];
+
+				rd [ 0 ] = Udiv( d0, d1 );
+				rd [ 1 ] = Umod( d0, d1 );
+			}
 			break ;
 		case 0x0C:	/* _RANDOMIZE */
 			if ( rd [ 0 ] >= -32768 && rd [ 0 ] <= 32767 )
@@ -288,14 +318,23 @@ static	int	fefunc( UChar code )
 			rd [ 0 ] = Fsqr( rd [ 0 ] ) ;
 			break ;
 */
-		case 0xE0:
+		case 0xE0:		/* __CLMUL : signed int 乗算 */
 			Clmul( ra [ 7 ] ) ;
 			break ;
-		case 0xE1:
+		case 0xE1:		/* __CLDIV : signed int 除算 */
 			Cldiv( ra [ 7 ] ) ;
 			break ;
-		case 0xE2:
+		case 0xE2:		/* __CLMOD : signed int 除算の剰余 */
 			Clmod( ra [ 7 ] ) ;
+			break ;
+		case 0xE3:		/* __CUMUL : unsigned int 乗算 */
+			Cumul( ra [ 7 ] ) ;
+			break ;
+		case 0xE4:		/* __CUDIV : unsigned int 除算 */
+			Cudiv( ra [ 7 ] ) ;
+			break ;
+		case 0xE5:		/* __CUMOD : unsigned int 除算の剰余 */
+			Cumod( ra [ 7 ] ) ;
 			break ;
 		case 0xE6:
 			Cltod( ra [ 7 ] ) ;
@@ -362,6 +401,45 @@ static	long	Ldiv( long d0, long d1 )
  戻り値：演算結果
 */
 static	long	Lmod( long d0, long d1 )
+{
+	if ( d1 == 0 ) {
+		CCR_C_ON() ;
+		return( 0 ) ;
+	}
+
+	CCR_C_OFF() ;
+	return( d0 % d1 ) ;
+}
+
+/*
+ 　機能：FEFUNC _UMULを実行する（エラーは未サポート）
+ 戻り値：演算結果
+*/
+static	unsigned long	Umul( unsigned long d0, unsigned long d1 )
+{
+	return( d0 * d1 ) ;
+}
+
+/*
+ 　機能：FEFUNC _UDIVを実行する
+ 戻り値：演算結果
+*/
+static	unsigned long	Udiv( unsigned long d0, unsigned long d1 )
+{
+	if ( d1 == 0 ) {
+		CCR_C_ON() ;
+		return( 0 ) ;
+	}
+
+	CCR_C_OFF() ;
+	return( d0 / d1 ) ;
+}
+
+/*
+ 　機能：FEFUNC _UMODを実行する
+ 戻り値：演算結果
+*/
+static	unsigned long	Umod( unsigned long d0, unsigned long d1 )
 {
 	if ( d1 == 0 ) {
 		CCR_C_ON() ;
@@ -1289,6 +1367,70 @@ static	void	Clmod( long adr )
 {
 	long	a ;
 	long	b ;
+
+	a = mem_get( adr, S_LONG ) ;
+	b = mem_get( adr + 4, S_LONG ) ;
+
+	if ( b == 0 ) {
+		CCR_C_ON() ;
+		return ;
+	}
+
+	a = a % b ;
+	CCR_C_OFF() ;
+
+	mem_set( adr, a, S_LONG ) ;
+}
+
+/*
+ 　機能：FEFUNC _CUMULを実行する＜エラーは未サポート＞
+ 戻り値：なし
+*/
+static	void	Cumul( unsigned long adr )
+{
+	unsigned long	a ;
+	unsigned long	b ;
+
+	a = mem_get( adr, S_LONG ) ;
+	b = mem_get( adr + 4, S_LONG ) ;
+
+	a = a * b ;
+	CCR_C_OFF() ;
+
+	mem_set( adr, a, S_LONG ) ;
+}
+
+/*
+ 　機能：FEFUNC _CUDIVを実行する
+ 戻り値：なし
+*/
+static	void	Cudiv( unsigned long adr )
+{
+	unsigned long	a ;
+	unsigned long	b ;
+
+	a = mem_get( adr, S_LONG ) ;
+	b = mem_get( adr + 4, S_LONG ) ;
+
+	if ( b == 0 ) {
+		CCR_C_ON() ;
+		return ;
+	}
+
+	a = a / b ;
+	CCR_C_OFF() ;
+
+	mem_set( adr, a, S_LONG ) ;
+}
+
+/*
+ 　機能：FEFUNC _CUMODを実行する
+ 戻り値：なし
+*/
+static	void	Cumod( unsigned long adr )
+{
+	unsigned long	a ;
+	unsigned long	b ;
 
 	a = mem_get( adr, S_LONG ) ;
 	b = mem_get( adr + 4, S_LONG ) ;

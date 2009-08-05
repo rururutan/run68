@@ -1,7 +1,10 @@
-/* $Id: line2.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line2.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.8  1999/12/07  12:43:51  yfujii
  * *** empty log message ***
  *
@@ -92,7 +95,7 @@ int	line2( char *pc_ptr )
 	}
 
 	/* ディスティネーションのアドレッシングモードに応じた処理 */
-	if (set_data_at_ea(EA_VariableData || (1 << EA_AI), dst_mode, dst_reg, size, src_data)) {
+	if (set_data_at_ea(EA_VariableData | (1 << (EA_AI - 1)), dst_mode, dst_reg, size, src_data)) {
 		return(TRUE);
 	}
 
