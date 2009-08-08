@@ -1,7 +1,10 @@
-/* $Id: line7.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line7.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.4  1999/12/07  12:44:50  yfujii
  * *** empty log message ***
  *
@@ -22,9 +25,9 @@
 #include "run68.h"
 
 /*
- @‹@”\F‚Vƒ‰ƒCƒ“–½—ß(moveq)‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼—ãƒ©ã‚¤ãƒ³å‘½ä»¤(moveq)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	line7( char *pc_ptr )
 {
@@ -35,7 +38,7 @@ int	line7( char *pc_ptr )
 	code = *(pc_ptr++) ;
 	pc += 2 ;
 	if ( (code & 0x01) != 0 ) {
-		err68a( "‚¨‚©‚µ‚È–½—ß‚ğÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
+		err68a( "ãŠã‹ã—ãªå‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸ", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;
 	}
 	reg = ((code >> 1) & 0x07) ;
@@ -46,7 +49,7 @@ int	line7( char *pc_ptr )
 		rd [ reg ] = data ;
 	}
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	general_conditions(rd[reg], S_LONG);
 
 #ifdef	TRACE

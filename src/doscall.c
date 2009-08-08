@@ -1,7 +1,15 @@
-/* $Id: doscall.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
+/* $Id: doscall.c,v 1.3 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/08/05 14:44:33  masamic
+ * Some Bug fix, and implemented some instruction
+ * Following Modification contributed by TRAP.
+ *
+ * Fixed Bug: In disassemble.c, shift/rotate as{lr},ls{lr},ro{lr} alway show word size.
+ * Modify: enable KEYSNS, register behaiviour of sub ea, Dn.
+ * Add: Nbcd, Sbcd.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
  * First imported source code and docs
  *
@@ -111,14 +119,14 @@ static    long    gets2( char *, int ) ;
 long Getenv_common(const char *name_p, char *buf_p);
 
 /*
- @‹@”\FDOSCALL‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šDOSCALLã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int    dos_call( UChar code )
 {
     char    *data_ptr ;
-/*    unsigned drv ; -- ˆê“x‚àg‚í‚ê‚Ä‚¢‚È‚¢ */
+/*    unsigned drv ; -- ä¸€åº¦ã‚‚ä½¿ã‚ã‚Œã¦ã„ãªã„ */
     long    stack_adr ;
     long    data ;
     long    env ;
@@ -188,7 +196,7 @@ int    dos_call( UChar code )
                 } else if(ir.EventType != KEY_EVENT || !ir.Event.KeyEvent.bKeyDown
                           || c == 0x0)
                 {
-                    /* •s—v‚ÈƒCƒxƒ“ƒg‚Í“Ç‚İÌ‚Ä‚é */
+                    /* ä¸è¦ãªã‚¤ãƒ™ãƒ³ãƒˆã¯èª­ã¿æ¨ã¦ã‚‹ */
                     b = ReadConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
                 } else if ( srt != 0xFE )
                 {
@@ -287,7 +295,7 @@ int    dos_call( UChar code )
             printf("%-10s\n", "FFLUSH");
     }
 #if defined(WIN32)
-            /* ƒI[ƒvƒ“’†‚Ì‘S‚Ä‚Ìƒtƒ@ƒCƒ‹‚ğƒtƒ‰ƒbƒVƒ…‚·‚éB*/
+            /* ã‚ªãƒ¼ãƒ—ãƒ³ä¸­ã®å…¨ã¦ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹ã€‚*/
             for( i = 5 ; i < FILE_MAX ; i ++ ) {
                 if ( finfo [ i ].fh == NULL)
                     continue ;
@@ -332,7 +340,7 @@ int    dos_call( UChar code )
                     /* OK, nothing to do. */
                 } else
                 {
-                    rd [ 0 ] = -15 ;    /* ƒhƒ‰ƒCƒuw’èŒë‚è */
+                    rd [ 0 ] = -15 ;    /* ãƒ‰ãƒ©ã‚¤ãƒ–æŒ‡å®šèª¤ã‚Š */
                 }
             }
 #elif defined(DOSX)
@@ -342,13 +350,13 @@ int    dos_call( UChar code )
                 rd [ 0 ] = -15 ;
 #endif
             break ;
-        case 0x0F:    /* DRVCTRL(‰½‚à‚µ‚È‚¢) */
+        case 0x0F:    /* DRVCTRL(ä½•ã‚‚ã—ãªã„) */
             srt = (short)mem_get( stack_adr, S_WORD ) ;
     if (func_trace_f) {
             printf("%-10s drv=%c:\n", "DRVCTRL", srt);
     }
             if ( srt > 26 && srt < 256 )
-                rd [ 0 ] = -15 ;    /* ƒhƒ‰ƒCƒuw’èŒë‚è */
+                rd [ 0 ] = -15 ;    /* ãƒ‰ãƒ©ã‚¤ãƒ–æŒ‡å®šèª¤ã‚Š */
             else
                 rd [ 0 ] = 0x02 ;    /* READY */
             break ;
@@ -382,7 +390,7 @@ int    dos_call( UChar code )
                     rd [ 0 ] = path[0] - 'A' ;
                 } else
                 {
-                    rd [ 0 ] = -15 ;    /* ƒhƒ‰ƒCƒuw’èŒë‚è */
+                    rd [ 0 ] = -15 ;    /* ãƒ‰ãƒ©ã‚¤ãƒ–æŒ‡å®šèª¤ã‚Š */
                 }
             }
 #elif defined(DOSX)
@@ -407,13 +415,13 @@ int    dos_call( UChar code )
                 INPUT_RECORD ir;
                 if (GetFileType(finfo [ fhdl ].fh) == FILE_TYPE_CHAR)
                 {
-                    /* •W€“ü—Í‚Ìƒnƒ“ƒhƒ‹‚ªƒLƒƒƒ‰ƒNƒ^ƒ^ƒCƒv‚¾‚Á‚½‚çAReadConsole‚ğ‚µ‚Ä‚İ‚éB*/
+                    /* æ¨™æº–å…¥åŠ›ã®ãƒãƒ³ãƒ‰ãƒ«ãŒã‚­ãƒ£ãƒ©ã‚¯ã‚¿ã‚¿ã‚¤ãƒ—ã ã£ãŸã‚‰ã€ReadConsoleã‚’è©¦ã—ã¦ã¿ã‚‹ã€‚*/
                     while(TRUE)
                     {
                         b = ReadConsoleInput(finfo [ fhdl ].fh, &ir, 1, (LPDWORD)&read_len);
                         if (b == FALSE)
                         {
-                            /* ƒRƒ“ƒ\[ƒ‹‚Å‚Í‚È‚©‚Á‚½B*/
+                            /* ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ã§ã¯ãªã‹ã£ãŸã€‚*/
                             ReadFile(finfo [ fhdl ].fh, &c, 1, (LPDWORD)&read_len, NULL);
                             break;
                         }
@@ -608,7 +616,7 @@ int    dos_call( UChar code )
     if (func_trace_f) {
             printf("%-10s\n", "DRVXCHG");
     }
-            rd [ 0 ] = -15 ;    /* ƒhƒ‰ƒCƒuw’èŒë‚è */
+            rd [ 0 ] = -15 ;    /* ãƒ‰ãƒ©ã‚¤ãƒ–æŒ‡å®šèª¤ã‚Š */
             break ;
         case 0x35:    /* INTVCG */
             srt = (short)mem_get( stack_adr, S_WORD ) ;
@@ -830,7 +838,7 @@ int    dos_call( UChar code )
                     Exec4( data ) ;
                     break ;
                 default:
-                    err68( "DOSCALL EXEC(5)‚ªÀs‚³‚ê‚Ü‚µ‚½" ) ;
+                    err68( "DOSCALL EXEC(5)ãŒå®Ÿè¡Œã•ã‚Œã¾ã—ãŸ" ) ;
                     return( TRUE ) ;
             }
             break ;
@@ -999,12 +1007,12 @@ int    dos_call( UChar code )
 }
 
 /*
- @‹@”\F
-     DOSCALL GETS‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     buf    <in>    “ü—Íƒoƒbƒtƒ@ƒAƒhƒŒƒX
-   –ß‚è’lF
-     long     “ü—Í•¶š”
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL GETSã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     buf    <in>    å…¥åŠ›ãƒãƒƒãƒ•ã‚¡ã‚¢ãƒ‰ãƒ¬ã‚¹
+   æˆ»ã‚Šå€¤ï¼š
+     long     å…¥åŠ›æ–‡å­—æ•°
 */
 static    long    Gets( long buf )
 {
@@ -1022,12 +1030,12 @@ static    long    Gets( long buf )
 }
 
 /*
- @‹@”\F
-     DOSCALL KFLUSH‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     buf    <in>    ƒ‚[ƒh
-   –ß‚è’lF
-     long     ƒL[ƒR[ƒh“™
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL KFLUSHã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     buf    <in>    ãƒ¢ãƒ¼ãƒ‰
+   æˆ»ã‚Šå€¤ï¼š
+     long     ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ç­‰
 */
 static    long    Kflush( short mode )
 {
@@ -1057,13 +1065,13 @@ static    long    Kflush( short mode )
 }
 
 /*
- @‹@”\F
-     DOSCALL IOCTRL‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     short    mode      <in>    ƒ‚[ƒh
-     long     stack_adr <in>    ƒXƒ^ƒbƒNƒAƒhƒŒƒX
-   –ß‚è’lF
-     long     ƒoƒCƒg”“™
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL IOCTRLã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     short    mode      <in>    ãƒ¢ãƒ¼ãƒ‰
+     long     stack_adr <in>    ã‚¹ã‚¿ãƒƒã‚¯ã‚¢ãƒ‰ãƒ¬ã‚¹
+   æˆ»ã‚Šå€¤ï¼š
+     long     ãƒã‚¤ãƒˆæ•°ç­‰
 */
 static    long    Ioctrl( short mode, long stack_adr )
 {
@@ -1080,7 +1088,7 @@ static    long    Ioctrl( short mode, long stack_adr )
         case 6:
             fno = (short)mem_get( stack_adr, S_WORD ) ;
             if ( fno == 0 )
-                return( 0xFF ) ;    /* “ü—Í‰Â */
+                return( 0xFF ) ;    /* å…¥åŠ›å¯ */
             if ( fno < 5 )
                 return( 0 ) ;
             if ( finfo [ fno ].fh == NULL )
@@ -1091,7 +1099,7 @@ static    long    Ioctrl( short mode, long stack_adr )
         case 7:
             fno = (short)mem_get( stack_adr, S_WORD ) ;
             if ( fno == 1 || fno == 2 )
-                return( 0xFF ) ;    /* o—Í‰Â */
+                return( 0xFF ) ;    /* å‡ºåŠ›å¯ */
             if ( fno < 5 )
                 return( 0 ) ;
             if ( finfo [ fno ].fh == NULL )
@@ -1105,12 +1113,12 @@ static    long    Ioctrl( short mode, long stack_adr )
 }
 
 /*
- @‹@”\F
-     DOSCALL DUP‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     short    org       <in>    ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹?
-   –ß‚è’lF
-     long     •¡Êæ‚Ìƒnƒ“ƒhƒ‹‚Ü‚½‚ÍƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL DUPã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     short    org       <in>    ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«?
+   æˆ»ã‚Šå€¤ï¼š
+     long     è¤‡å†™å…ˆã®ãƒãƒ³ãƒ‰ãƒ«ã¾ãŸã¯ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Dup( short org )
 {
@@ -1128,7 +1136,7 @@ static    long    Dup( short org )
         }
     }
     if ( ret == 0 )
-        return( -4 ) ;    /* ƒI[ƒvƒ“‚µ‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ª‘½‚·‚¬‚é */
+        return( -4 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤šã™ãã‚‹ */
     finfo [ ret ].fh   = finfo [ org ].fh ;
     finfo [ ret ].date = finfo [ org ].date ;
     finfo [ ret ].time = finfo [ org ].time ;
@@ -1140,8 +1148,8 @@ static    long    Dup( short org )
 }
 
 /*
- @‹@”\FDOSCALL DUP2‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL DUP2ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Dup2( short org, short new )
 {
@@ -1150,7 +1158,7 @@ static    long    Dup2( short org, short new )
         return( -14 ) ;
 
     if ( new >= FILE_MAX )
-        return( -14 ) ;    /* –³Œø‚Èƒpƒ‰ƒ[ƒ^ */
+        return( -14 ) ;    /* ç„¡åŠ¹ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
 
     if ( finfo [ new ].fh != NULL ) {
         Close( new ) ;
@@ -1168,21 +1176,21 @@ static    long    Dup2( short org, short new )
 }
 
 /*
- @‹@”\F
-     DOSCALL MALLOC‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     size      <in>    ƒƒ‚ƒŠƒTƒCƒY(ƒoƒCƒg)
-   –ß‚è’lF
-     long     ƒƒ‚ƒŠƒuƒƒbƒN‚Ö‚Ìƒ|ƒCƒ“ƒ^(>0)
-              ƒGƒ‰[ƒR[ƒh(<0)
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL MALLOCã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     size      <in>    ãƒ¡ãƒ¢ãƒªã‚µã‚¤ã‚º(ãƒã‚¤ãƒˆ)
+   æˆ»ã‚Šå€¤ï¼š
+     long     ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã¸ã®ãƒã‚¤ãƒ³ã‚¿(>0)
+              ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰(<0)
 */
 static    long    Malloc( long size )
 {
     char    *mem_ptr ;
-    long    mem_adr ;    /* ƒƒ‚ƒŠƒuƒƒbƒN‚ÌƒAƒhƒŒƒX */
-    long    mem_end ;    /* ƒƒ‚ƒŠƒuƒƒbƒN‚ÌI’[ƒAƒhƒŒƒX */
-    long    end_adr ;    /* ƒƒ‚ƒŠƒuƒƒbƒN‚Ìˆê”Ô’áˆÊ‚ÌƒAƒhƒŒƒX */
-    long    next_adr ;    /* Ÿ‚Ìƒƒ‚ƒŠƒuƒƒbƒN‚ÌƒAƒhƒŒƒX */
+    long    mem_adr ;    /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+    long    mem_end ;    /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã®çµ‚ç«¯ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+    long    end_adr ;    /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã®ä¸€ç•ªä½ä½ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+    long    next_adr ;    /* æ¬¡ã®ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
     long    data ;
 
     mem_adr  = psp [ nest_cnt ] ;
@@ -1190,10 +1198,10 @@ static    long    Malloc( long size )
     size &= 0xFFFFFF ;
 
     while( (next_adr=mem_get( mem_adr + 0x0C, S_LONG )) != 0 ) {
-        /* ƒƒ‚ƒŠƒuƒƒbƒNID‚ğŒŸ¸ */
+        /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯IDã‚’æ¤œæŸ» */
         data = mem_get( next_adr + 0x04, S_BYTE ) ;
         if ( data != 0x00 && data != 0xFF )
-            return( 0x82000000 ) ;    /* Š®‘S‚ÉŠm•Û‚Å‚«‚È‚¢ */
+            return( 0x82000000 ) ;    /* å®Œå…¨ã«ç¢ºä¿ã§ããªã„ */
         mem_adr = next_adr ;
         mem_end = mem_get( mem_adr + 0x08, S_LONG ) ;
         if ( mem_end > end_adr )
@@ -1205,12 +1213,12 @@ static    long    Malloc( long size )
 
     if ( end_adr + MB_SIZE + size > mem_aloc ) {
         if ( mem_aloc - (end_adr + MB_SIZE) < 0 )
-            return( 0x82000000 ) ;    /* Š®‘S‚ÉŠm•Û‚Å‚«‚È‚¢ */
-        /* Šm•Û‚Å‚«‚éÅ‘å’· */
+            return( 0x82000000 ) ;    /* å®Œå…¨ã«ç¢ºä¿ã§ããªã„ */
+        /* ç¢ºä¿ã§ãã‚‹æœ€å¤§é•· */
         return( 0x81000000 + mem_aloc - (end_adr + MB_SIZE) ) ;
     }
 
-    /* ƒƒ‚ƒŠŠÇ—ƒuƒƒbƒN‚ğì¬ */
+    /* ãƒ¡ãƒ¢ãƒªç®¡ç†ãƒ–ãƒ­ãƒƒã‚¯ã‚’ä½œæˆ */
     mem_ptr = prog_ptr + end_adr ;
     memset( mem_ptr, 0x00, MB_SIZE ) ;
     mem_set( mem_adr + 0x0C, end_adr, S_LONG ) ;
@@ -1221,12 +1229,12 @@ static    long    Malloc( long size )
 }
 
 /*
- @‹@”\F
-     DOSCALL MFREE‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     adr       <in>    ƒƒ‚ƒŠƒAƒhƒŒƒX
-   –ß‚è’lF
-     long     ƒGƒ‰[ƒR[ƒh(<0)
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL MFREEã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     adr       <in>    ãƒ¡ãƒ¢ãƒªã‚¢ãƒ‰ãƒ¬ã‚¹
+   æˆ»ã‚Šå€¤ï¼š
+     long     ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰(<0)
 */
 static    long    Mfree( long adr )
 {
@@ -1235,30 +1243,30 @@ static    long    Mfree( long adr )
     long    data ;
 
     if ( adr < 0 )
-        return( -9 ) ;    /* –³Œø‚Èƒƒ‚ƒŠŠÇ—ƒ|ƒCƒ“ƒ^ */
+        return( -9 ) ;    /* ç„¡åŠ¹ãªãƒ¡ãƒ¢ãƒªç®¡ç†ãƒã‚¤ãƒ³ã‚¿ */
 
     if ( adr == 0 ) {
         mem_set( psp [ nest_cnt ] + 0x0C, 0, S_LONG ) ;
         return( 0 ) ;
     }
 
-    /* ƒƒ‚ƒŠƒuƒƒbƒNID‚ğŒŸ¸ */
+    /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯IDã‚’æ¤œæŸ» */
     data = mem_get( adr - MB_SIZE + 0x04, S_BYTE ) ;
     if ( data != 0x00 && data != 0xFF )
-        return( -9 ) ;    /* –³Œø‚Èƒƒ‚ƒŠŠÇ—ƒ|ƒCƒ“ƒ^ */
+        return( -9 ) ;    /* ç„¡åŠ¹ãªãƒ¡ãƒ¢ãƒªç®¡ç†ãƒã‚¤ãƒ³ã‚¿ */
 
-    /* ‘O‚ÌƒuƒƒbƒN‚ğ’²‚×‚é */
+    /* å‰ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’èª¿ã¹ã‚‹ */
     prev_adr = mem_get( adr - MB_SIZE, S_LONG ) ;
     data = mem_get( prev_adr + 0x04, S_BYTE ) ;
     if ( data != 0x00 && data != 0xFF )
-        return( -7 ) ;    /* ƒƒ‚ƒŠŠÇ——Ìˆæ‚ª‰ó‚³‚ê‚½ */
+        return( -7 ) ;    /* ãƒ¡ãƒ¢ãƒªç®¡ç†é ˜åŸŸãŒå£Šã•ã‚ŒãŸ */
 
-    /* Ÿ‚ÌƒuƒƒbƒN‚ğ’²‚×‚é•ƒ|ƒCƒ“ƒ^‚ğ’£‚è‘Ö‚¦‚é */
+    /* æ¬¡ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’èª¿ã¹ã‚‹ï¼†ãƒã‚¤ãƒ³ã‚¿ã‚’å¼µã‚Šæ›¿ãˆã‚‹ */
     next_adr = mem_get( adr - MB_SIZE + 0x0C, S_LONG ) ;
     if ( next_adr != 0 ) {
         data = mem_get( next_adr + 0x04, S_BYTE ) ;
         if ( data != 0x00 && data != 0xFF )
-            return( -7 ) ;    /* ƒƒ‚ƒŠŠÇ——Ìˆæ‚ª‰ó‚³‚ê‚½ */
+            return( -7 ) ;    /* ãƒ¡ãƒ¢ãƒªç®¡ç†é ˜åŸŸãŒå£Šã•ã‚ŒãŸ */
         mem_set( next_adr, prev_adr, S_LONG ) ;
     }
     mem_set( prev_adr + 0x0C, next_adr, S_LONG ) ;
@@ -1266,14 +1274,14 @@ static    long    Mfree( long adr )
 }
 
 /*
- @‹@”\F
-     DOSCALL DSKFRE‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     drv       <in>    ƒhƒ‰ƒCƒu”Ô†(0`)
-     long     buf       <in>    ƒƒ‚ƒŠƒAƒhƒŒƒX
-   –ß‚è’lF
-     long     ƒfƒBƒXƒN‚Ì‹ó‚«—e—Ê(ƒoƒCƒg>0)
-              ƒGƒ‰[ƒR[ƒh(<0)
+ ã€€æ©Ÿèƒ½ï¼š
+     DOSCALL DSKFREã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     drv       <in>    ãƒ‰ãƒ©ã‚¤ãƒ–ç•ªå·(0ï½)
+     long     buf       <in>    ãƒ¡ãƒ¢ãƒªã‚¢ãƒ‰ãƒ¬ã‚¹
+   æˆ»ã‚Šå€¤ï¼š
+     long     ãƒ‡ã‚£ã‚¹ã‚¯ã®ç©ºãå®¹é‡(ãƒã‚¤ãƒˆ>0)
+              ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰(<0)
 */
 static    long    Dskfre( short drv, long buf )
 {
@@ -1305,9 +1313,9 @@ static    long    Dskfre( short drv, long buf )
 #elif defined(DOSX)
     static    buf_save ;
     struct    diskfree_t    dspace ;
-    buf_save = buf ;    /* dos_getdiskfree‚ªDskfre‚Ìˆø”‚ğ‰ó‚·‚½‚ß */
+    buf_save = buf ;    /* dos_getdiskfreeãŒDskfreã®å¼•æ•°ã‚’å£Šã™ãŸã‚ */
     if ( _dos_getdiskfree( drv, &dspace ) != 0 )
-        return( -15 ) ;        /* ƒhƒ‰ƒCƒuw’èŒë‚è */
+        return( -15 ) ;        /* ãƒ‰ãƒ©ã‚¤ãƒ–æŒ‡å®šèª¤ã‚Š */
     buf = buf_save ;
     buf = buf_save ;
     dspace.avail_clusters &= 0xFFFF ;
@@ -1325,13 +1333,13 @@ static    long    Dskfre( short drv, long buf )
 }
 
 /*
-   ‹@”\F
-     DOSCALL SETBLOCK‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     adr       <in>    ƒAƒhƒŒƒX
-     long     size      <in>    ƒTƒCƒY
-   –ß‚è’lF
-     long     ƒGƒ‰[ƒR[ƒh
+   æ©Ÿèƒ½ï¼š
+     DOSCALL SETBLOCKã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     adr       <in>    ã‚¢ãƒ‰ãƒ¬ã‚¹
+     long     size      <in>    ã‚µã‚¤ã‚º
+   æˆ»ã‚Šå€¤ï¼š
+     long     ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Setblock( long adr, long size )
 {
@@ -1344,25 +1352,25 @@ static    long    Setblock( long adr, long size )
     if( adr == 0 )
         adr = psp [ nest_cnt ] + MB_SIZE ;
 
-    /* ƒƒ‚ƒŠƒuƒƒbƒNID‚ğŒŸ¸ */
+    /* ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯IDã‚’æ¤œæŸ» */
     data = mem_get( adr - 0x0C, S_BYTE ) ;
     if ( data != 0x00 && data != 0xFF )
         return( -9 ) ;
 
-    /* ƒTƒCƒY‚ğŒŸ¸ */
+    /* ã‚µã‚¤ã‚ºã‚’æ¤œæŸ» */
     size &= 0x00FFFFFF ;
     tail_adr = mem_get( adr - 0x08, S_LONG ) ;
     data = tail_adr - adr ;
     if ( size > data ) {
         near_adr = mem_aloc ;
-        /* ‘O‚ÌƒuƒƒbƒN‚ğŒ©‚é */
+        /* å‰ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’è¦‹ã‚‹ */
         mem_adr = adr - MB_SIZE ;
         while( (next_adr=mem_get( mem_adr, S_LONG )) != HUMAN_HEAD ) {
             if ( next_adr >= tail_adr && next_adr < near_adr )
                 near_adr = next_adr ;
             mem_adr = next_adr ;
         }
-        /* Œã‚ë‚ÌƒuƒƒbƒN‚ğŒ©‚é */
+        /* å¾Œã‚ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’è¦‹ã‚‹ */
         mem_adr = adr - MB_SIZE ;
         while( (next_adr=mem_get( mem_adr + 0x0C, S_LONG )) != 0 ) {
             if ( next_adr >= tail_adr && next_adr < near_adr )
@@ -1378,14 +1386,14 @@ static    long    Setblock( long adr, long size )
 }
 
 /*
-   ‹@”\F
-     DOSCALL CREATE‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     p         <in>    ƒtƒ@ƒCƒ‹ƒpƒX–¼•¶š—ñ‚Ìƒ|ƒCƒ“ƒ^
-     short    atr       <in>    ƒtƒ@ƒCƒ‹‘®«
-   –ß‚è’lF
-     long     ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹(>=0)
-              ƒGƒ‰[ƒR[ƒh(<0)
+   æ©Ÿèƒ½ï¼š
+     DOSCALL CREATEã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     p         <in>    ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹åæ–‡å­—åˆ—ã®ãƒã‚¤ãƒ³ã‚¿
+     short    atr       <in>    ãƒ•ã‚¡ã‚¤ãƒ«å±æ€§
+   æˆ»ã‚Šå€¤ï¼š
+     long     ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«(>=0)
+              ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰(<0)
 */
 static    long    Create( char *p, short atr )
 {
@@ -1406,21 +1414,21 @@ static    long    Create( char *p, short atr )
         }
     }
     if ( ret == 0 )
-        return( -4 ) ;    /* ƒI[ƒvƒ“‚µ‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ª‘½‚·‚¬‚é */
+        return( -4 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤šã™ãã‚‹ */
 
-    /* ƒtƒ@ƒCƒ‹–¼Œã‚ë‚Ì‹ó”’‚ğ‚Â‚ß‚é */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åå¾Œã‚ã®ç©ºç™½ã‚’ã¤ã‚ã‚‹ */
     len = strlen( p ) ;
     for( i = len - 1 ; i >= 0 && p [ i ] == ' ' ; i-- )
         p [ i ] = '\0' ;
 
-    /* ƒtƒ@ƒCƒ‹–¼‚Ìƒ`ƒFƒbƒN */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒã‚§ãƒƒã‚¯ */
     if ( (len=strlen( p )) > 88 )
-        return( -13 ) ;    /* ƒtƒ@ƒCƒ‹–¼‚Ìw’èŒë‚è */
+        return( -13 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šèª¤ã‚Š */
 
     for( i = len - 1 ; i >= 0 && p [ i ] != '.' ; i-- )
         ;
     if ( i >= 0 ) {
-        /* Šg’£q‚ª‘¶İ‚·‚é */
+        /* æ‹¡å¼µå­ãŒå­˜åœ¨ã™ã‚‹ */
         if ( strlen( &(p [ i ]) ) > 4 )
             return( -13 ) ;
     }
@@ -1430,7 +1438,7 @@ static    long    Create( char *p, short atr )
 #else
     if ((fp=fopen( p, "w+b" )) == NULL)
 #endif
-        return( -23 ) ;    /* ƒfƒBƒXƒN‚ª‚¢‚Á‚Ï‚¢ */
+        return( -23 ) ;    /* ãƒ‡ã‚£ã‚¹ã‚¯ãŒã„ã£ã±ã„ */
     finfo [ ret ].fh   = fp ;
     finfo [ ret ].mode = 2 ;
     finfo [ ret ].nest = nest_cnt ;
@@ -1439,8 +1447,8 @@ static    long    Create( char *p, short atr )
 }
 
 /*
- @‹@”\FDOSCALL NEWFILE‚ğÀs‚·‚é
- –ß‚è’lFƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹i•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL NEWFILEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Newfile( char *p, short atr )
 {
@@ -1461,29 +1469,29 @@ static    long    Newfile( char *p, short atr )
         }
     }
     if ( ret == 0 )
-        return( -4 ) ;    /* ƒI[ƒvƒ“‚µ‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ª‘½‚·‚¬‚é */
+        return( -4 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤šã™ãã‚‹ */
 
-    /* ƒtƒ@ƒCƒ‹–¼Œã‚ë‚Ì‹ó”’‚ğ‚Â‚ß‚é */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åå¾Œã‚ã®ç©ºç™½ã‚’ã¤ã‚ã‚‹ */
     len = strlen( p ) ;
     for( i = len - 1 ; i >= 0 && p [ i ] == ' ' ; i-- )
         p [ i ] = '\0' ;
 
-    /* ƒtƒ@ƒCƒ‹–¼‚Ìƒ`ƒFƒbƒN */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åã®ãƒã‚§ãƒƒã‚¯ */
     if ( (len=strlen( p )) > 88 )
-        return( -13 ) ;    /* ƒtƒ@ƒCƒ‹–¼‚Ìw’èŒë‚è */
+        return( -13 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šèª¤ã‚Š */
 
     for( i = len - 1 ; i >= 0 && p [ i ] != '.' ; i-- )
         ;
     if ( i >= 0 ) {
-        /* Šg’£q‚ª‘¶İ‚·‚é */
+        /* æ‹¡å¼µå­ãŒå­˜åœ¨ã™ã‚‹ */
         if ( strlen( &(p [ i ]) ) > 4 )
             return( -13 ) ;
     }
 #if defined(WIN32)
 /*
- * uX68000ŠÂ‹«ƒnƒ“ƒhƒuƒbƒNv‚É‚æ‚é‚ÆAƒtƒ@ƒCƒ‹‚ª‘¶İ‚·‚éê‡‚Å‚à
- * V‚½‚Éƒtƒ@ƒCƒ‹‚ğ¶¬‚·‚é‚Æ‚ ‚é‚Ì‚ÅAƒtƒ@ƒCƒ‹‚Ì‘¶İƒ`ƒFƒbƒN‚Í•s—v
- * ‚Å‚ ‚éB
+ * ã€ŒX68000ç’°å¢ƒãƒãƒ³ãƒ‰ãƒ–ãƒƒã‚¯ã€ã«ã‚ˆã‚‹ã¨ã€ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆã§ã‚‚
+ * æ–°ãŸã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç”Ÿæˆã™ã‚‹ã¨ã‚ã‚‹ã®ã§ã€ãƒ•ã‚¡ã‚¤ãƒ«ã®å­˜åœ¨ãƒã‚§ãƒƒã‚¯ã¯ä¸è¦
+ * ã§ã‚ã‚‹ã€‚
     if ((fp = CreateFile(p, GENERIC_READ, 0, NULL,
         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
     {
@@ -1494,15 +1502,15 @@ static    long    Newfile( char *p, short atr )
     if ((fp = CreateFile(p, GENERIC_READ | GENERIC_WRITE, 0, NULL,
         CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL)) == INVALID_HANDLE_VALUE)
     {
-        return( -23 ) ;    /* ƒfƒBƒXƒN‚ª‚¢‚Á‚Ï‚¢ */
+        return( -23 ) ;    /* ãƒ‡ã‚£ã‚¹ã‚¯ãŒã„ã£ã±ã„ */
     }
 #else
     if ((fp=fopen( p, "rb" )) != NULL) {
         fclose( fp ) ;
-        return( -80 ) ;    /* Šù‚É‘¶İ‚µ‚Ä‚¢‚é */
+        return( -80 ) ;    /* æ—¢ã«å­˜åœ¨ã—ã¦ã„ã‚‹ */
     }
     if ((fp=fopen( p, "w+b" )) == NULL)
-        return( -23 ) ;    /* ƒfƒBƒXƒN‚ª‚¢‚Á‚Ï‚¢ */
+        return( -23 ) ;    /* ãƒ‡ã‚£ã‚¹ã‚¯ãŒã„ã£ã±ã„ */
 #endif
 
     finfo [ ret ].fh = fp ;
@@ -1513,8 +1521,8 @@ static    long    Newfile( char *p, short atr )
 }
 
 /*
- @‹@”\FDOSCALL OPEN‚ğÀs‚·‚é
- –ß‚è’lFƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹i•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL OPENã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Open( char *p, short mode )
 {
@@ -1530,14 +1538,14 @@ static    long    Open( char *p, short mode )
     long    i ;
 
     switch( mode ) {
-        case 0: /* “Ç‚İ‚İƒI[ƒvƒ“ */
+        case 0: /* èª­ã¿è¾¼ã¿ã‚ªãƒ¼ãƒ—ãƒ³ */
 #if defined(WIN32)
             md = GENERIC_READ;
 #else
             strcpy( md, "rb" ) ;
 #endif
             break ;
-        case 1: /* ‘‚«‚İƒI[ƒvƒ“ */
+        case 1: /* æ›¸ãè¾¼ã¿ã‚ªãƒ¼ãƒ—ãƒ³ */
 #if defined(WIN32)
             if ((fh = CreateFile(p, GENERIC_READ, 0, NULL,
                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) == INVALID_HANDLE_VALUE)
@@ -1546,12 +1554,12 @@ static    long    Open( char *p, short mode )
             md = GENERIC_WRITE;
 #else
             if ((fp=fopen( p, "rb" )) == NULL)
-                return( -2 ) ;    /* ƒtƒ@ƒCƒ‹‚ÍŒ©‚Â‚©‚ç‚È‚¢ */
+                return( -2 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«ã¯è¦‹ã¤ã‹ã‚‰ãªã„ */
             fclose( fp ) ;
             strcpy( md, "r+b" ) ;
 #endif
             break ;
-        case 2: /* “Ç‚İ‘‚«ƒI[ƒvƒ“ */
+        case 2: /* èª­ã¿æ›¸ãã‚ªãƒ¼ãƒ—ãƒ³ */
 #if defined(WIN32)
             md = GENERIC_READ | GENERIC_WRITE;
 #else
@@ -1559,16 +1567,16 @@ static    long    Open( char *p, short mode )
 #endif
             break ;
         default:
-            return( -12 ) ;        /* ƒAƒNƒZƒXƒ‚[ƒh‚ªˆÙí */
+            return( -12 ) ;        /* ã‚¢ã‚¯ã‚»ã‚¹ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ */
     }
 
-    /* ƒtƒ@ƒCƒ‹–¼Œã‚ë‚Ì‹ó”’‚ğ‚Â‚ß‚é */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åå¾Œã‚ã®ç©ºç™½ã‚’ã¤ã‚ã‚‹ */
     len = strlen( p ) ;
     for( i = len - 1 ; i >= 0 && p [ i ] == ' ' ; i-- )
         p [ i ] = '\0' ;
 
     if ( (len=strlen( p )) > 88 )
-        return( -13 ) ;    /* ƒtƒ@ƒCƒ‹–¼‚Ìw’èŒë‚è */
+        return( -13 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šèª¤ã‚Š */
 #if defined(WIN32)
     if ((fh = CreateFile(p, md, 0, NULL,
                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) == INVALID_HANDLE_VALUE)
@@ -1577,9 +1585,9 @@ static    long    Open( char *p, short mode )
 #endif
     {
         if ( mode == 1 )
-            return( -23 ) ;    /* ƒfƒBƒXƒN‚ª‚¢‚Á‚Ï‚¢ */
+            return( -23 ) ;    /* ãƒ‡ã‚£ã‚¹ã‚¯ãŒã„ã£ã±ã„ */
         else
-            return( -2 ) ;    /* ƒtƒ@ƒCƒ‹‚ÍŒ©‚Â‚©‚ç‚È‚¢ */
+            return( -2 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«ã¯è¦‹ã¤ã‹ã‚‰ãªã„ */
     }
 
     ret = 0 ;
@@ -1596,7 +1604,7 @@ static    long    Open( char *p, short mode )
 #else
         fclose( fp ) ;
 #endif
-        return( -4 ) ;    /* ƒI[ƒvƒ“‚µ‚Ä‚¢‚éƒtƒ@ƒCƒ‹‚ª‘½‚·‚¬‚é */
+        return( -4 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã„ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒå¤šã™ãã‚‹ */
     }
 
 #if defined(WIN32)
@@ -1611,13 +1619,13 @@ static    long    Open( char *p, short mode )
 }
 
 /*
- @‹@”\FDOSCALL CLOSE‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL CLOSEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Close( short hdl )
 {
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;    /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
 
     if ( hdl <= 4 )
         return( 0 ) ;
@@ -1627,10 +1635,10 @@ static    long    Close( short hdl )
 #else
     if ( fclose( finfo [ hdl ].fh ) == EOF )
 #endif
-        return( -14 ) ;    /* –³Œø‚Èƒpƒ‰ƒ[ƒ^‚ÅƒR[ƒ‹‚µ‚½ */
+        return( -14 ) ;    /* ç„¡åŠ¹ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã§ã‚³ãƒ¼ãƒ«ã—ãŸ */
 
     finfo [ hdl ].fh = NULL ;
-    /* ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv•ÏX */
+    /* ã‚¿ã‚¤ãƒ ã‚¹ã‚¿ãƒ³ãƒ—å¤‰æ›´ */
 #if defined(WIN32)
     if ( finfo [ hdl ].date != 0 || finfo [ hdl ].time != 0 )
     {
@@ -1642,7 +1650,7 @@ static    long    Close( short hdl )
            GENERIC_WRITE, 0, NULL,
            OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         GetFileTime(fh, &ft0, &ft1, &ft2);
-        // •b¨100nsec‚É•ÏŠ·‚·‚éB
+        // ç§’â†’100nsecã«å¤‰æ›ã™ã‚‹ã€‚
         datetime = ((__int64)finfo [ hdl ].date*86400L + finfo [ hdl ].time) * 10000000;
         ft2.dwLowDateTime = (unsigned long)(datetime & 0xffffffff);
         ft2.dwHighDateTime = (unsigned long)(datetime >> 32);
@@ -1666,8 +1674,8 @@ static    long    Close( short hdl )
 }
 
 /*
- @‹@”\FDOSCALL FGETS‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL FGETSã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Fgets( long adr, short hdl )
 {
@@ -1677,7 +1685,7 @@ static    long    Fgets( long adr, short hdl )
     UChar    max ;
 
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;    /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
 
     if ( finfo [ hdl ].mode == 1 )
         return( -1 ) ;
@@ -1726,8 +1734,8 @@ static    long    Fgets( long adr, short hdl )
 }
 
 /*
- @‹@”\FDOSCALL READ‚ğÀs‚·‚é
- –ß‚è’lF“Ç‚İ‚ñ‚¾ƒoƒCƒg”i•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL READã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šèª­ã¿è¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°ï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Read( short hdl, long buf, long len )
 {
@@ -1736,10 +1744,10 @@ static    long    Read( short hdl, long buf, long len )
     BOOL    ret;
 
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;    /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
 
     if ( finfo [ hdl ].mode == 1 )
-        return( -1 ) ;    /* –³Œø‚Èƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒR[ƒ‹ */
+        return( -1 ) ;    /* ç„¡åŠ¹ãªãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚³ãƒ¼ãƒ« */
 
     if ( len == 0 )
         return( 0 ) ;
@@ -1755,8 +1763,8 @@ static    long    Read( short hdl, long buf, long len )
 }
 
 /*
- @‹@”\FDOSCALL WRITE‚ğÀs‚·‚é
- –ß‚è’lF‘‚«‚ñ‚¾ƒoƒCƒg”i•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL WRITEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šæ›¸ãè¾¼ã‚“ã ãƒã‚¤ãƒˆæ•°ï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Write( short hdl, long buf, long len )
 {
@@ -1765,7 +1773,7 @@ static    long    Write( short hdl, long buf, long len )
     unsigned len2 ;
 
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;    /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;    /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
 
     if ( len == 0 )
         return( 0 ) ;
@@ -1792,8 +1800,8 @@ static    long    Write( short hdl, long buf, long len )
 }
 
 /*
- @‹@”\FDOSCALL DELETE‚ğÀs‚·‚é
- –ß‚è’lFƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹i•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL DELETEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Delete( char *p )
 {
@@ -1804,7 +1812,7 @@ static    long    Delete( char *p )
 
     errno = 0 ;
     if ( remove( p ) != 0 ) {
-        /* ƒI[ƒvƒ“’†‚Ìƒtƒ@ƒCƒ‹‚ğ’²‚×‚é */
+        /* ã‚ªãƒ¼ãƒ—ãƒ³ä¸­ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª¿ã¹ã‚‹ */
         err_save = errno ;
         len = strlen( p ) ;
         hdl = 0 ;
@@ -1823,9 +1831,9 @@ static    long    Delete( char *p )
             errno = 0 ;
             if ( remove( p ) != 0 ) {
                 if ( errno == ENOENT )
-                    return( -2 ) ;    /* ƒtƒ@ƒCƒ‹‚ª‚È‚¢ */
+                    return( -2 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã„ */
                 else
-                    return( -13 ) ;    /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+                    return( -13 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
             }
         } else {
             if ( err_save == ENOENT )
@@ -1838,8 +1846,8 @@ static    long    Delete( char *p )
 }
 
 /*
- @‹@”\FDOSCALL SEEK‚ğÀs‚·‚é
- –ß‚è’lFæ“ª‚©‚ç‚ÌƒIƒtƒZƒbƒgi•‰‚È‚çƒGƒ‰[ƒR[ƒhj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL SEEKã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šå…ˆé ­ã‹ã‚‰ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆï¼ˆè² ãªã‚‰ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ï¼‰
 */
 static    long    Seek( short hdl, long offset, short mode )
 {
@@ -1848,7 +1856,7 @@ static    long    Seek( short hdl, long offset, short mode )
 
 #if defined(WIN32)
     if (finfo [ hdl ].fh == INVALID_HANDLE_VALUE)
-        return( -6 ) ;        /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;        /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
     switch( mode ) {
         case 0:
             sk = FILE_BEGIN ;
@@ -1860,13 +1868,13 @@ static    long    Seek( short hdl, long offset, short mode )
             sk = FILE_END ;
             break ;
         default:
-            return( -14 ) ;    /* –³Œø‚Èƒpƒ‰ƒ[ƒ^ */
+            return( -14 ) ;    /* ç„¡åŠ¹ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
     }
     if ((ret = SetFilePointer(finfo [ hdl ].fh, offset, NULL, sk )) < 0 )
-        return( -25 ) ;        /* w’è‚ÌˆÊ’u‚ÉƒV[ƒN‚Å‚«‚È‚¢ */
+        return( -25 ) ;        /* æŒ‡å®šã®ä½ç½®ã«ã‚·ãƒ¼ã‚¯ã§ããªã„ */
 #else
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;        /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;        /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
     switch( mode ) {
         case 0:
             sk = SEEK_SET ;
@@ -1878,18 +1886,18 @@ static    long    Seek( short hdl, long offset, short mode )
             sk = SEEK_END ;
             break ;
         default:
-            return( -14 ) ;    /* –³Œø‚Èƒpƒ‰ƒ[ƒ^ */
+            return( -14 ) ;    /* ç„¡åŠ¹ãªãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ */
     }
     if ( fseek( finfo [ hdl ].fh, offset, sk ) != 0 )
-        return( -25 ) ;        /* w’è‚ÌˆÊ’u‚ÉƒV[ƒN‚Å‚«‚È‚¢ */
+        return( -25 ) ;        /* æŒ‡å®šã®ä½ç½®ã«ã‚·ãƒ¼ã‚¯ã§ããªã„ */
     ret = ftell( finfo [ hdl ].fh ) ;
 #endif
     return( ret ) ;
 }
 
 /*
- @‹@”\FDOSCALL RENAME‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL RENAMEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Rename( long old, long new1 )
 {
@@ -1901,17 +1909,17 @@ static    long    Rename( long old, long new1 )
     errno = 0 ;
     if (rename( old_ptr, new_ptr ) != 0 ) {
         if ( errno == EACCES )
-            return( -22 ) ;    /* ƒtƒ@ƒCƒ‹‚ª‚ ‚Á‚ÄƒŠƒl[ƒ€‚Å‚«‚È‚¢ */
+            return( -22 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã£ã¦ãƒªãƒãƒ¼ãƒ ã§ããªã„ */
         else
-            return( -7 ) ;    /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+            return( -7 ) ;    /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
     }
 
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL CHMOD‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL CHMODã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Chmod( long adr, short atr )
 {
@@ -1920,13 +1928,13 @@ static    long    Chmod( long adr, short atr )
 
     name_ptr = prog_ptr + adr ;
     if ( atr == -1 ) {
-        /* “Ç‚İo‚µ */
+        /* èª­ã¿å‡ºã— */
 #if defined(WIN32)
         if ((ret = GetFileAttributesA(name_ptr)) == 0xFFFFFFFF)
             return -2;
 #else
         if ( _dos_getfileattr( name_ptr, &ret ) != 0 )
-            return( -2 ) ;        /* ƒtƒ@ƒCƒ‹‚ª‚È‚¢ */
+            return( -2 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã„ */
 #endif
         return( ret ) ;
     } else {
@@ -1938,17 +1946,17 @@ static    long    Chmod( long adr, short atr )
         if ( _dos_setfileattr( name_ptr, atr ) != 0 ) {
 #endif
             if ( errno == ENOENT )
-                return( -2 ) ;        /* ƒtƒ@ƒCƒ‹‚ª‚È‚¢ */
+                return( -2 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã„ */
             else
-                return( -19 ) ;        /* ‘‚«‚İ‹Ö~ */
+                return( -19 ) ;        /* æ›¸ãè¾¼ã¿ç¦æ­¢ */
         }
         return( atr ) ;
     }
 }
 
 /*
- @‹@”\FDOSCALL MKDIR‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL MKDIRã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Mkdir( long name )
 {
@@ -1957,15 +1965,15 @@ static    long    Mkdir( long name )
     name_ptr = prog_ptr + name ;
     if (CreateDirectoryA(name_ptr, NULL) == FALSE) {
         if ( errno == EACCES )
-            return( -20 ) ;    /* ƒfƒBƒŒƒNƒgƒŠ‚ÍŠù‚É‘¶İ‚·‚é */
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+            return( -20 ) ;    /* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã¯æ—¢ã«å­˜åœ¨ã™ã‚‹ */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
     }
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL RMDIR‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL RMDIRã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Rmdir( long name )
 {
@@ -1975,15 +1983,15 @@ static    long    Rmdir( long name )
     errno = 0 ;
     if (RemoveDirectoryA(name_ptr) == FALSE) {
         if ( errno == EACCES )
-            return( -21 ) ;    /* ƒfƒBƒŒƒNƒgƒŠ’†‚Éƒtƒ@ƒCƒ‹‚ª‚ ‚é */
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+            return( -21 ) ;    /* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªä¸­ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚‹ */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
     }
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL CHDIR‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL CHDIRã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Chdir( long name )
 {
@@ -1991,45 +1999,45 @@ static    long    Chdir( long name )
 
     name_ptr = prog_ptr + name ;
     if (SetCurrentDirectory(name_ptr) == FALSE )
-        return( -3 ) ;        /* ƒfƒBƒŒƒNƒgƒŠ‚ªŒ©‚Â‚©‚ç‚È‚¢ */
+        return( -3 ) ;        /* ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒè¦‹ã¤ã‹ã‚‰ãªã„ */
     return( 0 ) ;
 }
 
 /*
-   ‹@”\F
-     DOSCALL CURDIR‚ğÀs‚·‚é
-   –ß‚è’lF
-     ƒGƒ‰[ƒR[ƒh
+   æ©Ÿèƒ½ï¼š
+     DOSCALL CURDIRã‚’å®Ÿè¡Œã™ã‚‹
+   æˆ»ã‚Šå€¤ï¼š
+     ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Curdir( short drv, char *buf_ptr )
 {
     char    str [ 67 ];
-    char     *ret_ptr = str; /* NULLˆÈŠO‚È‚ç‰½‚Å‚à‚æ‚¢B*/
+    char     *ret_ptr = str; /* NULLä»¥å¤–ãªã‚‰ä½•ã§ã‚‚ã‚ˆã„ã€‚*/
 #if defined(WIN32)
     char cpath[512], tpath[512];
     char cdrv[3], tdrv[3];
     BOOL b;
 
-    if ( drv != 0 ) { /* ƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚Å‚È‚©‚Á‚½‚ç */
-        /* ‚Ü‚¸AƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğæ“¾‚µ‚Ä•Û‘¶‚µ‚Ä‚¨‚­B*/
+    if ( drv != 0 ) { /* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã§ãªã‹ã£ãŸã‚‰ */
+        /* ã¾ãšã€ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’å–å¾—ã—ã¦ä¿å­˜ã—ã¦ãŠãã€‚*/
         b = GetCurrentDirectory(sizeof(cpath), cpath);
         sprintf(cdrv, "%c:", cpath[0]);
-        /* Ÿ‚ÉAƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚ğ•ÏX‚·‚éB*/
+        /* æ¬¡ã«ã€ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã‚’å¤‰æ›´ã™ã‚‹ã€‚*/
         sprintf(tdrv, "%c:", drv+'A'-1);
         b = SetCurrentDirectory(tdrv);
         if (b == FALSE)
         {
-            /* ƒhƒ‰ƒCƒu‚Ì•ÏX‚É¸”s‚µ‚½B*/
+            /* ãƒ‰ãƒ©ã‚¤ãƒ–ã®å¤‰æ›´ã«å¤±æ•—ã—ãŸã€‚*/
             ret_ptr = NULL;
         }
     }
     if (ret_ptr != NULL)
     {
-        /* •ÏX‚µ‚½ƒhƒ‰ƒCƒu‚ÌƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚ğæ“¾‚·‚éB*/
+        /* å¤‰æ›´ã—ãŸãƒ‰ãƒ©ã‚¤ãƒ–ã®ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã‚’å–å¾—ã™ã‚‹ã€‚*/
         b = GetCurrentDirectory(sizeof(tpath), tpath);
     }
-    if ( drv != 0 ) { /* ƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚Å‚È‚©‚Á‚½‚ç */
-        /* ÅŒã‚ÉAƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚ğŒ³‚É–ß‚·B*/
+    if ( drv != 0 ) { /* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã§ãªã‹ã£ãŸã‚‰ */
+        /* æœ€å¾Œã«ã€ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã‚’å…ƒã«æˆ»ã™ã€‚*/
         b = SetCurrentDirectory(cdrv);
     }
     if (ret_ptr == NULL)
@@ -2059,7 +2067,7 @@ static    long    Curdir( short drv, char *buf_ptr )
         if ( ret_ptr == NULL )
             return( -15 ) ;
         if ( toupper( str[ 0 ] ) != drv - 1 + 'A' )
-            return( -15 ) ;        /* ƒhƒ‰ƒCƒu–¼w’èŒë‚è */
+            return( -15 ) ;        /* ãƒ‰ãƒ©ã‚¤ãƒ–åæŒ‡å®šèª¤ã‚Š */
     } else {
         if ( ret_ptr == NULL )
             return( -15 ) ;
@@ -2070,14 +2078,14 @@ static    long    Curdir( short drv, char *buf_ptr )
 }
 
 /*
-   ‹@”\F
-     DOSCALL FILES‚ğÀs‚·‚é
-   ƒpƒ‰ƒ[ƒ^F
-     long     buf       <in>    ƒtƒ@ƒCƒ‹ŒŸõƒoƒbƒtƒ@‚ÌƒAƒhƒŒƒX
-     long     name      <in>    ƒtƒ@ƒCƒ‹–¼(ƒƒCƒ‹ƒhƒJ[ƒhŠÜ‚Ş)‚Ö‚Ìƒ|ƒCƒ“ƒ^
-     short    atr       <in>    ‘®«
-   –ß‚è’lF
-     ƒGƒ‰[ƒR[ƒh
+   æ©Ÿèƒ½ï¼š
+     DOSCALL FILESã‚’å®Ÿè¡Œã™ã‚‹
+   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
+     long     buf       <in>    ãƒ•ã‚¡ã‚¤ãƒ«æ¤œç´¢ãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
+     long     name      <in>    ãƒ•ã‚¡ã‚¤ãƒ«å(ãƒ¯ã‚¤ãƒ«ãƒ‰ã‚«ãƒ¼ãƒ‰å«ã‚€)ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+     short    atr       <in>    å±æ€§
+   æˆ»ã‚Šå€¤ï¼š
+     ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Files( long buf, long name, short atr )
 {
@@ -2088,8 +2096,8 @@ static    long    Files( long buf, long name, short atr )
     name_ptr = prog_ptr + name ;
     buf_ptr  = prog_ptr + buf ;
 
-    /* Å‰‚Éƒ}ƒbƒ`‚·‚éƒtƒ@ƒCƒ‹‚ğ’T‚·B*/
-    /* FindFirstFileEx()‚ÍWindowsNT‚É‚µ‚©‚È‚¢‚Ì‚Åƒ{ƒc
+    /* æœ€åˆã«ãƒãƒƒãƒã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¢ã™ã€‚*/
+    /* FindFirstFileEx()ã¯WindowsNTã«ã—ã‹ãªã„ã®ã§ãƒœãƒ„
     handle = FindFirstFileEx
                    (name_ptr,
                     FindExInfoStandard, 
@@ -2098,15 +2106,15 @@ static    long    Files( long buf, long name, short atr )
                     NULL,
                     0);
     */
-    /* Å‰‚Ìƒtƒ@ƒCƒ‹‚ğŒŸõ‚·‚éB*/
+    /* æœ€åˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œç´¢ã™ã‚‹ã€‚*/
     handle = FindFirstFile(name_ptr, &f_data);
-    /* —\–ñ—Ìˆæ‚ğƒZƒbƒg */
-    buf_ptr[0] = atr;  /* ƒtƒ@ƒCƒ‹‚Ì‘®« */
-    buf_ptr[1] = 0;    /* ƒhƒ‰ƒCƒu”Ô†(not used) */
-    *((HANDLE*)&buf_ptr[2]) = handle; /* ƒT[ƒ`ƒnƒ“ƒhƒ‹ */
+    /* äºˆç´„é ˜åŸŸã‚’ã‚»ãƒƒãƒˆ */
+    buf_ptr[0] = atr;  /* ãƒ•ã‚¡ã‚¤ãƒ«ã®å±æ€§ */
+    buf_ptr[1] = 0;    /* ãƒ‰ãƒ©ã‚¤ãƒ–ç•ªå·(not used) */
+    *((HANDLE*)&buf_ptr[2]) = handle; /* ã‚µãƒ¼ãƒãƒãƒ³ãƒ‰ãƒ« */
     {
         BOOL b = handle != INVALID_HANDLE_VALUE;
-        /* ‘®«‚Ìˆê’v‚·‚éƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚é‚Ü‚ÅŒJ•Ô‚µŒŸõ‚·‚éB*/
+        /* å±æ€§ã®ä¸€è‡´ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‹ã¾ã§ç¹°è¿”ã—æ¤œç´¢ã™ã‚‹ã€‚*/
         while(b == TRUE)
         {
             unsigned char fatr;
@@ -2118,16 +2126,16 @@ static    long    Files( long buf, long name, short atr )
             fatr |= f_data.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ? 0x20 : 0;
             if (fatr & buf_ptr[0] || (fatr == 0 && (buf_ptr[0] & 0x20)))
             {
-                /* ATR‚ğƒZƒbƒg */
+                /* ATRã‚’ã‚»ãƒƒãƒˆ */
                 buf_ptr[21] = fatr;
-                break;  /* w’è‚³‚ê‚½‘®«‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚Á‚½B*/
+                break;  /* æŒ‡å®šã•ã‚ŒãŸå±æ€§ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã£ãŸã€‚*/
             }
             b = FindNextFile(handle, &f_data);
         }
         if (!b)
             return( -2 ) ;
     }
-    /* DATE‚ÆTIME‚ğƒZƒbƒg */
+    /* DATEã¨TIMEã‚’ã‚»ãƒƒãƒˆ */
     {
         SYSTEMTIME st;
         unsigned short s;
@@ -2143,20 +2151,20 @@ static    long    Files( long buf, long name, short atr )
         buf_ptr[24] = (s & 0xff00) >> 8;
         buf_ptr[25] = s & 0xff;
     }
-    /* FILELEN‚ğƒZƒbƒg */
+    /* FILELENã‚’ã‚»ãƒƒãƒˆ */
     buf_ptr[26] = (unsigned char)((f_data.nFileSizeLow & 0xff000000) >> 24);
     buf_ptr[27] = (unsigned char)((f_data.nFileSizeLow & 0x00ff0000) >> 16);
     buf_ptr[28] = (unsigned char)((f_data.nFileSizeLow & 0x0000ff00) >> 8);
     buf_ptr[29] = (unsigned char)(f_data.nFileSizeLow & 0x000000ff);
-    /* PACKEDNAME‚ğƒZƒbƒg */
+    /* PACKEDNAMEã‚’ã‚»ãƒƒãƒˆ */
     strncpy(&buf_ptr[30], f_data.cFileName, 22);
     buf_ptr[30+22] = 0;
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL NFILES‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL NFILESã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Nfiles( long buf )
 {
@@ -2167,11 +2175,11 @@ static    long    Nfiles( long buf )
     short atr;
 
     buf_ptr = prog_ptr + buf ;
-    atr = buf_ptr[0]; /* ŒŸõ‚·‚×‚«ƒtƒ@ƒCƒ‹‚Ì‘®« */
+    atr = buf_ptr[0]; /* æ¤œç´¢ã™ã¹ããƒ•ã‚¡ã‚¤ãƒ«ã®å±æ€§ */
     {
-    /* todo:buf_ptr‚Ìw‚·—Ìˆæ‚©‚ç•K—v‚Èî•ñ‚ğæ‚èo‚µ‚ÄAf_data‚ÉƒRƒs[‚·‚éB*/
-    /* DOSX‚Ìˆ—‚ğQl‚É‚·‚éB*/
-    /* 2•b¨100ns‚É•ÏŠ·‚·‚éB*/
+    /* todo:buf_ptrã®æŒ‡ã™é ˜åŸŸã‹ã‚‰å¿…è¦ãªæƒ…å ±ã‚’å–ã‚Šå‡ºã—ã¦ã€f_dataã«ã‚³ãƒ”ãƒ¼ã™ã‚‹ã€‚*/
+    /* DOSXã®å‡¦ç†ã‚’å‚è€ƒã«ã™ã‚‹ã€‚*/
+    /* 2ç§’â†’100nsã«å¤‰æ›ã™ã‚‹ã€‚*/
         SYSTEMTIME st;
         BOOL b;
         unsigned short s;
@@ -2186,10 +2194,10 @@ static    long    Nfiles( long buf )
         st.wSecond = (s & 0x001f);
         st.wMilliseconds = 0;
         b = SystemTimeToFileTime(&st, &f_data.ftLastWriteTime);
-        /* ƒtƒ@ƒCƒ‹–¼ */
-/* ƒtƒ@ƒCƒ‹–¼‚ğbuf‚©‚çæ‚èo‚µ‚Äf_data‚ÉƒRƒs[‚·‚é•K—v‚Í‚È‚¢‚Æv‚¤B
-   ‚±‚Ì•”•ª‚ÌƒR[ƒh‚ªŒ´ˆö‚ÅŒë“®ì‚µ‚Ä‚¢‚½‚Æl‚¦‚ç‚ê‚é‚Ì‚ÅAƒŠƒŠ[ƒXŒã
-   1ƒ–Œ‘Ò‚Á‚Äíœ‚·‚éB  Y.Fujii 2000/1/19
+        /* ãƒ•ã‚¡ã‚¤ãƒ«å */
+/* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’bufã‹ã‚‰å–ã‚Šå‡ºã—ã¦f_dataã«ã‚³ãƒ”ãƒ¼ã™ã‚‹å¿…è¦ã¯ãªã„ã¨æ€ã†ã€‚
+   ã“ã®éƒ¨åˆ†ã®ã‚³ãƒ¼ãƒ‰ãŒåŸå› ã§èª¤å‹•ä½œã—ã¦ã„ãŸã¨è€ƒãˆã‚‰ã‚Œã‚‹ã®ã§ã€ãƒªãƒªãƒ¼ã‚¹å¾Œ
+   1ãƒ¶æœˆå¾…ã£ã¦å‰Šé™¤ã™ã‚‹ã€‚  Y.Fujii 2000/1/19
         {
             char *p;
             int i;
@@ -2223,10 +2231,10 @@ static    long    Nfiles( long buf )
 */
         f_data.nFileSizeHigh = 0;
         f_data.nFileSizeLow = *((unsigned long*)&buf_ptr[29]);
-        /* ƒtƒ@ƒCƒ‹‚Ìƒnƒ“ƒhƒ‹‚ğƒoƒbƒtƒ@‚©‚çæ“¾‚·‚éB*/
+        /* ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒãƒ³ãƒ‰ãƒ«ã‚’ãƒãƒƒãƒ•ã‚¡ã‹ã‚‰å–å¾—ã™ã‚‹ã€‚*/
         handle = *((HANDLE*)&buf_ptr[2]);
         b = FindNextFile(handle, &f_data);
-        /* ‘®«‚Ìˆê’v‚·‚éƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚é‚Ü‚ÅŒJ•Ô‚µŒŸõ‚·‚éB*/
+        /* å±æ€§ã®ä¸€è‡´ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚‹ã¾ã§ç¹°è¿”ã—æ¤œç´¢ã™ã‚‹ã€‚*/
         while(b == TRUE)
         {
             unsigned char fatr;
@@ -2238,9 +2246,9 @@ static    long    Nfiles( long buf )
             fatr |= f_data.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ? 0x20 : 0;
             if (fatr & buf_ptr[0] || (fatr == 0 && (buf_ptr[0] & 0x20)))
             {
-                /* ATR‚ğƒZƒbƒg */
+                /* ATRã‚’ã‚»ãƒƒãƒˆ */
                 buf_ptr[21] = fatr;
-                break;  /* w’è‚³‚ê‚½‘®«‚Ìƒtƒ@ƒCƒ‹‚ªŒ©‚Â‚©‚Á‚½B*/
+                break;  /* æŒ‡å®šã•ã‚ŒãŸå±æ€§ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã£ãŸã€‚*/
             }
             b = FindNextFile(handle, &f_data);
         }
@@ -2249,12 +2257,12 @@ static    long    Nfiles( long buf )
             return -2;
         }
     }
-    /* buf_ptr—Ìˆæ‚É”­Œ©‚µ‚½ƒtƒ@ƒCƒ‹‚Ìî•ñ‚ğƒZƒbƒg‚µ’¼‚·B*/
-    /* —\–ñ—Ìˆæ‚ğƒZƒbƒg(4ƒoƒCƒg‚µ‚©g‚í‚È‚¢B*/
-    *((HANDLE*)&buf_ptr[2]) = handle; /* DIRCLS, DIRFAT‚Ì—Ìˆæ‚ğg‚Á‚½B*/
+    /* buf_ptré ˜åŸŸã«ç™ºè¦‹ã—ãŸãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±ã‚’ã‚»ãƒƒãƒˆã—ç›´ã™ã€‚*/
+    /* äºˆç´„é ˜åŸŸã‚’ã‚»ãƒƒãƒˆ(4ãƒã‚¤ãƒˆã—ã‹ä½¿ã‚ãªã„ã€‚*/
+    *((HANDLE*)&buf_ptr[2]) = handle; /* DIRCLS, DIRFATã®é ˜åŸŸã‚’ä½¿ã£ãŸã€‚*/
     for (i = 6; i < 21; i ++)
         buf_ptr[i] = 0;
-    /* DATE‚ÆTIME‚ğƒZƒbƒg */
+    /* DATEã¨TIMEã‚’ã‚»ãƒƒãƒˆ */
     {
         SYSTEMTIME st;
         unsigned short s;
@@ -2270,20 +2278,20 @@ static    long    Nfiles( long buf )
         buf_ptr[24] = (s & 0xff00) >> 8;
         buf_ptr[25] = s & 0xff;
     }
-    /* FILELEN‚ğƒZƒbƒg */
+    /* FILELENã‚’ã‚»ãƒƒãƒˆ */
     buf_ptr[26] = (unsigned char)((f_data.nFileSizeLow & 0xff000000) >> 24);
     buf_ptr[27] = (unsigned char)((f_data.nFileSizeLow & 0x00ff0000) >> 16);
     buf_ptr[28] = (unsigned char)((f_data.nFileSizeLow & 0x0000ff00) >> 8);
     buf_ptr[29] = (unsigned char)(f_data.nFileSizeLow & 0x000000ff);
-    /* PACKEDNAME‚ğƒZƒbƒg */
+    /* PACKEDNAMEã‚’ã‚»ãƒƒãƒˆ */
     strncpy(&buf_ptr[30], f_data.cFileName, 22);
     buf_ptr[30+22] = 0;
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL FILEDATE‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL FILEDATEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Filedate( short hdl, long dt )
 {
@@ -2300,11 +2308,11 @@ static    long    Filedate( short hdl, long dt )
     UShort     ftime ;
 #endif
     if ( finfo [ hdl ].fh == NULL )
-        return( -6 ) ;        /* ƒI[ƒvƒ“‚³‚ê‚Ä‚¢‚È‚¢ */
+        return( -6 ) ;        /* ã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚Œã¦ã„ãªã„ */
 #if defined(DOSX)
     dosfh = fileno( finfo [ hdl ].fh ) ;
 #endif
-    if ( dt != 0 ) {    /* İ’è */
+    if ( dt != 0 ) {    /* è¨­å®š */
 #if defined(WIN32)
         hFile = finfo [ hdl ].fh;
         GetFileTime(hFile, &ctime, &atime, &wtime);
@@ -2313,7 +2321,7 @@ static    long    Filedate( short hdl, long dt )
         wtime.dwHighDateTime = (DWORD)(ll_wtime >> 32);
         b = SetFileTime(hFile, &ctime, &atime, &wtime);
         if (b)
-            return( -19 ) ;    /* ‘‚«‚İ•s‰Â */
+            return( -19 ) ;    /* æ›¸ãè¾¼ã¿ä¸å¯ */
         finfo [ hdl ].date = (unsigned long)(ll_wtime / 10000000 / 86400);
         finfo [ hdl ].time = (unsigned long)((ll_wtime / 10000000) % 86400);
 #elif defined(DOSX)
@@ -2323,7 +2331,7 @@ static    long    Filedate( short hdl, long dt )
         fd = fdate ;
         ft = ftime ;
         if ( dos_setftime( dosfh, fd, ft ) != 0 )
-            return( -19 ) ;    /* ‘‚«‚İ•s‰Â */
+            return( -19 ) ;    /* æ›¸ãè¾¼ã¿ä¸å¯ */
         finfo [ hdl ].date = fd ;
         finfo [ hdl ].time = ft ;
 #endif
@@ -2348,8 +2356,8 @@ static    long    Filedate( short hdl, long dt )
 }
 
 /*
- @‹@”\FDOSCALL GETDATE‚ğÀs‚·‚é
- –ß‚è’lFŒ»İ‚Ì“ú•t
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL GETDATEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šç¾åœ¨ã®æ—¥ä»˜
 */
 static    long    Getdate()
 {
@@ -2371,8 +2379,8 @@ static    long    Getdate()
 }
 
 /*
- @‹@”\FDOSCALL SETDATE‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL SETDATEã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Setdate( short dt )
 {
@@ -2387,7 +2395,7 @@ static    long    Setdate( short dt )
     // b = SetSystemTime(&stime);
     b = SetLocalTime(&stime);
     if (!b)
-        return -14;     /* ƒpƒ‰ƒ[ƒ^•s³ */
+        return -14;     /* ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä¸æ­£ */
 #else
     struct dos_date_t ddate ;
 
@@ -2396,14 +2404,14 @@ static    long    Setdate( short dt )
     ddate.day   = (dt & 0x1F) ;
 
     if ( dos_setdate( &ddate ) != 0 )
-        return( -14 ) ;        /* ƒpƒ‰ƒ[ƒ^•s³ */
+        return( -14 ) ;        /* ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä¸æ­£ */
 #endif
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL GETTIME / GETTIME2‚ğÀs‚·‚é
- –ß‚è’lFŒ»İ‚Ì
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL GETTIME / GETTIME2ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šç¾åœ¨ã®æ™‚åˆ»
 */
 static    long    Gettime( int flag )
 {
@@ -2431,8 +2439,8 @@ static    long    Gettime( int flag )
 }
 
 /*
- @‹@”\FDOSCALL SETTIM2‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL SETTIM2ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Settim2( long tim )
 {
@@ -2446,7 +2454,7 @@ static    long    Settim2( long tim )
     stime.wMilliseconds = 0;
     b = SetSystemTime(&stime);
     if (!b)
-        return -14;     /* ƒpƒ‰ƒ[ƒ^•s³ */
+        return -14;     /* ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä¸æ­£ */
 #else
     struct dos_time_t dtime ;
 
@@ -2455,14 +2463,14 @@ static    long    Settim2( long tim )
     dtime.second  = (tim & 0x3F) ;
     dtime.hsecond = 0 ;
     if ( dos_settime( &dtime ) != 0 )
-        return( -14 ) ;        /* ƒpƒ‰ƒ[ƒ^•s³ */
+        return( -14 ) ;        /* ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ä¸æ­£ */
 #endif
     return( 0 ) ;
 }
 
 /*
- @‹@”\FDOSCALL GETENV‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL GETENVã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static long    Getenv( long name, long env, long buf )
 {
@@ -2477,11 +2485,11 @@ long Getenv_common(const char *name_p, char *buf_p)
 {
     unsigned char *mem_ptr;
 /*
-   WIN32‚ÌŠÂ‹«•Ï”—Ìˆæ‚©‚çrun68‚ÌƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“—Ìˆæ‚É•¡»‚µ‚Ä‚ ‚é
-   ’l‚ğŒŸõ‚·‚éd—l‚É‚·‚éB
+   WIN32ã®ç’°å¢ƒå¤‰æ•°é ˜åŸŸã‹ã‚‰run68ã®ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³é ˜åŸŸã«è¤‡è£½ã—ã¦ã‚ã‚‹
+   å€¤ã‚’æ¤œç´¢ã™ã‚‹ä»•æ§˜ã«ã™ã‚‹ã€‚
 */
 /*
-    ŠÂ‹«ƒGƒŠƒA‚Ìæ“ª(ENV_TOP)‚©‚ç‡‚ÉŠÂ‹«•Ï”–¼‚ğŒŸõ‚·‚éB
+    ç’°å¢ƒã‚¨ãƒªã‚¢ã®å…ˆé ­(ENV_TOP)ã‹ã‚‰é †ã«ç’°å¢ƒå¤‰æ•°åã‚’æ¤œç´¢ã™ã‚‹ã€‚
 */
     for (mem_ptr = prog_ptr + ENV_TOP + 4;
          *mem_ptr != 0;
@@ -2489,7 +2497,7 @@ long Getenv_common(const char *name_p, char *buf_p)
     {
         char ename[256];
         int i;
-        /* ŠÂ‹«•Ï”–¼‚ğæ“¾‚·‚éB*/
+        /* ç’°å¢ƒå¤‰æ•°åã‚’å–å¾—ã™ã‚‹ã€‚*/
         for (i = 0; *mem_ptr != '\0' && *mem_ptr != '='; i ++)
         {
             ename[i] = *(mem_ptr ++);
@@ -2497,31 +2505,31 @@ long Getenv_common(const char *name_p, char *buf_p)
         ename[i] = '\0';
         if (stricmp(name_p, ename) == 0)
         {
-            /* ŠÂ‹«•Ï”‚ªŒ©‚Â‚©‚Á‚½B*/
+            /* ç’°å¢ƒå¤‰æ•°ãŒè¦‹ã¤ã‹ã£ãŸã€‚*/
             while (*mem_ptr == '=' || *mem_ptr == ' ')
             {
                 mem_ptr ++;
             }
-            /* ‹ó•¶š—ñ‚Ìê‡‚à‚ ‚éB*/
+            /* ç©ºæ–‡å­—åˆ—ã®å ´åˆã‚‚ã‚ã‚‹ã€‚*/
 /*            *buf_p = (long)((char*)mem_ptr - prog_ptr);*/
             strcpy(buf_p, mem_ptr);
             return 0;
         }
-        /* •Ï”–¼‚ªˆê’v‚µ‚È‚©‚Á‚½‚çA•Ï”‚Ì’l‚ğƒXƒLƒbƒv‚·‚éB*/
+        /* å¤‰æ•°åãŒä¸€è‡´ã—ãªã‹ã£ãŸã‚‰ã€å¤‰æ•°ã®å€¤ã‚’ã‚¹ã‚­ãƒƒãƒ—ã™ã‚‹ã€‚*/
         while (*mem_ptr)
             mem_ptr ++;
-        /* '\0'‚ÌŒã‚É‚à‚¤ˆê‚Â'\0'‚ª‘±‚­ê‡‚ÍAŠÂ‹«•Ï”—Ìˆæ‚ÌI‚è‚Å‚ ‚éB*/
+        /* '\0'ã®å¾Œã«ã‚‚ã†ä¸€ã¤'\0'ãŒç¶šãå ´åˆã¯ã€ç’°å¢ƒå¤‰æ•°é ˜åŸŸã®çµ‚ã‚Šã§ã‚ã‚‹ã€‚*/
     }
-    /* •Ï”‚ªŒ©‚Â‚©‚ç‚È‚©‚Á‚½‚çNULLƒ|ƒCƒ“ƒ^‚ğ•Ô‚·B*/
+    /* å¤‰æ•°ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸã‚‰NULLãƒã‚¤ãƒ³ã‚¿ã‚’è¿”ã™ã€‚*/
     (*buf_p) = 0;
     return -10;
 }
 
 /*
-   ‹@”\F
-     DOSCALL NAMESTS‚ğÀs‚·‚é
-   –ß‚è’lF
-     ƒGƒ‰[ƒR[ƒh
+   æ©Ÿèƒ½ï¼š
+     DOSCALL NAMESTSã‚’å®Ÿè¡Œã™ã‚‹
+   æˆ»ã‚Šå€¤ï¼š
+     ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Namests( long name, long buf )
 {
@@ -2541,10 +2549,10 @@ static    long    Namests( long name, long buf )
     buf_ptr  = prog_ptr + buf ;
     memset( buf_ptr, 0x00, 88 ) ;
     if ( (len=strlen( name_ptr )) > 88 )
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼‚Ìw’èŒë‚è */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šèª¤ã‚Š */
     strcpy( nbuf, name_ptr ) ;
 
-    /* Šg’£q‚ğƒZƒbƒg */
+    /* æ‹¡å¼µå­ã‚’ã‚»ãƒƒãƒˆ */
     for( i = len - 1 ; i >= 0 && nbuf [ i ] != '.' ; i-- ) {
         if ( nbuf [ i ] == '*' || nbuf [ i ] == '?' )
             wild = 1 ;
@@ -2553,14 +2561,14 @@ static    long    Namests( long name, long buf )
         return( -13 ) ;
     memset( buf_ptr + 75, ' ', 3 ) ;
     if ( i < 0 ) {
-        /* Šg’£q‚È‚µ */
+        /* æ‹¡å¼µå­ãªã— */
         i = len ;
     } else {
         memcpy( buf_ptr + 75, &(nbuf [ i + 1 ]), strlen(&(nbuf [ i + 1 ])) ) ;
         nbuf [ i ] = '\0' ;
     }
 
-    /* ƒtƒ@ƒCƒ‹–¼‚ğƒZƒbƒg */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚»ãƒƒãƒˆ */
     for( i -- ; i >= 0 ; i-- ) {
         if ( nbuf [ i ] == '\\' || nbuf[ i ] == '/' || nbuf [ i ] == ':' )
             break ;
@@ -2570,7 +2578,7 @@ static    long    Namests( long name, long buf )
     i ++ ;
     if ( strlen( &(nbuf [ i ]) ) > 18 )
         return( -13 ) ;
-    if ( strlen( &(nbuf [ i ]) ) > 8 )    /* –{“–‚ÍƒGƒ‰[‚Å‚Í‚È‚¢ */
+    if ( strlen( &(nbuf [ i ]) ) > 8 )    /* æœ¬å½“ã¯ã‚¨ãƒ©ãƒ¼ã§ã¯ãªã„ */
         return( -13 ) ;
     memset( buf_ptr + 67, ' ', 8 ) ;
     memcpy( buf_ptr + 67, &(nbuf [ i ]), strlen(&(nbuf [ i ])) ) ;
@@ -2579,9 +2587,9 @@ static    long    Namests( long name, long buf )
     if ( wild != 0 )
         mem_set( buf, 0x01, S_BYTE ) ;
 
-    /* ƒpƒX–¼‚ğƒZƒbƒg */
+    /* ãƒ‘ã‚¹åã‚’ã‚»ãƒƒãƒˆ */
     if ( i == 0 ) {
-        /* ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğƒZƒbƒg */
+        /* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ã‚»ãƒƒãƒˆ */
         if (Curdir(0, cud) != 0)
             return( 13 ) ;
         strcpy( buf_ptr + 2, &(cud [ 2 ]) ) ;
@@ -2600,9 +2608,9 @@ static    long    Namests( long name, long buf )
         strcpy( buf_ptr + 2, &(nbuf [ i ]) ) ;
     }
 
-    /* ƒhƒ‰ƒCƒu–¼‚ğƒZƒbƒg */
+    /* ãƒ‰ãƒ©ã‚¤ãƒ–åã‚’ã‚»ãƒƒãƒˆ */
     if ( i == 0 ) {
-        /* ƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚ğƒZƒbƒg */
+        /* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã‚’ã‚»ãƒƒãƒˆ */
 #if defined(WIN32)
         char path[MAX_PATH];
         GetCurrentDirectory(strlen(path), path);
@@ -2622,8 +2630,8 @@ static    long    Namests( long name, long buf )
 }
 
 /*
- @‹@”\FDOSCALL NAMECK‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL NAMECKã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Nameck( long name, long buf )
 {
@@ -2639,24 +2647,24 @@ static    long    Nameck( long name, long buf )
     buf_ptr  = prog_ptr + buf ;
     memset( buf_ptr, 0x00, 91 ) ;
     if ( (len=strlen( name_ptr )) > 88 )
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼‚Ìw’èŒë‚è */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åã®æŒ‡å®šèª¤ã‚Š */
     strcpy( nbuf, name_ptr ) ;
 
-    /* Šg’£q‚ğƒZƒbƒg */
+    /* æ‹¡å¼µå­ã‚’ã‚»ãƒƒãƒˆ */
     for( i = len - 1 ; i >= 0 && nbuf [ i ] != '.' ; i-- ) {
         if ( nbuf [ i ] == '*' || nbuf [ i ] == '?' )
             ret = 1 ;
     }
     if ( strlen( &(nbuf [ i ]) ) > 4 )
         return( -13 ) ;
-    if ( i < 0 ) {    /* Šg’£q‚È‚µ */
+    if ( i < 0 ) {    /* æ‹¡å¼µå­ãªã— */
         i = len ;
     } else {
         strcpy( buf_ptr + 86, &(nbuf [ i ]) ) ;
         nbuf [ i ] = '\0' ;
     }
 
-    /* ƒtƒ@ƒCƒ‹–¼‚ğƒZƒbƒg */
+    /* ãƒ•ã‚¡ã‚¤ãƒ«åã‚’ã‚»ãƒƒãƒˆ */
     for( i -- ; i >= 0 ; i-- ) {
         if ( nbuf [ i ] == '\\' || nbuf[ i ] == '/' || nbuf [ i ] == ':' )
             break ;
@@ -2669,7 +2677,7 @@ static    long    Nameck( long name, long buf )
     strcpy( buf_ptr + 67, &(nbuf [ i ]) ) ;
     nbuf [ i ] = '\0' ;
 
-    /* ƒpƒX–¼‚ğƒZƒbƒg */
+    /* ãƒ‘ã‚¹åã‚’ã‚»ãƒƒãƒˆ */
     if ( i == 0 ) {
         strcpy( buf_ptr + 2, ".\\" ) ;
     } else {
@@ -2683,9 +2691,9 @@ static    long    Nameck( long name, long buf )
         strcpy( buf_ptr + 2, &(nbuf [ i ]) ) ;
     }
 
-    /* ƒhƒ‰ƒCƒu–¼‚ğƒZƒbƒg */
+    /* ãƒ‰ãƒ©ã‚¤ãƒ–åã‚’ã‚»ãƒƒãƒˆ */
     if ( i == 0 ) {
-        /* ƒJƒŒƒ“ƒgƒhƒ‰ƒCƒu‚ğƒZƒbƒg */
+        /* ã‚«ãƒ¬ãƒ³ãƒˆãƒ‰ãƒ©ã‚¤ãƒ–ã‚’ã‚»ãƒƒãƒˆ */
 #if defined(WIN32)
         char path[MAX_PATH];
         BOOL b;
@@ -2704,8 +2712,8 @@ static    long    Nameck( long name, long buf )
 }
 
 /*
- @‹@”\FDOSCALL CONCTRL‚ğÀs‚·‚é
- –ß‚è’lFmode‚É‚æ‚Á‚ÄˆÙ‚È‚é
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL CONCTRLã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šmodeã«ã‚ˆã£ã¦ç•°ãªã‚‹
 */
 static    long    Conctrl( short mode, long adr )
 {
@@ -2732,7 +2740,7 @@ static    long    Conctrl( short mode, long adr )
             p = prog_ptr + mes ;
             printf( "%s", p ) ;
             break ;
-        case  2:    /* ‘®« */
+        case  2:    /* å±æ€§ */
             srt = (short)mem_get( adr, S_WORD ) ;
             text_color( srt ) ;
             break ;
@@ -2741,38 +2749,38 @@ static    long    Conctrl( short mode, long adr )
             y = (short)mem_get( adr + 2, S_WORD ) ;
             printf( "%c[%d;%dH", 0x1B, y + 1, x + 1 ) ;
             break ;
-        case  4:    /* ‚Ps‰º‚ÉƒJ[ƒ\ƒ‹ˆÚ“®(ƒXƒNƒ[ƒ‹—L‚è) */
+        case  4:    /* ï¼‘è¡Œä¸‹ã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•(ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœ‰ã‚Š) */
             printf( "%c[s\n%c[u%c[1B", 0x1B, 0x1B, 0x1B ) ;
             break ;
-        case  5:    /* ‚Psã‚ÉƒJ[ƒ\ƒ‹ˆÚ“®(ƒXƒNƒ[ƒ‹–¢ƒTƒ|[ƒg) */
+        case  5:    /* ï¼‘è¡Œä¸Šã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹•(ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœªã‚µãƒãƒ¼ãƒˆ) */
             printf( "%c[1A", 0x1B ) ;
             break ;
-        case  6:    /* srtsã‚ÉƒJ[ƒ\ƒ‹ˆÚ“® */
+        case  6:    /* srtè¡Œä¸Šã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹• */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dA", 0x1B, srt ) ;
             break ;
-        case  7:    /* srts‰º‚ÉƒJ[ƒ\ƒ‹ˆÚ“® */
+        case  7:    /* srtè¡Œä¸‹ã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹• */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dB", 0x1B, srt ) ;
             break ;
-        case  8:    /* srt•¶š‰E‚ÉƒJ[ƒ\ƒ‹ˆÚ“® */
+        case  8:    /* srtæ–‡å­—å³ã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹• */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dC", 0x1B, srt ) ;
             break ;
-        case  9:    /* srt•¶š¶‚ÉƒJ[ƒ\ƒ‹ˆÚ“® */
+        case  9:    /* srtæ–‡å­—å·¦ã«ã‚«ãƒ¼ã‚½ãƒ«ç§»å‹• */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dD", 0x1B, srt ) ;
             break ;
         case 10:
             srt = (short)mem_get( adr, S_WORD ) ;
             switch ( srt ) {
-                case 0:    /* ÅIs¶’[‚Ü‚ÅÁ‹ */
+                case 0:    /* æœ€çµ‚è¡Œå·¦ç«¯ã¾ã§æ¶ˆå» */
                     printf( "%c[0J", 0x1B ) ;
                     break ;
-                case 1:    /* ƒz[ƒ€‚©‚çƒJ[ƒ\ƒ‹ˆÊ’u‚Ü‚ÅÁ‹ */
+                case 1:    /* ãƒ›ãƒ¼ãƒ ã‹ã‚‰ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã¾ã§æ¶ˆå» */
                     printf( "%c[1J", 0x1B ) ;
                     break ;
-                case 2:    /* ‰æ–Ê‚ğÁ‹ */
+                case 2:    /* ç”»é¢ã‚’æ¶ˆå» */
                     printf( "%c[2J", 0x1B ) ;
                     break ;
             }
@@ -2780,32 +2788,32 @@ static    long    Conctrl( short mode, long adr )
         case 11:
             srt = (short)mem_get( adr, S_WORD ) ;
             switch ( srt ) {
-                case 0:    /* ‰E’[‚Ü‚ÅÁ‹ */
+                case 0:    /* å³ç«¯ã¾ã§æ¶ˆå» */
                     printf( "%c[K", 0x1B ) ;
                     break ;
-                case 1:    /* ¶’[‚©‚çƒJ[ƒ\ƒ‹ˆÊ’u‚Ü‚ÅÁ‹ */
+                case 1:    /* å·¦ç«¯ã‹ã‚‰ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã¾ã§æ¶ˆå» */
                     printf( "%c[1K", 0x1B ) ;
                     break ;
-                case 2:    /* ‚PsÁ‹ */
-                    printf( "%c[s", 0x1B ) ;    /* ˆÊ’u•Û‘¶ */
-                    printf( "%c[999D", 0x1B ) ; /* ¶’[‚ÉˆÚ“® */
-                    printf( "%c[K", 0x1B ) ;    /* ‰E’[‚Ü‚ÅÁ‹ */
-                    printf( "%c[u", 0x1B ) ;    /* ˆÊ’uÄİ’è */
+                case 2:    /* ï¼‘è¡Œæ¶ˆå» */
+                    printf( "%c[s", 0x1B ) ;    /* ä½ç½®ä¿å­˜ */
+                    printf( "%c[999D", 0x1B ) ; /* å·¦ç«¯ã«ç§»å‹• */
+                    printf( "%c[K", 0x1B ) ;    /* å³ç«¯ã¾ã§æ¶ˆå» */
+                    printf( "%c[u", 0x1B ) ;    /* ä½ç½®å†è¨­å®š */
                     break ;
             }
             break ;
-        case 12:    /* ƒJ[ƒ\ƒ‹s‚Ésrts‘}“ü */
+        case 12:    /* ã‚«ãƒ¼ã‚½ãƒ«è¡Œã«srtè¡ŒæŒ¿å…¥ */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dL", 0x1B, srt ) ;
             break ;
-        case 13:    /* ƒJ[ƒ\ƒ‹s‚©‚çsrtsíœ */
+        case 13:    /* ã‚«ãƒ¼ã‚½ãƒ«è¡Œã‹ã‚‰srtè¡Œå‰Šé™¤ */
             srt = (short)mem_get( adr, S_WORD ) ;
             printf( "%c[%dM", 0x1B, srt ) ;
             break ;
-        case 17:    /* ƒJ[ƒ\ƒ‹•\¦ */
+        case 17:    /* ã‚«ãƒ¼ã‚½ãƒ«è¡¨ç¤º */
             printf( "%c[>5l", 0x1B ) ;
             break ;
-        case 18:    /* ƒJ[ƒ\ƒ‹Á‹ */
+        case 18:    /* ã‚«ãƒ¼ã‚½ãƒ«æ¶ˆå» */
             printf( "%c[>5h", 0x1B ) ;
             break ;
     }
@@ -2814,8 +2822,8 @@ static    long    Conctrl( short mode, long adr )
 }
 
 /*
- @‹@”\FDOSCALL KEYCTRL‚ğÀs‚·‚é
- –ß‚è’lFƒL[ƒR[ƒh“™imode‚É‚æ‚Á‚ÄˆÙ‚È‚éj
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL KEYCTRLã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ç­‰ï¼ˆmodeã«ã‚ˆã£ã¦ç•°ãªã‚‹ï¼‰
 */
 static    long    Keyctrl( short mode, long stack_adr )
 {
@@ -2835,7 +2843,7 @@ static    long    Keyctrl( short mode, long stack_adr )
             return( c ) ;
 #if defined(WIN32)
 #elif defined(DOSX)
-        case 1:        /* ƒL[‚Ìæ“Ç‚İ */
+        case 1:        /* ã‚­ãƒ¼ã®å…ˆèª­ã¿ */
             if ( kbhit() == 0 )
                 return( 0 ) ;
             c = _getch() ;
@@ -2856,8 +2864,8 @@ static    long    Keyctrl( short mode, long stack_adr )
 }
 
 /*
- @‹@”\FDOSCALL FNCKEY‚ğÀs‚·‚é
- –ß‚è’lF‚È‚µ
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL FNCKEYã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãªã—
 */
 static    void    Fnckey( short mode, long buf )
 {
@@ -2872,8 +2880,8 @@ static    void    Fnckey( short mode, long buf )
 }
 
 /*
- @‹@”\FDOSCALL INTVCG‚ğÀs‚·‚é
- –ß‚è’lFƒxƒNƒ^‚Ì’l
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL INTVCGã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãƒ™ã‚¯ã‚¿ã®å€¤
 */
 static    long    Intvcg( UShort intno )
 {
@@ -2903,8 +2911,8 @@ static    long    Intvcg( UShort intno )
 }
 
 /*
- @‹@”\FDOSCALL INTVCS‚ğÀs‚·‚é
- –ß‚è’lFİ’è‘O‚ÌƒxƒNƒ^
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL INTVCSã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šè¨­å®šå‰ã®ãƒ™ã‚¯ã‚¿
 */
 static    long    Intvcs( UShort intno, long adr )
 {
@@ -2928,8 +2936,8 @@ static    long    Intvcs( UShort intno, long adr )
 }
 
 /*
- @‹@”\FDOSCALL ASSIGN‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh‘¼
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL ASSIGNã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ä»–
 */
 static    long    Assign( short mode, long stack_adr )
 {
@@ -2961,8 +2969,8 @@ static    long    Assign( short mode, long stack_adr )
 }
 
 /*
- @‹@”\FDOSCALL GETFCB‚ğÀs‚·‚é
- –ß‚è’lFFCB‚ÌƒAƒhƒŒƒX
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL GETFCBã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šFCBã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 */
 static    long    Getfcb( short fhdl )
 {
@@ -3024,8 +3032,8 @@ static    long    Getfcb( short fhdl )
 }
 
 /*
- @‹@”\FDOSCALL EXEC(mode=0,1)‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh“™
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL EXEC(mode=0,1)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ç­‰
 */
 static    long    Exec01( long nm, long cmd, long env, int md )
 {
@@ -3045,7 +3053,7 @@ static    long    Exec01( long nm, long cmd, long env, int md )
     nm &= 0xFFFFFF ;
     name_ptr = prog_ptr + nm ;
     if ( strlen( name_ptr ) > 88 )
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
 
     strcpy( fname, name_ptr ) ;
     if ( (fp=prog_open( fname, FALSE )) == NULL )
@@ -3057,7 +3065,7 @@ static    long    Exec01( long nm, long cmd, long env, int md )
     mem = Malloc( mem_aloc ) ;
     if ( (mem=Malloc( mem_aloc )) == (long)0x82000000 ) {
         fclose( fp ) ;
-        return( -8 ) ;        /* ƒƒ‚ƒŠ‚ªŠm•Û‚Å‚«‚È‚¢ */
+        return( -8 ) ;        /* ãƒ¡ãƒ¢ãƒªãŒç¢ºä¿ã§ããªã„ */
     }
     mem &= 0xFFFFFF ;
     size = mem ;
@@ -3105,8 +3113,8 @@ static    long    Exec01( long nm, long cmd, long env, int md )
 }
 
 /*
- @‹@”\FDOSCALL EXEC(mode=2)‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL EXEC(mode=2)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 */
 static    long    Exec2( long nm, long cmd, long env )
 {
@@ -3121,7 +3129,7 @@ static    long    Exec2( long nm, long cmd, long env )
     p = name_ptr ;
     while( *p != '\0' && *p != ' ' )
         p ++ ;
-    if ( *p != '\0' ) {    /* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚ ‚è */
+    if ( *p != '\0' ) {    /* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã‚ã‚Š */
         *p = '\0' ;
         p ++ ;
         len = strlen( p ) ;
@@ -3129,7 +3137,7 @@ static    long    Exec2( long nm, long cmd, long env )
         strcpy( cmd_ptr + 1, p ) ;
     }
 
-    /* ŠÂ‹«•Ï”PATH‚É]‚Á‚Äƒtƒ@ƒCƒ‹‚ğŒŸõ‚µAƒI[ƒvƒ“‚·‚éB*/
+    /* ç’°å¢ƒå¤‰æ•°PATHã«å¾“ã£ã¦ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œç´¢ã—ã€ã‚ªãƒ¼ãƒ—ãƒ³ã™ã‚‹ã€‚*/
     fp = prog_open(name_ptr, TRUE);
     if (fp == NULL)
     {
@@ -3142,8 +3150,8 @@ static    long    Exec2( long nm, long cmd, long env )
 }
 
 /*
- @‹@”\FDOSCALL EXEC(mode=3)‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh“™
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL EXEC(mode=3)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ç­‰
 */
 static    long    Exec3( long nm, long adr1, long adr2 )
 {
@@ -3161,7 +3169,7 @@ static    long    Exec3( long nm, long adr1, long adr2 )
     adr2 &= 0xFFFFFF ;
     name_ptr = prog_ptr + nm ;
     if ( strlen( name_ptr ) > 88 )
-        return( -13 ) ;        /* ƒtƒ@ƒCƒ‹–¼w’èŒë‚è */
+        return( -13 ) ;        /* ãƒ•ã‚¡ã‚¤ãƒ«åæŒ‡å®šèª¤ã‚Š */
 
     strcpy( fname, name_ptr ) ;
     if ( (fp=prog_open( fname, FALSE )) == NULL )
@@ -3176,8 +3184,8 @@ static    long    Exec3( long nm, long adr1, long adr2 )
 }
 
 /*
- @‹@”\FDOSCALL EXEC(mode=4)‚ğÀs‚·‚é
- –ß‚è’lFƒGƒ‰[ƒR[ƒh“™
+ ã€€æ©Ÿèƒ½ï¼šDOSCALL EXEC(mode=4)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ç­‰
 */
 static    void    Exec4( long adr )
 {
@@ -3188,8 +3196,8 @@ static    void    Exec4( long adr )
 }
 
 /*
- @‹@”\F•W€ŠÔ‚ğ“ú–{ŠÔ‚É•ÏŠ·‚·‚é
- –ß‚è’lF‚È‚µ
+ ã€€æ©Ÿèƒ½ï¼šæ¨™æº–æ™‚é–“ã‚’æ—¥æœ¬æ™‚é–“ã«å¤‰æ›ã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãªã—
 */
 static    void    get_jtime( UShort *d, UShort *t, int offset )
 {
@@ -3217,7 +3225,7 @@ static    void    get_jtime( UShort *d, UShort *t, int offset )
     month = ((*d >> 5) & 0xF) ;
     day   = (*d & 0x1F) ;
 
-    /* ‚QŒ‚Ì“ú”‚Ì”»’è */
+    /* ï¼’æœˆã®æ—¥æ•°ã®åˆ¤å®š */
     if ( (year % 4) == 0 ) {
         if ( (year % 100) == 0 ) {
             if ( (year % 400) == 0 )
@@ -3232,27 +3240,27 @@ static    void    get_jtime( UShort *d, UShort *t, int offset )
     }
 
     if ( day + offset >= 1 && day + offset <= month_day [ month ] ) {
-        *d += offset ;            /* “ú}‚P */
+        *d += offset ;            /* æ—¥Â±ï¼‘ */
         return ;
     }
     if ( offset > 0 )
-        *d = (*d & 0xFFE0) + 1 ;            /* ‚P“ú */
+        *d = (*d & 0xFFE0) + 1 ;            /* ï¼‘æ—¥ */
     else
-        *d = (*d & 0xFFE0) + month_day [ month - 1 ] ;    /* ‘OŒÅI“ú */
+        *d = (*d & 0xFFE0) + month_day [ month - 1 ] ;    /* å‰æœˆæœ€çµ‚æ—¥ */
 
     if ( month + offset >= 1 && month + offset <= 12 ) {
-        *d += (0x20 * offset) ;        /* Œ}‚P */
+        *d += (0x20 * offset) ;        /* æœˆÂ±ï¼‘ */
         return ;
     }
     if ( offset > 0 )
-        *d = (*d & 0xFE1F) + 0x200 + 0x20 ;    /* —‚”N‚PŒ */
+        *d = (*d & 0xFE1F) + 0x200 + 0x20 ;    /* ç¿Œå¹´ï¼‘æœˆ */
     else
-        *d = (*d & 0xFE1F) - 0x200 + 0x180 ;    /* ‘O”N‚P‚QŒ */
+        *d = (*d & 0xFE1F) - 0x200 + 0x180 ;    /* å‰å¹´ï¼‘ï¼’æœˆ */
 }
 
 /*
- @‹@”\Fgets‚Ì‘ã‚í‚è‚ğ‚·‚é
- –ß‚è’lF‚È‚µ
+ ã€€æ©Ÿèƒ½ï¼šgetsã®ä»£ã‚ã‚Šã‚’ã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãªã—
 */
 static    long    gets2( char *str, int max )
 {
@@ -3276,7 +3284,7 @@ static    long    gets2( char *str, int max )
 #else
     _dos_write( fileno(stdout), "\x01B[1A", 4, &dmy ) ;
 #endif
-    /* printf("%c[1A", 0x1B) ; */    /* ƒJ[ƒ\ƒ‹‚ğ‚Psã‚É */
+    /* printf("%c[1A", 0x1B) ; */    /* ã‚«ãƒ¼ã‚½ãƒ«ã‚’ï¼‘è¡Œä¸Šã« */
     str[ cnt ] = '\0' ;
 
     return( strlen( str ) ) ;

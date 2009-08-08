@@ -1,7 +1,15 @@
-/* $Id: linec.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
+/* $Id: linec.c,v 1.3 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/08/05 14:44:33  masamic
+ * Some Bug fix, and implemented some instruction
+ * Following Modification contributed by TRAP.
+ *
+ * Fixed Bug: In disassemble.c, shift/rotate as{lr},ls{lr},ro{lr} alway show word size.
+ * Modify: enable KEYSNS, register behaiviour of sub ea, Dn.
+ * Add: Nbcd, Sbcd.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
  * First imported source code and docs
  *
@@ -37,9 +45,9 @@ static	int	Mulu( char, char ) ;
 static	int	Muls( char, char ) ;
 
 /*
- @‹@”\F‚bƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼£ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	linec( char *pc_ptr )
 {
@@ -59,7 +67,7 @@ int	linec( char *pc_ptr )
 			/* abcd */
 			char	src_reg = (code2 & 0x7);
 			char	dst_reg = ((code1 & 0xE) >> 1);
-			char	size = 0;	/* S_BYTE ŒÅ’è */
+			char	size = 0;	/* S_BYTE å›ºå®š */
 			long	src_data;
 			long	dst_data;
 			long	low;
@@ -107,19 +115,19 @@ int	linec( char *pc_ptr )
 
 			kekka = (high & 0xf0) | (low & 0x0f);
 
-			/* 0 ˆÈŠO‚Ì’l‚É‚È‚Á‚½‚Ì‚İAZ ƒtƒ‰ƒO‚ğƒŠƒZƒbƒg‚·‚é */
+			/* 0 ä»¥å¤–ã®å€¤ã«ãªã£ãŸæ™‚ã®ã¿ã€Z ãƒ•ãƒ©ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹ */
 			if ( kekka != 0 ) {
 				CCR_Z_OFF();
 			}
 
-			/* Nƒtƒ‰ƒO‚ÍŒ‹‰Ê‚É‰‚¶‚Ä—§‚Ä‚é */
+			/* Nãƒ•ãƒ©ã‚°ã¯çµæœã«å¿œã˜ã¦ç«‹ã¦ã‚‹ */
 			if ( kekka & 0x80 ) {
 				CCR_N_ON();
 			}else{
 				CCR_N_OFF();
 			}
 
-			/* Vƒtƒ‰ƒO */
+			/* Vãƒ•ãƒ©ã‚° */
 			if ( dst_data < 0x80 ) {
 				if ( 5 <= (dst_data & 0x0f) ) {
 					if ( (0x80 <= kekka) && (kekka <= 0x85) ) {
@@ -158,7 +166,7 @@ int	linec( char *pc_ptr )
 
 			return( FALSE );
 /*
-			err68a( "–¢’è‹`–½—ß(abcd)‚ğÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
+			err68a( "æœªå®šç¾©å‘½ä»¤(abcd)ã‚’å®Ÿè¡Œã—ã¾ã—ãŸ", __FILE__, __LINE__ ) ;
 			return( TRUE ) ;	 abcd 
 */
 		}
@@ -170,9 +178,9 @@ int	linec( char *pc_ptr )
 }
 
 /*
- @‹@”\Fand Dn,<ea>–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šand Dn,<ea>å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	And1( char code1, char code2 )
 {
@@ -192,12 +200,12 @@ static	int	And1( char code1, char code2 )
 	src_reg = ((code1 & 0x0E) >> 1) ;
 	dst_reg = (code2 & 0x07) ;
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (get_data_at_ea(EA_All, EA_DD, src_reg, size, &src_data)) {
 		return(TRUE);
 	}
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -208,10 +216,10 @@ static	int	And1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* AND‰‰Z */
+	/* ANDæ¼”ç®— */
 	data &= src_data;
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -222,7 +230,7 @@ static	int	And1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	general_conditions(data, size);
 
 #ifdef	TRACE
@@ -245,9 +253,9 @@ static	int	And1( char code1, char code2 )
 }
 
 /*
- @‹@”\Fand <ea>,Dn–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šand <ea>,Dnå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	And2( char code1, char code2 )
 {
@@ -268,33 +276,33 @@ static	int	And2( char code1, char code2 )
 	size = ((code2 >> 6) & 0x03) ;
 
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (get_data_at_ea(EA_Data, mode, src_reg, size, &src_data)) {
 		return(TRUE);
 	}
 
-	/* ƒfƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ãƒ‡ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (get_data_at_ea(EA_All, EA_DD, dst_reg, size, &data)) {
 		return(TRUE);
 	}
 
-	/* AND‰‰Z */
+	/* ANDæ¼”ç®— */
 	data &= src_data;
 
 	if (set_data_at_ea(EA_All, EA_DD, dst_reg, size, data)) {
 		return(TRUE);
 	}
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	general_conditions(data, size);
 
 	return( FALSE ) ;
 }
 
 /*
- @‹@”\Fexg–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šexgå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Exg( char code1, char code2 )
 {
@@ -324,7 +332,7 @@ static	int	Exg( char code1, char code2 )
 			ra [ dst_reg ] = tmp ;
 			break ;
 		default:
-			err68a( "EXG: •s³‚ÈOPƒ‚[ƒh‚Å‚·B", __FILE__, __LINE__ ) ;
+			err68a( "EXG: ä¸æ­£ãªOPãƒ¢ãƒ¼ãƒ‰ã§ã™ã€‚", __FILE__, __LINE__ ) ;
 			return( TRUE ) ;
 	}
 
@@ -336,9 +344,9 @@ static	int	Exg( char code1, char code2 )
 }
 
 /*
- @‹@”\Fmulu–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šmuluå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Mulu( char code1, char code2 )
 {
@@ -358,7 +366,7 @@ static	int	Mulu( char code1, char code2 )
 
 	dst_data = (rd [ dst_reg ] & 0xFFFF) ;
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (get_data_at_ea(EA_Data, mode, src_reg, S_WORD, &src_data_l)) {
 		return(TRUE);
 	}
@@ -370,16 +378,16 @@ static	int	Mulu( char code1, char code2 )
 	printf( "trace: mulu     src=%u PC=%06lX\n", src_data, save_pc ) ;
 #endif
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	general_conditions(ans, S_LONG);
 
 	return( FALSE ) ;
 }
 
 /*
- @‹@”\Fmuls–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šmulså‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Muls( char code1, char code2 )
 {
@@ -399,7 +407,7 @@ static	int	Muls( char code1, char code2 )
 
 	dst_data = (rd [ dst_reg ] & 0xFFFF) ;
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (get_data_at_ea(EA_Data, mode, src_reg, S_WORD, &src_data_l)) {
 		return(TRUE);
 	}
@@ -412,7 +420,7 @@ static	int	Muls( char code1, char code2 )
 	printf( "trace: muls     src=%d PC=%06lX\n", src_data, save_pc ) ;
 #endif
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	general_conditions(ans, S_LONG);
 
 	return( FALSE ) ;

@@ -1,7 +1,10 @@
-/* $Id: lined.c,v 1.1.1.1 2001-05-23 11:22:08 masamic Exp $ */
+/* $Id: lined.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
+ * First imported source code and docs
+ *
  * Revision 1.5  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -30,9 +33,9 @@ static	int	Add1( char, char ) ;
 static	int	Add2( char, char ) ;
 
 /*
- @‹@”\F‚cƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼¤ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	lined( char *pc_ptr )
 {
@@ -75,9 +78,9 @@ static	int	Adda( char code1, char code2 )
 	src_reg = (code2 & 0x07) ;
 
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (size == S_BYTE) {
-		err68a( "•s³‚È–½—ß: adda.b <ea>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+		err68a( "ä¸æ­£ãªå‘½ä»¤: adda.b <ea>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, mode, src_reg, size, &src_data)) {
 		return(TRUE);
@@ -116,7 +119,7 @@ static	int	Addx( char code1, char code2 )
 
 	if ( (code2 & 0x08) != 0 ) {
 		/* -(An), -(An) */
-		err68a( "–¢’è‹`–½—ß‚ğÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
+		err68a( "æœªå®šç¾©å‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸ", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;
 	}
 
@@ -126,7 +129,7 @@ static	int	Addx( char code1, char code2 )
 	save_x = CCR_X_REF() != 0 ? 1 : 0;
 	rd [ dst_reg ] = add_long(rd [ src_reg ] + save_x, dest_data , size ) ;
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	add_conditions(rd[src_reg], dest_data, rd[dst_reg], size, save_z);
 
 #ifdef	TRACE
@@ -149,9 +152,9 @@ static	int	Addx( char code1, char code2 )
 }
 
 /*
- @‹@”\Fadd Dn,<ea>–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šadd Dn,<ea>å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Add1( char code1, char code2 )
 {
@@ -175,7 +178,7 @@ static	int	Add1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -186,10 +189,10 @@ static	int	Add1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* Sub‰‰Z */
+	/* Subæ¼”ç®— */
 	rd [ 8 ] = add_long(src_data, dest_data, size ) ;
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -200,7 +203,7 @@ static	int	Add1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	sub_conditions(src_data, dest_data, rd[ 8 ], size, 1);
 
 #ifdef	TRACE
@@ -223,9 +226,9 @@ static	int	Add1( char code1, char code2 )
 }
 
 /*
- @‹@”\Fadd <ea>,Dn–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šadd <ea>,Dnå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Add2( char code1, char code2 )
 {
@@ -245,7 +248,7 @@ static	int	Add2( char code1, char code2 )
 
 
 	if (mode == EA_AD && size == S_BYTE) {
-		err68a( "•s³‚È–½—ß: sub.b An, Dn ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+		err68a( "ä¸æ­£ãªå‘½ä»¤: sub.b An, Dn ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, mode, src_reg, size, &src_data)) {
 		return(TRUE);
@@ -268,7 +271,7 @@ static	int	Add2( char code1, char code2 )
     default:
         return TRUE;
     }
-	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 	add_conditions(src_data, dest_data, rd[ dst_reg ], size, 1);
 
 #ifdef	TRACE

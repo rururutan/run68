@@ -1,7 +1,10 @@
-/* $Id: calc.c,v 1.1.1.1 2001-05-23 11:22:05 masamic Exp $ */
+/* $Id: calc.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:05  masamic
+ * First imported source code and docs
+ *
  * Revision 1.3  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -22,8 +25,8 @@
 // long sub_long(long src, long dest, int size);
 
 /*
- @‹@”\Fdest‚Ésrc‚ğsizeƒTƒCƒY‚Å‰ÁZ‚·‚é
- –ß‚è’lF“š‚¦
+ ã€€æ©Ÿèƒ½ï¼šdestã«srcã‚’sizeã‚µã‚¤ã‚ºã§åŠ ç®—ã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šç­”ãˆ
 */
 long add_long(long src, long dest, int size) {
 
@@ -45,8 +48,8 @@ long add_long(long src, long dest, int size) {
 }
 
 /*
- @‹@”\Fdest‚©‚çsrc‚ğsizeƒTƒCƒY‚ÅŒ¸Z‚·‚é
- –ß‚è’lF“š‚¦
+ ã€€æ©Ÿèƒ½ï¼šdestã‹ã‚‰srcã‚’sizeã‚µã‚¤ã‚ºã§æ¸›ç®—ã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šç­”ãˆ
 */
 long sub_long(long src, long dest, int size) {
 

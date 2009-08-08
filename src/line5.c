@@ -1,7 +1,10 @@
-/* $Id: line5.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line5.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.6  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -30,9 +33,9 @@ static	int	Addq( char, char ) ;
 static	int	Subq( char, char ) ;
 
 /*
- @‹@”\F‚Tƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼•ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	line5( char *pc_ptr )
 {
@@ -55,9 +58,9 @@ int	line5( char *pc_ptr )
 }
 
 /*
- @‹@”\Fdbcc–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šdbccå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Dbcc( char code1, char code2 )
 {
@@ -85,9 +88,9 @@ static	int	Dbcc( char code1, char code2 )
 }
 
 /*
- @‹@”\Fscc–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šsccå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Scc( char code1, char code2 )
 {
@@ -102,14 +105,14 @@ static	int	Scc( char code1, char code2 )
 	reg  = (code2 & 0x07) ;
 	ret  = get_cond( (char)(code1 & 0x0F) ) ;
 
-	/* ğŒ‚æ‚èƒrƒbƒg‚ğŒˆ‚ß‚é */
+	/* æ¡ä»¶ã‚ˆã‚Šãƒ“ãƒƒãƒˆã‚’æ±ºã‚ã‚‹ */
 	if ( ret == TRUE ) {
 		src_data = 0xff;
 	} else {
 		src_data = 0;
 	}
 
-	/* ƒfƒBƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ãƒ‡ã‚£ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (set_data_at_ea(EA_VariableData, mode, reg, S_BYTE, src_data)) {
 		return(TRUE);
 	}
@@ -118,9 +121,9 @@ static	int	Scc( char code1, char code2 )
 }
 
 /*
- @‹@”\Faddq–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šaddqå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Addq( char code1, char code2 )
 {
@@ -142,15 +145,15 @@ static	int	Addq( char code1, char code2 )
 
 	if (mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "•s³‚È–½—ß: addq.b #<data>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+			err68a( "ä¸æ­£ãªå‘½ä»¤: addq.b #<data>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else {
-			/* ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Úƒ‚[ƒh‚Ì‚ÌƒAƒNƒZƒXƒTƒCƒY‚Í•K‚¸ƒƒ“ƒOƒ[ƒh‚É‚È‚é */
+			/* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã¯å¿…ãšãƒ­ãƒ³ã‚°ãƒ¯ãƒ¼ãƒ‰ã«ãªã‚‹ */
 			size = S_LONG;
 		}
 	}
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -161,14 +164,14 @@ static	int	Addq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ƒ[ƒNƒŒƒWƒXƒ^‚ÉƒRƒs[ */
+	/* ãƒ¯ãƒ¼ã‚¯ãƒ¬ã‚¸ã‚¹ã‚¿ã«ã‚³ãƒ”ãƒ¼ */
 	rd[8] = dest_data;
 
-	/* Add‰‰Z */
+	/* Addæ¼”ç®— */
 	//rd [ 8 ] = add_rd( 8, (long)src_data, size ) ;
 	rd [ 8 ] = add_long((long)src_data, dest_data, size ) ;
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -179,9 +182,9 @@ static	int	Addq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	// ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Ú‚Ìê‡‚ÍƒŒƒWƒXƒ^‚Í•Ï‰»‚µ‚È‚¢
+	// ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ã®å ´åˆã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã¯å¤‰åŒ–ã—ãªã„
 	if (mode != EA_AD) {
-		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 		add_conditions((long)src_data, dest_data, rd[8], size, 1);
 	}
 
@@ -189,9 +192,9 @@ static	int	Addq( char code1, char code2 )
 }
 
 /*
- @‹@”\Fsubq–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šsubqå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 static	int	Subq( char code1, char code2 )
 {
@@ -212,15 +215,15 @@ static	int	Subq( char code1, char code2 )
 
 	if (mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "•s³‚È–½—ß: subq.b #<data>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+			err68a( "ä¸æ­£ãªå‘½ä»¤: subq.b #<data>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else {
-			/* ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Úƒ‚[ƒh‚Ì‚ÌƒAƒNƒZƒXƒTƒCƒY‚Í•K‚¸ƒƒ“ƒOƒ[ƒh‚É‚È‚é */
+			/* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã¯å¿…ãšãƒ­ãƒ³ã‚°ãƒ¯ãƒ¼ãƒ‰ã«ãªã‚‹ */
 			size = S_LONG;
 		}
 	}
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -231,14 +234,14 @@ static	int	Subq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ƒ[ƒNƒŒƒWƒXƒ^‚ÉƒRƒs[ */
+	/* ãƒ¯ãƒ¼ã‚¯ãƒ¬ã‚¸ã‚¹ã‚¿ã«ã‚³ãƒ”ãƒ¼ */
 	rd[8] = dest_data;
 
-	/* Add‰‰Z */
+	/* Addæ¼”ç®— */
 	//rd [ 8 ] = sub_rd( 8, (long)src_data, size ) ;
 	rd [ 8 ] = sub_long((long)src_data, dest_data, size ) ;
 
-	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
+	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -249,9 +252,9 @@ static	int	Subq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	// ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Ú‚Ìê‡‚ÍƒŒƒWƒXƒ^‚Í•Ï‰»‚µ‚È‚¢
+	// ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ã®å ´åˆã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã¯å¤‰åŒ–ã—ãªã„
 	if (mode != EA_AD) {
-		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 		sub_conditions((long)src_data, dest_data, rd[8], size, 1);
 	}
 

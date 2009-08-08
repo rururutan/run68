@@ -1,7 +1,15 @@
-/* $Id: line2.c,v 1.2 2009-08-05 14:44:33 masamic Exp $ */
+/* $Id: line2.c,v 1.3 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2009/08/05 14:44:33  masamic
+ * Some Bug fix, and implemented some instruction
+ * Following Modification contributed by TRAP.
+ *
+ * Fixed Bug: In disassemble.c, shift/rotate as{lr},ls{lr},ro{lr} alway show word size.
+ * Modify: enable KEYSNS, register behaiviour of sub ea, Dn.
+ * Add: Nbcd, Sbcd.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
  * First imported source code and docs
  *
@@ -31,9 +39,9 @@
 #include "run68.h"
 
 /*
- @‹@”\F‚P/‚Q/‚Rƒ‰ƒCƒ“–½—ß(move / movea)‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼‘/ï¼’/ï¼“ãƒ©ã‚¤ãƒ³å‘½ä»¤(move / movea)ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	line2( char *pc_ptr )
 {
@@ -55,7 +63,7 @@ int	line2( char *pc_ptr )
 	src_mode = ((code2 & 0x38) >> 3) ;
 	src_reg  = (code2 & 0x07) ;
 
-	/* ƒAƒNƒZƒXƒTƒCƒY‚ÌŒˆ’è */
+	/* ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã®æ±ºå®š */
 	switch ((code1 >> 4) & 0x03) {
 		case 1:
 			size = S_BYTE;
@@ -67,22 +75,22 @@ int	line2( char *pc_ptr )
 			size = S_LONG;
 			break;
 		default:
-			err68a( "‘¶İ‚µ‚È‚¢ƒAƒNƒZƒXƒTƒCƒY‚Å‚·B", __FILE__, __LINE__ ) ;
+			err68a( "å­˜åœ¨ã—ãªã„ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã§ã™ã€‚", __FILE__, __LINE__ ) ;
 			return( TRUE ) ;
 	}
 
-	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (src_mode == EA_AD && size == S_BYTE) {
-		err68a( "•s³‚È–½—ß: move[a].b An, <ea> ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+		err68a( "ä¸æ­£ãªå‘½ä»¤: move[a].b An, <ea> ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, src_mode, src_reg, size, &src_data)) {
 		return(TRUE);
 	}
 
-	/* movea ÀŒø‚Ìˆ— */
+	/* movea å®ŸåŠ¹æ™‚ã®å‡¦ç† */
 	if (dst_mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "•s³‚È–½—ß: movea.b <ea>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
+			err68a( "ä¸æ­£ãªå‘½ä»¤: movea.b <ea>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else if (size == S_WORD) {
 			if (src_data & 0x8000) {
@@ -94,15 +102,15 @@ int	line2( char *pc_ptr )
 		}
 	}
 
-	/* ƒfƒBƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
+	/* ãƒ‡ã‚£ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
 	if (set_data_at_ea(EA_VariableData | (1 << (EA_AI - 1)), dst_mode, dst_reg, size, src_data)) {
 		return(TRUE);
 	}
 
-	/* movea ‚Ì‚Æ‚«‚Íƒtƒ‰ƒO‚Í•Ï‰»‚µ‚È‚¢ */
+	/* movea ã®ã¨ãã¯ãƒ•ãƒ©ã‚°ã¯å¤‰åŒ–ã—ãªã„ */
 	if ( dst_mode != MD_AD ) {
 
-		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
+		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
 		general_conditions(src_data, size);
 
 	}

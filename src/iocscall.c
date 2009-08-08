@@ -1,7 +1,10 @@
-/* $Id: iocscall.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: iocscall.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.3  1999/12/07  12:42:59  yfujii
  * *** empty log message ***
  *
@@ -39,9 +42,9 @@ static	long	Intvcs( long, long ) ;
 static	void	Dmamove( long, long, long, long ) ;
 
 /*
- @‹@”\FIOCSCALL‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šIOCSCALLã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	iocs_call()
 {
@@ -81,7 +84,7 @@ int	iocs_call()
 		case 0x24:	/* B_DOWN_S */
 			printf( "%c[s\n%c[u%c[1B", 0x1B, 0x1B, 0x1B ) ;
 			break ;
-		case 0x25:	/* B_UP_S *//* (ƒXƒNƒ[ƒ‹–¢ƒTƒ|[ƒg) */
+		case 0x25:	/* B_UP_S *//* (ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«æœªã‚µãƒãƒ¼ãƒˆ) */
 			printf( "%c[1A", 0x1B ) ;
 			break ;
 		case 0x2F:	/* B_PUTMES */
@@ -135,7 +138,7 @@ int	iocs_call()
 				SR_S_OFF() ;
 			break ;
 		case 0x6E:	/* HSYNCST */
-			err68( "…•½“¯ŠúŠ„‚è‚İ‚ğİ’è‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½" ) ;
+			err68( "æ°´å¹³åŒæœŸå‰²ã‚Šè¾¼ã¿ã‚’è¨­å®šã—ã‚ˆã†ã¨ã—ã¾ã—ãŸ" ) ;
 			return( TRUE ) ;
 		case 0x7F:	/* ONTIME */
 #if defined(WIN32)
@@ -159,7 +162,7 @@ int	iocs_call()
 			if ( ra [ 1 ] == 0 ) {
 				/* user -> super */
 				if ( SR_S_REF() != 0 ) {
-					rd [ 0 ] = -1 ;	/* ƒGƒ‰[ */
+					rd [ 0 ] = -1 ;	/* ã‚¨ãƒ©ãƒ¼ */
 				} else {
 					rd [ 0 ] = ra [ 7 ] ;
 					SR_S_ON() ;
@@ -218,13 +221,13 @@ int	iocs_call()
 }
 
 /*
- @‹@”\F•¶š‚ğ•\¦‚·‚é
- –ß‚è’lFƒJ[ƒ\ƒ‹ˆÊ’u
+ ã€€æ©Ÿèƒ½ï¼šæ–‡å­—ã‚’è¡¨ç¤ºã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šã‚«ãƒ¼ã‚½ãƒ«ä½ç½®
 */
 static	long	Putc( UShort code )
 {
 	if ( code == 0x1A ) {
-		printf( "%c[0J", 0x1B ) ; /* ÅIs¶’[‚Ü‚ÅÁ‹ */
+		printf( "%c[0J", 0x1B ) ; /* æœ€çµ‚è¡Œå·¦ç«¯ã¾ã§æ¶ˆå» */
 	} else {
 		if ( code >= 0x0100 )
 			putchar( code >> 8 ) ;
@@ -234,12 +237,12 @@ static	long	Putc( UShort code )
 }
 
 /*
- @‹@”\F•¶š‚ÌƒJƒ‰[‘®«‚ğw’è‚·‚é
- –ß‚è’lF•ÏX‘O‚ÌƒJƒ‰[‚Ü‚½‚ÍŒ»İ‚ÌƒJƒ‰[
+ ã€€æ©Ÿèƒ½ï¼šæ–‡å­—ã®ã‚«ãƒ©ãƒ¼å±æ€§ã‚’æŒ‡å®šã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šå¤‰æ›´å‰ã®ã‚«ãƒ©ãƒ¼ã¾ãŸã¯ç¾åœ¨ã®ã‚«ãƒ©ãƒ¼
 */
 static	long	Color( short arg )
 {
-	if ( arg == -1 )	/* Œ»İ‚ÌƒJƒ‰[‚ğ’²‚×‚éi–¢ƒTƒ|[ƒgj*/
+	if ( arg == -1 )	/* ç¾åœ¨ã®ã‚«ãƒ©ãƒ¼ã‚’èª¿ã¹ã‚‹ï¼ˆæœªã‚µãƒãƒ¼ãƒˆï¼‰*/
 		return( 3 ) ;
 
 	text_color( arg ) ;
@@ -248,8 +251,8 @@ static	long	Color( short arg )
 }
 
 /*
- @‹@”\F•¶š—ñ‚ğ•\¦‚·‚é
- –ß‚è’lF‚È‚µ
+ ã€€æ©Ÿèƒ½ï¼šæ–‡å­—åˆ—ã‚’è¡¨ç¤ºã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãªã—
 */
 static	void	Putmes()
 {
@@ -278,8 +281,8 @@ static	void	Putmes()
 }
 
 /*
- @‹@”\F“ú•t‚ğ“¾‚é
- –ß‚è’lFBCD‚Ì“ú•tƒf[ƒ^
+ ã€€æ©Ÿèƒ½ï¼šæ—¥ä»˜ã‚’å¾—ã‚‹
+ æˆ»ã‚Šå€¤ï¼šBCDã®æ—¥ä»˜ãƒ‡ãƒ¼ã‚¿
 */
 static	long	Dateget()
 {
@@ -309,8 +312,8 @@ static	long	Dateget()
 }
 
 /*
- @‹@”\F‚ğ“¾‚é
- –ß‚è’lFBCD‚Ìƒf[ƒ^
+ ã€€æ©Ÿèƒ½ï¼šæ™‚åˆ»ã‚’å¾—ã‚‹
+ æˆ»ã‚Šå€¤ï¼šBCDã®æ™‚åˆ»ãƒ‡ãƒ¼ã‚¿
 */
 static	long	Timeget()
 {
@@ -338,8 +341,8 @@ static	long	Timeget()
 }
 
 /*
- @‹@”\FBCD•\Œ»‚Ì“ú•tƒf[ƒ^‚ğƒoƒCƒiƒŠ•\Œ»‚É’¼‚·
- –ß‚è’lFƒoƒCƒiƒŠ‚Ì“ú•tƒf[ƒ^
+ ã€€æ©Ÿèƒ½ï¼šBCDè¡¨ç¾ã®æ—¥ä»˜ãƒ‡ãƒ¼ã‚¿ã‚’ãƒã‚¤ãƒŠãƒªè¡¨ç¾ã«ç›´ã™
+ æˆ»ã‚Šå€¤ï¼šãƒã‚¤ãƒŠãƒªã®æ—¥ä»˜ãƒ‡ãƒ¼ã‚¿
 */
 static	long	Datebin( long bcd )
 {
@@ -357,8 +360,8 @@ static	long	Datebin( long bcd )
 }
 
 /*
- @‹@”\FBCD•\Œ»‚Ìƒf[ƒ^‚ğƒoƒCƒiƒŠ•\Œ»‚É’¼‚·
- –ß‚è’lFƒoƒCƒiƒŠ‚Ìƒf[ƒ^
+ ã€€æ©Ÿèƒ½ï¼šBCDè¡¨ç¾ã®æ™‚åˆ»ãƒ‡ãƒ¼ã‚¿ã‚’ãƒã‚¤ãƒŠãƒªè¡¨ç¾ã«ç›´ã™
+ æˆ»ã‚Šå€¤ï¼šãƒã‚¤ãƒŠãƒªã®æ™‚åˆ»ãƒ‡ãƒ¼ã‚¿
 */
 static	long	Timebin( long bcd )
 {
@@ -374,8 +377,8 @@ static	long	Timebin( long bcd )
 }
 
 /*
- @‹@”\FƒoƒCƒiƒŠ•\Œ»‚Ì“ú•tƒf[ƒ^‚ğ•¶š—ñ‚É’¼‚·
- –ß‚è’lF-1‚Ì‚Æ‚«ƒGƒ‰[
+ ã€€æ©Ÿèƒ½ï¼šãƒã‚¤ãƒŠãƒªè¡¨ç¾ã®æ—¥ä»˜ãƒ‡ãƒ¼ã‚¿ã‚’æ–‡å­—åˆ—ã«ç›´ã™
+ æˆ»ã‚Šå€¤ï¼š-1ã®ã¨ãã‚¨ãƒ©ãƒ¼
 */
 static	long	Dateasc( long data, long adr )
 {
@@ -423,8 +426,8 @@ static	long	Dateasc( long data, long adr )
 }
 
 /*
- @‹@”\FƒoƒCƒiƒŠ•\Œ»‚Ìƒf[ƒ^‚ğ•¶š—ñ‚É’¼‚·
- –ß‚è’lF-1‚Ì‚Æ‚«ƒGƒ‰[
+ ã€€æ©Ÿèƒ½ï¼šãƒã‚¤ãƒŠãƒªè¡¨ç¾ã®æ™‚åˆ»ãƒ‡ãƒ¼ã‚¿ã‚’æ–‡å­—åˆ—ã«ç›´ã™
+ æˆ»ã‚Šå€¤ï¼š-1ã®ã¨ãã‚¨ãƒ©ãƒ¼
 */
 static	long	Timeasc( long data, long adr )
 {
@@ -452,8 +455,8 @@ static	long	Timeasc( long data, long adr )
 }
 
 /*
- @‹@”\F—j“ú”Ô†‚©‚ç•¶š—ñ‚ğ“¾‚é
- –ß‚è’lF‚È‚µ
+ ã€€æ©Ÿèƒ½ï¼šæ›œæ—¥ç•ªå·ã‹ã‚‰æ–‡å­—åˆ—ã‚’å¾—ã‚‹
+ æˆ»ã‚Šå€¤ï¼šãªã—
 */
 static	void	Dayasc( long data, long adr )
 {
@@ -463,25 +466,25 @@ static	void	Dayasc( long data, long adr )
 
 	switch( data ) {
 		case 0:
-			strcpy( data_ptr, "“ú" ) ;
+			strcpy( data_ptr, "æ—¥" ) ;
 			break ;
 		case 1:
-			strcpy( data_ptr, "Œ" ) ;
+			strcpy( data_ptr, "æœˆ" ) ;
 			break ;
 		case 2:
-			strcpy( data_ptr, "‰Î" ) ;
+			strcpy( data_ptr, "ç«" ) ;
 			break ;
 		case 3:
-			strcpy( data_ptr, "…" ) ;
+			strcpy( data_ptr, "æ°´" ) ;
 			break ;
 		case 4:
-			strcpy( data_ptr, "–Ø" ) ;
+			strcpy( data_ptr, "æœ¨" ) ;
 			break ;
 		case 5:
-			strcpy( data_ptr, "‹à" ) ;
+			strcpy( data_ptr, "é‡‘" ) ;
 			break ;
 		case 6:
-			strcpy( data_ptr, "“y" ) ;
+			strcpy( data_ptr, "åœŸ" ) ;
 			break ;
 		default:
 			ra [ 1 ] -= 2 ;
@@ -491,8 +494,8 @@ static	void	Dayasc( long data, long adr )
 }
 
 /*
- @‹@”\FƒxƒNƒ^Eƒe[ƒuƒ‹‚ğ‘‚«Š·‚¦‚é
- –ß‚è’lFİ’è‘O‚Ìˆ—ƒAƒhƒŒƒX
+ ã€€æ©Ÿèƒ½ï¼šãƒ™ã‚¯ã‚¿ãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’æ›¸ãæ›ãˆã‚‹
+ æˆ»ã‚Šå€¤ï¼šè¨­å®šå‰ã®å‡¦ç†ã‚¢ãƒ‰ãƒ¬ã‚¹
 */
 static	long	Intvcs( long no, long adr )
 {
@@ -513,8 +516,8 @@ static	long	Intvcs( long no, long adr )
 }
 
 /*
- @‹@”\FDMA“]‘—‚ğ‚·‚é
- –ß‚è’lFİ’è‘O‚Ìˆ—ƒAƒhƒŒƒX
+ ã€€æ©Ÿèƒ½ï¼šDMAè»¢é€ã‚’ã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼šè¨­å®šå‰ã®å‡¦ç†ã‚¢ãƒ‰ãƒ¬ã‚¹
 */
 static	void	Dmamove( long md, long size, long adr1, long adr2 )
 {
@@ -523,13 +526,13 @@ static	void	Dmamove( long md, long size, long adr1, long adr2 )
 	long	tmp ;
 
 	if ( (md & 0x80) != 0 ) {
-		/* adr1 -> adr2“]‘—‚É‚·‚é */
+		/* adr1 -> adr2è»¢é€ã«ã™ã‚‹ */
 		tmp = adr1 ;
 		adr1 = adr2 ;
 		adr2 = tmp ;
 	}
 
-	/* adr1,adr2‹¤‚ÉƒCƒ“ƒNƒŠƒƒ“ƒgƒ‚[ƒh‚Å‚È‚¢ê‡‚Í–¢ƒTƒ|[ƒg */
+	/* adr1,adr2å…±ã«ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ã§ãªã„å ´åˆã¯æœªã‚µãƒãƒ¼ãƒˆ */
 	if ( (md & 0x0F) != 5 )
 		return ;
 

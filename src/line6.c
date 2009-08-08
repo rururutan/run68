@@ -1,7 +1,10 @@
-/* $Id: line6.c,v 1.1.1.1 2001-05-23 11:22:07 masamic Exp $ */
+/* $Id: line6.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
 
 /*
  * $Log: not supported by cvs2svn $
+ * Revision 1.1.1.1  2001/05/23 11:22:07  masamic
+ * First imported source code and docs
+ *
  * Revision 1.6  1999/12/21  10:08:59  yfujii
  * Uptodate source code from Beppu.
  *
@@ -25,9 +28,9 @@
 #include "run68.h"
 
 /*
- @‹@”\F‚Uƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
- –ß‚è’lF TRUE = ÀsI—¹
-         FALSE = ÀsŒp‘±
+ ã€€æ©Ÿèƒ½ï¼šï¼–ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
+ æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
+         FALSE = å®Ÿè¡Œç¶™ç¶š
 */
 int	line6( char *pc_ptr )
 {
