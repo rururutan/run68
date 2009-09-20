@@ -1,7 +1,10 @@
-/* $Id: run68.h,v 1.5 2009-08-08 06:49:44 masamic Exp $ */
+/* $Id: run68.h,v 1.5 2009/08/08 06:49:44 masamic Exp $ */
 
 /*
- * $Log: not supported by cvs2svn $
+ * $Log: run68.h,v $
+ * Revision 1.5  2009/08/08 06:49:44  masamic
+ * Convert Character Encoding Shifted-JIS to UTF-8.
+ *
  * Revision 1.4  2009/08/05 14:44:33  masamic
  * Some Bug fix, and implemented some instruction
  * Following Modification contributed by TRAP.
@@ -65,7 +68,7 @@
  *
  */
 
-#define RUN68VERSION "0.09"
+#define RUN68VERSION "0.09a"
 #if !defined(_RUN68_H_)
 #define _RUN68_H_
 
@@ -162,7 +165,7 @@
 #define EA_Data			0x0ffd	/* 0000 1111 1111 1101 */
 #define EA_PreDecriment		0x01f4	/* 0000 0001 1111 0100 */
 #define EA_PostIncrement	0x07ec	/* 0000 0111 1110 1100 */
-#define EA_VariableData		0x00fd	/* 0000 0000 1111 1101 */
+#define EA_VariableData		0x01fd	/* 0000 0001 1111 1101 */
 #define EA_Variable		0x01ff	/* 0000 0001 1111 1111 */
 #define EA_VariableMemory	0x01fc	/* 0000 0001 1111 1100 */
 

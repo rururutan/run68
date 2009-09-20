@@ -1,7 +1,10 @@
-/* $Id: doscall.c,v 1.3 2009-08-08 06:49:44 masamic Exp $ */
+/* $Id: doscall.c,v 1.3 2009/08/08 06:49:44 masamic Exp $ */
 
 /*
- * $Log: not supported by cvs2svn $
+ * $Log: doscall.c,v $
+ * Revision 1.3  2009/08/08 06:49:44  masamic
+ * Convert Character Encoding Shifted-JIS to UTF-8.
+ *
  * Revision 1.2  2009/08/05 14:44:33  masamic
  * Some Bug fix, and implemented some instruction
  * Following Modification contributed by TRAP.
@@ -1277,7 +1280,7 @@ static    long    Mfree( long adr )
  　機能：
      DOSCALL DSKFREを実行する
    パラメータ：
-     long     drv       <in>    ドライブ番号(0～)
+     long     drv       <in>    ドライブ番号(0)
      long     buf       <in>    メモリアドレス
    戻り値：
      long     ディスクの空き容量(バイト>0)
@@ -2841,8 +2844,9 @@ static    long    Keyctrl( short mode, long stack_adr )
                     c = cnv_key98( c ) ;
             }
             return( c ) ;
-#if defined(WIN32)
-#elif defined(DOSX)
+#if defined(WIN32) || defined(DOSX)
+//#if defined(WIN32)
+//#elif defined(DOSX)
         case 1:        /* キーの先読み */
             if ( kbhit() == 0 )
                 return( 0 ) ;

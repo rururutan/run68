@@ -1,7 +1,10 @@
-/* $Id: lineb.c,v 1.2 2009-08-08 06:49:44 masamic Exp $ */
+/* $Id: lineb.c,v 1.2 2009/08/08 06:49:44 masamic Exp $ */
 
 /*
- * $Log: not supported by cvs2svn $
+ * $Log: lineb.c,v $
+ * Revision 1.2  2009/08/08 06:49:44  masamic
+ * Convert Character Encoding Shifted-JIS to UTF-8.
+ *
  * Revision 1.1.1.1  2001/05/23 11:22:08  masamic
  * First imported source code and docs
  *
@@ -327,7 +330,7 @@ static	int	Eor( char code1, char code2 )
 		work_mode = mode;
 	}
 
-	if (get_data_at_ea_noinc(EA_VariableMemory, work_mode, dst_reg, size, &data)) {
+	if (get_data_at_ea_noinc(EA_VariableData, work_mode, dst_reg, size, &data)) {
 		return(TRUE);
 	}
 
@@ -341,7 +344,7 @@ static	int	Eor( char code1, char code2 )
 		work_mode = mode;
 	}
 
-	if (set_data_at_ea(EA_VariableMemory, work_mode, dst_reg, size, data)) {
+	if (set_data_at_ea(EA_VariableData, work_mode, dst_reg, size, data)) {
 		return(TRUE);
 	}
 
