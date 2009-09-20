@@ -28,9 +28,9 @@
 #include "run68.h"
 
 /*
- ã€€æ©Ÿèƒ½ï¼šï¼–ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\F‚Uƒ‰ƒCƒ“–½—ß‚ðŽÀs‚·‚é
+ –ß‚è’lF TRUE = ŽÀsI—¹
+         FALSE = ŽÀsŒp‘±
 */
 int	line6( char *pc_ptr )
 {

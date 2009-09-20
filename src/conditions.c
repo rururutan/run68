@@ -77,7 +77,7 @@ long getMSB(long num, int size) {
 			ret = ((num >> 31) & 1);
 			break;
 		default:
-			err68a("ä¸æ­£ãªãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã§ã™ã€‚", __FILE__, __LINE__);
+			err68a("•s³‚Èƒf[ƒ^ƒTƒCƒY‚Å‚·B", __FILE__, __LINE__);
 	}
 
 	return(ret);
@@ -96,7 +96,7 @@ long getBitsByDataSize(long num, int size) {
 			ret = num;
 			break;
 		default:
-			err68a("ä¸æ­£ãªãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã§ã™ã€‚", __FILE__, __LINE__);
+			err68a("•s³‚Èƒf[ƒ^ƒTƒCƒY‚Å‚·B", __FILE__, __LINE__);
 	}
 	return(ret);
 }
@@ -104,25 +104,25 @@ long getBitsByDataSize(long num, int size) {
 
 
 /*
- * ã€èª¬æ˜ã€‘
- *   ä¸€èˆ¬ç³»ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ã®è¨­å®š
+ * yà–¾z
+ *   ˆê”ÊŒnƒRƒ“ƒfƒBƒVƒ‡ƒ“ƒtƒ‰ƒO‚Ìİ’è
  *
- * ã€ãƒ¬ã‚¸ã‚¹ã‚¿ã®å¤‰åŒ–ã€‘
- *   X: å¤‰åŒ–ãªã—
- *   N: è² æ•°ã®ã¨ãONã€é›¶ã¾ãŸã¯æ­£æ•°ã®ã¨ãOFF
- *   Z: é›¶ã®ã¨ãONã€é›¶ä»¥å¤–ã®ã¨ãOFF
- *   V: å¸¸ã«0
- *   C: å¸¸ã«0
+ * yƒŒƒWƒXƒ^‚Ì•Ï‰»z
+ *   X: •Ï‰»‚È‚µ
+ *   N: •‰”‚Ì‚Æ‚«ONA—ë‚Ü‚½‚Í³”‚Ì‚Æ‚«OFF
+ *   Z: —ë‚Ì‚Æ‚«ONA—ëˆÈŠO‚Ì‚Æ‚«OFF
+ *   V: í‚É0
+ *   C: í‚É0
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘®z
  *   general_conditions(result, size);
  *
- * ã€å¼•æ•°ã€‘
- *   long result;    <in>  Resultå€¤
- *   int  size;      <in>  ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚º
+ * yˆø”z
+ *   long result;    <in>  Result’l
+ *   int  size;      <in>  ƒAƒNƒZƒXƒTƒCƒY
  *
- * ã€è¿”å€¤ã€‘ 
- *   ãªã—
+ * y•Ô’lz 
+ *   ‚È‚µ
  *
  */
 
@@ -155,22 +155,22 @@ void general_conditions(long result, int size) {
 }
 
 /*
- * ã€èª¬æ˜ã€‘
- *   addç³»ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ã®è¨­å®š
+ * yà–¾z
+ *   addŒnƒRƒ“ƒfƒBƒVƒ‡ƒ“ƒtƒ‰ƒO‚Ìİ’è
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘®z
  *   add_conditions(src, dest, result, size, zero_flag);
  *
- * ã€å¼•æ•°ã€‘
- *   long src;       <in>  Sourceå€¤
- *   long dest;      <in>  Destinationå€¤
- *   long result;    <in>  Resultå€¤
- *   int  size;      <in>  ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚º
- *   BOOL zero_flag; <in>  addxç”¨æ¼”ç®—å‰ zero flag å€¤ã€‚
- *                         ãã®ä»–ã®å ´åˆã¯å¸¸ã« 1 ã‚’æŒ‡å®šã®ã“ã¨ã€‚
+ * yˆø”z
+ *   long src;       <in>  Source’l
+ *   long dest;      <in>  Destination’l
+ *   long result;    <in>  Result’l
+ *   int  size;      <in>  ƒAƒNƒZƒXƒTƒCƒY
+ *   BOOL zero_flag; <in>  addx—p‰‰Z‘O zero flag ’lB
+ *                         ‚»‚Ì‘¼‚Ìê‡‚Íí‚É 1 ‚ğw’è‚Ì‚±‚ÆB
  *
- * ã€è¿”å€¤ã€‘ 
- *   ãªã—
+ * y•Ô’lz 
+ *   ‚È‚µ
  *
  */
 
@@ -215,22 +215,22 @@ void add_conditions(long src, long dest, long result, int size, BOOL zero_flag) 
 
 
 /*
- * ã€èª¬æ˜ã€‘
- *   cmpç³»ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ã®è¨­å®š
+ * yà–¾z
+ *   cmpŒnƒRƒ“ƒfƒBƒVƒ‡ƒ“ƒtƒ‰ƒO‚Ìİ’è
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘®z
  *   cmp_conditions(src, dest, result, size, zero_flag);
  *
- * ã€å¼•æ•°ã€‘
- *   long src;       <in>  Sourceå€¤
- *   long dest;      <in>  Destinationå€¤
- *   long result;    <in>  Resultå€¤
- *   int  size;      <in>  ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚º
- *   BOOL zero_flag; <in>  subxç”¨æ¼”ç®—å‰ zero flag å€¤ã€‚
- *                         ãã®ä»–ã®å ´åˆã¯å¸¸ã« 1 ã‚’æŒ‡å®šã®ã“ã¨ã€‚
+ * yˆø”z
+ *   long src;       <in>  Source’l
+ *   long dest;      <in>  Destination’l
+ *   long result;    <in>  Result’l
+ *   int  size;      <in>  ƒAƒNƒZƒXƒTƒCƒY
+ *   BOOL zero_flag; <in>  subx—p‰‰Z‘O zero flag ’lB
+ *                         ‚»‚Ì‘¼‚Ìê‡‚Íí‚É 1 ‚ğw’è‚Ì‚±‚ÆB
  *
- * ã€è¿”å€¤ã€‘ 
- *   ãªã—
+ * y•Ô’lz 
+ *   ‚È‚µ
  *
  */
 
@@ -273,22 +273,22 @@ void cmp_conditions(long src, long dest, long result, int size) {
 
 
 /*
- * ã€èª¬æ˜ã€‘
- *   subç³»ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ã®è¨­å®š
+ * yà–¾z
+ *   subŒnƒRƒ“ƒfƒBƒVƒ‡ƒ“ƒtƒ‰ƒO‚Ìİ’è
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘®z
  *   sub_conditions(src, dest, result, size, zero_flag);
  *
- * ã€å¼•æ•°ã€‘
- *   long src;       <in>  Sourceå€¤
- *   long dest;      <in>  Destinationå€¤
- *   long result;    <in>  Resultå€¤
- *   int  size;      <in>  ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚º
- *   BOOL zero_flag; <in>  subxç”¨æ¼”ç®—å‰ zero flag å€¤ã€‚
- *                         ãã®ä»–ã®å ´åˆã¯å¸¸ã« 1 ã‚’æŒ‡å®šã®ã“ã¨ã€‚
+ * yˆø”z
+ *   long src;       <in>  Source’l
+ *   long dest;      <in>  Destination’l
+ *   long result;    <in>  Result’l
+ *   int  size;      <in>  ƒAƒNƒZƒXƒTƒCƒY
+ *   BOOL zero_flag; <in>  subx—p‰‰Z‘O zero flag ’lB
+ *                         ‚»‚Ì‘¼‚Ìê‡‚Íí‚É 1 ‚ğw’è‚Ì‚±‚ÆB
  *
- * ã€è¿”å€¤ã€‘ 
- *   ãªã—
+ * y•Ô’lz 
+ *   ‚È‚µ
  *
  */
 
@@ -312,21 +312,21 @@ void sub_conditions(long src, long dest, long result, int size, BOOL zero_flag) 
 }
 
 /*
- * ã€èª¬æ˜ã€‘
- *   negç³»ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ãƒ•ãƒ©ã‚°ã®è¨­å®š
+ * yà–¾z
+ *   negŒnƒRƒ“ƒfƒBƒVƒ‡ƒ“ƒtƒ‰ƒO‚Ìİ’è
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘®z
  *   neg_conditions(dest, result, size, zero_flag);
  *
- * ã€å¼•æ•°ã€‘
- *   long dest;      <in>  Destinationå€¤
- *   long result;    <in>  Resultå€¤
- *   int  size;      <in>  ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚º
- *   BOOL zero_flag; <in>  negxç”¨æ¼”ç®—å‰ zero flag å€¤ã€‚
- *                         ãã®ä»–ã®å ´åˆã¯å¸¸ã« 1 ã‚’æŒ‡å®šã®ã“ã¨ã€‚
+ * yˆø”z
+ *   long dest;      <in>  Destination’l
+ *   long result;    <in>  Result’l
+ *   int  size;      <in>  ƒAƒNƒZƒXƒTƒCƒY
+ *   BOOL zero_flag; <in>  negx—p‰‰Z‘O zero flag ’lB
+ *                         ‚»‚Ì‘¼‚Ìê‡‚Íí‚É 1 ‚ğw’è‚Ì‚±‚ÆB
  *
- * ã€è¿”å€¤ã€‘ 
- *   ãªã—
+ * y•Ô’lz 
+ *   ‚È‚µ
  *
  */
 

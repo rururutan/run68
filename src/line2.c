@@ -39,9 +39,9 @@
 #include "run68.h"
 
 /*
- ã€€æ©Ÿèƒ½ï¼šï¼‘/ï¼’/ï¼“ãƒ©ã‚¤ãƒ³å‘½ä»¤(move / movea)ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\F‚P/‚Q/‚Rƒ‰ƒCƒ“–½—ß(move / movea)‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 int	line2( char *pc_ptr )
 {
@@ -63,7 +63,7 @@ int	line2( char *pc_ptr )
 	src_mode = ((code2 & 0x38) >> 3) ;
 	src_reg  = (code2 & 0x07) ;
 
-	/* ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã®æ±ºå®š */
+	/* ƒAƒNƒZƒXƒTƒCƒY‚ÌŒˆ’è */
 	switch ((code1 >> 4) & 0x03) {
 		case 1:
 			size = S_BYTE;
@@ -75,22 +75,22 @@ int	line2( char *pc_ptr )
 			size = S_LONG;
 			break;
 		default:
-			err68a( "å­˜åœ¨ã—ãªã„ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã§ã™ã€‚", __FILE__, __LINE__ ) ;
+			err68a( "‘¶İ‚µ‚È‚¢ƒAƒNƒZƒXƒTƒCƒY‚Å‚·B", __FILE__, __LINE__ ) ;
 			return( TRUE ) ;
 	}
 
-	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
 	if (src_mode == EA_AD && size == S_BYTE) {
-		err68a( "ä¸æ­£ãªå‘½ä»¤: move[a].b An, <ea> ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+		err68a( "•s³‚È–½—ß: move[a].b An, <ea> ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, src_mode, src_reg, size, &src_data)) {
 		return(TRUE);
 	}
 
-	/* movea å®ŸåŠ¹æ™‚ã®å‡¦ç† */
+	/* movea ÀŒø‚Ìˆ— */
 	if (dst_mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "ä¸æ­£ãªå‘½ä»¤: movea.b <ea>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+			err68a( "•s³‚È–½—ß: movea.b <ea>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else if (size == S_WORD) {
 			if (src_data & 0x8000) {
@@ -102,15 +102,15 @@ int	line2( char *pc_ptr )
 		}
 	}
 
-	/* ãƒ‡ã‚£ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+	/* ƒfƒBƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
 	if (set_data_at_ea(EA_VariableData | (1 << (EA_AI - 1)), dst_mode, dst_reg, size, src_data)) {
 		return(TRUE);
 	}
 
-	/* movea ã®ã¨ãã¯ãƒ•ãƒ©ã‚°ã¯å¤‰åŒ–ã—ãªã„ */
+	/* movea ‚Ì‚Æ‚«‚Íƒtƒ‰ƒO‚Í•Ï‰»‚µ‚È‚¢ */
 	if ( dst_mode != MD_AD ) {
 
-		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 		general_conditions(src_data, size);
 
 	}

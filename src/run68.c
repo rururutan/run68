@@ -82,7 +82,7 @@ static  int     exec_notrap(BOOL *restart);
 static  void    trap_table_make( void ) ;
 extern char *disassemble(long addr, long* next_addr);
 
- /* ãƒ•ãƒ©ã‚°(ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°) */
+ /* ƒtƒ‰ƒO(ƒOƒ[ƒoƒ‹•Ï”) */
 BOOL func_trace_f = FALSE;
 BOOL trace_f = FALSE;
 BOOL debug_on = FALSE;
@@ -91,31 +91,31 @@ long trap_pc = 0;
 unsigned short cwatchpoint = 0x4afc;
 extern unsigned long stepcount;
 char ini_file_name[MAX_PATH];
-/* æ¨™æº–å…¥åŠ›ã®ãƒãƒ³ãƒ‰ãƒ« */
+/* •W€“ü—Í‚Ìƒnƒ“ƒhƒ‹ */
 HANDLE stdin_handle;
 
-/* ã‚¢ãƒœãƒ¼ãƒˆå‡¦ç†ã®ãŸã‚ã®ã‚¸ãƒ£ãƒ³ãƒ—ãƒãƒƒãƒ•ã‚¡ */
+/* ƒAƒ{[ƒgˆ—‚Ì‚½‚ß‚ÌƒWƒƒƒ“ƒvƒoƒbƒtƒ@ */
 jmp_buf jmp_when_abort;
 
- /* å‘½ä»¤å®Ÿè¡Œæƒ…å ±(ã‚°ãƒ­ãƒ¼ãƒãƒ«å¤‰æ•°) */
+ /* –½—ßÀsî•ñ(ƒOƒ[ƒoƒ‹•Ï”) */
 EXEC_INSTRUCTION_INFO OP_info;
 
 int	main( int argc, char *argv[], char *envp[] )
 {
-	char	fname [ 89 ] ;		/* å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«å */
-	FILE	*fp ;			/* å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ã‚¡ã‚¤ãƒ«ãƒã‚¤ãƒ³ã‚¿ */
-	char	*arg_ptr ;		/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—æ ¼ç´é ˜åŸŸ */
+	char	fname [ 89 ] ;		/* Àsƒtƒ@ƒCƒ‹–¼ */
+	FILE	*fp ;			/* Àsƒtƒ@ƒCƒ‹‚Ìƒtƒ@ƒCƒ‹ƒ|ƒCƒ“ƒ^ */
+	char	*arg_ptr ;		/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñŠi”[—Ìˆæ */
 #if !defined(ENV_FROM_INI)
 	char	buf [ ENV_SIZE ] ;
-	char	*mem_ptr ;		/* ãƒ¡ãƒ¢ãƒªç®¡ç†ãƒ–ãƒ­ãƒƒã‚¯ */
+	char	*mem_ptr ;		/* ƒƒ‚ƒŠŠÇ—ƒuƒƒbƒN */
 	char	*read_ptr ;
-	int	env_len = 0 ;		/* ç’°å¢ƒã®é•·ã• */
+	int	env_len = 0 ;		/* ŠÂ‹«‚Ì’·‚³ */
 #endif
-	long	prog_size ;		/* ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚µã‚¤ã‚º(bsså«ã‚€) */
-	long	prog_size2 ;		/* ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚µã‚¤ã‚º(bssé™¤ã) */
-	int	arg_len = 0 ;		/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®é•·ã• */
+	long	prog_size ;		/* ƒvƒƒOƒ‰ƒ€ƒTƒCƒY(bssŠÜ‚Ş) */
+	long	prog_size2 ;		/* ƒvƒƒOƒ‰ƒ€ƒTƒCƒY(bssœ‚­) */
+	int	arg_len = 0 ;		/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚Ì’·‚³ */
 	int	i, j;
-    int argbase = 0;        /* ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®é–‹å§‹ä½ç½® */
+    int argbase = 0;        /* ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚ÌŠJnˆÊ’u */
     int ret;
     BOOL restart;
 
@@ -123,10 +123,10 @@ int	main( int argc, char *argv[], char *envp[] )
 Restart:
     arg_len = 0;
     argbase = 0;
-    /* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³è§£æ */
+    /* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‰ğÍ */
     for (i = 1; i < argc; i ++)
     {
-        /* ãƒ•ãƒ©ã‚°ã‚’èª¿ã¹ã‚‹ã€‚ */
+        /* ƒtƒ‰ƒO‚ğ’²‚×‚éB */
         if (argv[i][0] == '-')
         {
             BOOL invalid_flag = FALSE;
@@ -137,31 +137,31 @@ Restart:
                if (strlen(argv[i]) == 2)
                 {
                     trace_f = TRUE;
-                    fprintf(stderr, "MPUå‘½ä»¤ãƒˆãƒ¬ãƒ¼ã‚¹ãƒ•ãƒ©ã‚°=ON\n");
+                    fprintf(stderr, "MPU–½—ßƒgƒŒ[ƒXƒtƒ‰ƒO=ON\n");
                 } else if (argv[i][2] == 'r')
                 {
-                    char *p; /* ã‚¢ãƒ‰ãƒ¬ã‚¹æ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿ */
+                    char *p; /* ƒAƒhƒŒƒX•¶š—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^ */
                     if (strlen(argv[i]) == strlen("-tr"))
                     {
-                        i++; /* "-tr"ã¨ã‚¢ãƒ‰ãƒ¬ã‚¹ã¨ã®é–“ã«ç©ºç™½ã‚ã‚Šã€‚*/
+                        i++; /* "-tr"‚ÆƒAƒhƒŒƒX‚Æ‚ÌŠÔ‚É‹ó”’‚ ‚èB*/
                         p = argv[i];
                     } else
                     {
                         p = &(argv[i][3]);
                     }
-                    /* 16é€²æ–‡å­—åˆ—ãŒæ­£ã—ã„ã“ã¨ã‚’ç¢ºèª */
+                    /* 16i•¶š—ñ‚ª³‚µ‚¢‚±‚Æ‚ğŠm”F */
                     for (j = 0; (unsigned int)j < strlen(p); j ++)
                     {
                         char c = toupper(p[j]);
                         if (c < '0' || '9' < c && c < 'A' || 'F' < c)
                         {
-                            fprintf(stderr, "16é€²ã‚¢ãƒ‰ãƒ¬ã‚¹æŒ‡å®šã¯ç„¡åŠ¹ã§ã™ã€‚(\"%s\")\n", p);
+                            fprintf(stderr, "16iƒAƒhƒŒƒXw’è‚Í–³Œø‚Å‚·B(\"%s\")\n", p);
                             invalid_flag = TRUE;
                         }
                     }
-                    /* ãƒˆãƒ©ãƒƒãƒ—ã™ã‚‹PCã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚*/
+                    /* ƒgƒ‰ƒbƒv‚·‚éPC‚ÌƒAƒhƒŒƒX‚ğæ“¾‚·‚éB*/
                     sscanf(p, "%x", &trap_pc);
-                    fprintf(stderr, "MPUå‘½ä»¤ãƒˆãƒ©ãƒƒãƒ—ãƒ•ãƒ©ã‚°=ON ADDR=$%06X\n", trap_pc);
+                    fprintf(stderr, "MPU–½—ßƒgƒ‰ƒbƒvƒtƒ‰ƒO=ON ADDR=$%06X\n", trap_pc);
                 } else
                 {
                     invalid_flag = TRUE;
@@ -175,31 +175,31 @@ Restart:
                 }
                 debug_on = TRUE;
                 debug_flag = TRUE;
-                fprintf(stderr, "ãƒ‡ãƒãƒƒã‚¬ã‚’èµ·å‹•ã—ã¾ã™ã€‚\n");
+                fprintf(stderr, "ƒfƒoƒbƒK‚ğ‹N“®‚µ‚Ü‚·B\n");
                 break;
             case 'f':
                 func_trace_f = TRUE;
-                fprintf(stderr, "ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚³ãƒ¼ãƒ«ãƒˆãƒ¬ãƒ¼ã‚¹ãƒ•ãƒ©ã‚°=ON\n");
+                fprintf(stderr, "ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒR[ƒ‹ƒgƒŒ[ƒXƒtƒ‰ƒO=ON\n");
                 break;
             default:
                 invalid_flag = TRUE;
                 break;
             }
             if (invalid_flag)
-                fprintf(stderr, "ç„¡åŠ¹ãªãƒ•ãƒ©ã‚°'%s'ã¯ç„¡è¦–ã•ã‚Œã¾ã™ã€‚\n", fsp);
+                fprintf(stderr, "–³Œø‚Èƒtƒ‰ƒO'%s'‚Í–³‹‚³‚ê‚Ü‚·B\n", fsp);
         } else
         {
             break;
         }
     }
-    argbase = i; /* argbaseä»¥å‰ã®å¼•æ•°ã¯ã™ã¹ã¦ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã§ã‚ã‚‹ã€‚*/
+    argbase = i; /* argbaseˆÈ‘O‚Ìˆø”‚Í‚·‚×‚ÄƒIƒvƒVƒ‡ƒ“‚Å‚ ‚éB*/
 	if ( argc - argbase == 0 ) {
 #if defined(WIN32) || defined(DOSX)
 		strcpy( fname, "run68.exe" ) ;
 #else
 		strcpy( fname, "run68w.exe" ) ;
 #endif
-		fprintf(stderr, "X68000ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚¿ Ver.%s %s (for ", RUN68VERSION, fname) ;
+		fprintf(stderr, "X68000ƒGƒ~ƒ…ƒŒ[ƒ^ Ver.%s %s (for ", RUN68VERSION, fname) ;
 #if defined(WIN32)
 		fprintf(stderr, "Windows 95/98/NT/2000/XP/Vista") ;
 #elif defined(DOSX)
@@ -209,39 +209,39 @@ Restart:
 #endif
 		fprintf(stderr, ")\n");
         fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
-        fprintf(stderr, "          %s\n", "Created in 1996 by ï¼¹ï½ï½‹ï½‹ï½");
+        fprintf(stderr, "          %s\n", "Created in 1996 by ‚x‚‚‹‚‹‚");
         fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
     }
 	if ( argc - argbase == 0 ) {
-		fprintf(stderr, "ä½¿ç”¨æ³•ï¼š %s {ã‚ªãƒ—ã‚·ãƒ§ãƒ³} å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«å [ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³]\n", fname) ;
-		fprintf(stderr, "ã€€           -f         ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚³ãƒ¼ãƒ«ãƒˆãƒ¬ãƒ¼ã‚¹\n");
-        fprintf(stderr, "             -debug     run68ç°¡æ˜“ãƒ‡ãƒãƒƒã‚¬èµ·å‹•\n");
-		fprintf(stderr, "ã€€           -S  size   å®Ÿè¡Œæ™‚ã‚¹ã‚¿ãƒƒã‚¯ã‚µã‚¤ã‚ºæŒ‡å®š(å˜ä½KBã€æœªå®Ÿè£…)\n");
+		fprintf(stderr, "g—p–@F %s {ƒIƒvƒVƒ‡ƒ“} Àsƒtƒ@ƒCƒ‹–¼ [ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“]\n", fname) ;
+		fprintf(stderr, "@           -f         ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒR[ƒ‹ƒgƒŒ[ƒX\n");
+        fprintf(stderr, "             -debug     run68ŠÈˆÕƒfƒoƒbƒK‹N“®\n");
+		fprintf(stderr, "@           -S  size   ÀsƒXƒ^ƒbƒNƒTƒCƒYw’è(’PˆÊKBA–¢À‘•)\n");
 		return( 1 ) ;
 	}
 
-	/* iniãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±ã‚’èª­ã¿è¾¼ã‚€ */
+	/* iniƒtƒ@ƒCƒ‹‚Ìî•ñ‚ğ“Ç‚İ‚Ş */
     strcpy(ini_file_name, argv[0]);
-    /* iniãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ•ãƒ«ãƒ‘ã‚¹åãŒå¾—ã‚‰ã‚Œã‚‹ã€‚*/
+    /* iniƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX–¼‚ª“¾‚ç‚ê‚éB*/
 	read_ini(ini_file_name, fname) ;
 
-	/* ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã™ã‚‹ */
+	/* ƒƒ‚ƒŠ‚ğŠm•Û‚·‚é */
 	if ( (prog_ptr=malloc( mem_aloc )) == NULL ) {
 		fclose( fp ) ;
-		fprintf(stderr, "ãƒ¡ãƒ¢ãƒªãŒç¢ºä¿ã§ãã¾ã›ã‚“\n") ;
+		fprintf(stderr, "ƒƒ‚ƒŠ‚ªŠm•Û‚Å‚«‚Ü‚¹‚ñ\n") ;
 		return( 1 ) ;
 	}
-	/* A0,A2,A3ãƒ¬ã‚¸ã‚¹ã‚¿ã«å€¤ã‚’è¨­å®š */
-	ra [ 0 ] = STACK_TOP + STACK_SIZE ;	/* ãƒ¡ãƒ¢ãƒªç®¡ç†ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
-	ra [ 2 ] = STACK_TOP ;			/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
-	ra [ 3 ] = ENV_TOP ;			/* ç’°å¢ƒã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+	/* A0,A2,A3ƒŒƒWƒXƒ^‚É’l‚ğİ’è */
+	ra [ 0 ] = STACK_TOP + STACK_SIZE ;	/* ƒƒ‚ƒŠŠÇ—ƒuƒƒbƒN‚ÌƒAƒhƒŒƒX */
+	ra [ 2 ] = STACK_TOP ;			/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚ÌƒAƒhƒŒƒX */
+	ra [ 3 ] = ENV_TOP ;			/* ŠÂ‹«‚ÌƒAƒhƒŒƒX */
 
-    /* ç’°å¢ƒã®è¨­å®š */
+    /* ŠÂ‹«‚Ìİ’è */
 #if defined(ENV_FROM_INI)
-    /* ç’°å¢ƒå¤‰æ•°ã¯iniãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜è¿°ã™ã‚‹ã€‚(getini.cå‚ç…§) */
+    /* ŠÂ‹«•Ï”‚Íiniƒtƒ@ƒCƒ‹‚É‹Lq‚·‚éB(getini.cQÆ) */
     readenv_from_ini(ini_file_name);
 #else
-    /* Windowsã®ç’°å¢ƒå¤‰æ•°ã‚’è¤‡è£½ã™ã‚‹ã€‚*/
+    /* Windows‚ÌŠÂ‹«•Ï”‚ğ•¡»‚·‚éB*/
 	mem_set( ra [ 3 ], ENV_SIZE, S_LONG ) ;
 	mem_set( ra [ 3 ] + 4, 0, S_BYTE ) ;
 	for( i = 0 ; envp [ i ] != NULL ; i++ ) {
@@ -264,15 +264,15 @@ Restart:
 	}
 	mem_set( ra [ 3 ] + 4 + env_len, 0, S_BYTE ) ;
 #endif
-	/* å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ªãƒ¼ãƒ—ãƒ³ */
+	/* Àsƒtƒ@ƒCƒ‹‚ÌƒI[ƒvƒ“ */
 	if ( strlen( argv[1] ) > 88 ) {
-		fprintf(stderr, "ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ‘ã‚¹åãŒé•·ã™ãã¾ã™\n") ;
+		fprintf(stderr, "ƒtƒ@ƒCƒ‹‚ÌƒpƒX–¼‚ª’·‚·‚¬‚Ü‚·\n") ;
 		return( 1 ) ;
 	}
     strcpy( fname, argv[argbase] ) ;
 /*
- * ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’PATHç’°å¢ƒå¤‰æ•°ã§è¨­å®šã—ãŸãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‹ã‚‰æ¢ã—ã¦
- * èª­ã¿è¾¼ã¿ã‚’è¡Œã†ã€‚
+ * ƒvƒƒOƒ‰ƒ€‚ğPATHŠÂ‹«•Ï”‚Åİ’è‚µ‚½ƒfƒBƒŒƒNƒgƒŠ‚©‚ç’T‚µ‚Ä
+ * “Ç‚İ‚İ‚ğs‚¤B
  */
 	if ( (fp=prog_open( fname, TRUE )) == NULL )
     {
@@ -284,7 +284,7 @@ Restart:
 	memset(prog_ptr, 0, mem_aloc) ;
 #endif
 
-	/* ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’ãƒ¡ãƒ¢ãƒªã«èª­ã¿è¾¼ã‚€ */
+	/* ƒvƒƒOƒ‰ƒ€‚ğƒƒ‚ƒŠ‚É“Ç‚İ‚Ş */
 	prog_size2 = mem_aloc ;
 	pc = prog_read( fp, fname, PROG_TOP, &prog_size, &prog_size2, TRUE ) ;
 	if ( pc < 0 ) {
@@ -292,12 +292,12 @@ Restart:
 		return( 1 ) ;
 	}
 
-	/* A1,A4ãƒ¬ã‚¸ã‚¹ã‚¿ã«å€¤ã‚’è¨­å®š */
-	ra [ 1 ] = PROG_TOP + prog_size ;	/* ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®çµ‚ã‚ã‚Š+1ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ */
-	ra [ 4 ] = pc ;				/* å®Ÿè¡Œé–‹å§‹ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+	/* A1,A4ƒŒƒWƒXƒ^‚É’l‚ğİ’è */
+	ra [ 1 ] = PROG_TOP + prog_size ;	/* ƒvƒƒOƒ‰ƒ€‚ÌI‚í‚è+1‚ÌƒAƒhƒŒƒX */
+	ra [ 4 ] = pc ;				/* ÀsŠJnƒAƒhƒŒƒX */
 	nest_cnt = 0 ;
 
-	/* ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³æ–‡å­—åˆ—è¨­å®š */
+	/* ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“•¶š—ñİ’è */
 	arg_ptr = prog_ptr + ra [ 2 ] ;
 	for ( i = argbase+1 ; i < argc ; i++ ) {
 		if ( i > 2 ) {
@@ -316,7 +316,7 @@ Restart:
 		printf( "command line: %s\n", arg_ptr + 1 ) ;
 #endif
 
-	/* Humanã®ãƒ¡ãƒ¢ãƒªç®¡ç†ãƒ–ãƒ­ãƒƒã‚¯è¨­å®š */
+	/* Human‚Ìƒƒ‚ƒŠŠÇ—ƒuƒƒbƒNİ’è */
 	SR_S_ON() ;
 	mem_set( HUMAN_HEAD, 0, S_LONG ) ;
 	mem_set( HUMAN_HEAD + 0x04, 0, S_LONG ) ;
@@ -324,15 +324,15 @@ Restart:
 	mem_set( HUMAN_HEAD + 0x0C, ra [ 0 ], S_LONG ) ;
 	SR_S_OFF() ;
 
-	/* ãƒ—ãƒ­ã‚»ã‚¹ç®¡ç†ãƒ–ãƒ­ãƒƒã‚¯è¨­å®š */
+	/* ƒvƒƒZƒXŠÇ—ƒuƒƒbƒNİ’è */
 	if ( make_psp( fname, HUMAN_HEAD, mem_aloc, HUMAN_HEAD, prog_size2 )
 	     == FALSE ) {
 		free( (void *)prog_ptr ) ;
-		fprintf(stderr, "å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«åãŒé•·ã™ãã¾ã™\n") ;
+		fprintf(stderr, "Àsƒtƒ@ƒCƒ‹–¼‚ª’·‚·‚¬‚Ü‚·\n") ;
 		return( 1 ) ;
 	}
 
-	/* ãƒ•ã‚¡ã‚¤ãƒ«ç®¡ç†ãƒ†ãƒ¼ãƒ–ãƒ«ã®åˆæœŸåŒ– */
+	/* ƒtƒ@ƒCƒ‹ŠÇ—ƒe[ƒuƒ‹‚Ì‰Šú‰» */
 	for( i = 0 ; i < FILE_MAX ; i ++ ) {
 		finfo [ i ].fh   = NULL ;
 		finfo [ i ].date = 0 ;
@@ -345,7 +345,7 @@ Restart:
 	finfo [ 0 ].fh   = GetStdHandle(STD_INPUT_HANDLE);
 	finfo [ 1 ].fh   = GetStdHandle(STD_OUTPUT_HANDLE);
 	finfo [ 2 ].fh   = GetStdHandle(STD_ERROR_HANDLE);
-    /* æ¨™æº–å…¥åŠ›ã®ãƒãƒ³ãƒ‰ãƒ«ã‚’è¨˜éŒ²ã—ã¦ãŠã */
+    /* •W€“ü—Í‚Ìƒnƒ“ƒhƒ‹‚ğ‹L˜^‚µ‚Ä‚¨‚­ */
     stdin_handle = finfo[0].fh;
 #else
 	finfo [ 0 ].fh   = stdin ;
@@ -357,7 +357,7 @@ Restart:
 	finfo [ 2 ].mode = 1 ;
 	trap_table_make() ;
 
-	/* å®Ÿè¡Œ */
+	/* Às */
 	ra [ 7 ] = STACK_TOP + STACK_SIZE ;
 	superjsr_ret = 0 ;
 	usp = 0 ;
@@ -366,7 +366,7 @@ Restart:
 	else
 		ret = exec_notrap(&restart);
 
-	/* çµ‚äº† */
+	/* I—¹ */
     if (trace_f || func_trace_f)
     {
     	printf( "d0-7=%08lx" , rd [ 0 ] ) ;
@@ -390,15 +390,15 @@ Restart:
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šå‰²ã‚Šè¾¼ã¿ã‚’ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ãƒˆã—ã¦å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼šãªã—
+ @‹@”\FŠ„‚è‚İ‚ğƒGƒ~ƒ…ƒŒ[ƒg‚µ‚ÄÀs‚·‚é
+ –ß‚è’lF‚È‚µ
 */
 static int exec_trap(BOOL *restart)
 {
 	UChar	*trap_mem1 ;
 	UChar	*trap_mem2 ;
 	long	trap_adr ;
-    long    prev_pc = 0; /* 1ã‚µã‚¤ã‚¯ãƒ«å‰ã«å®Ÿè¡Œã—ãŸå‘½ä»¤ã®PC */
+    long    prev_pc = 0; /* 1ƒTƒCƒNƒ‹‘O‚ÉÀs‚µ‚½–½—ß‚ÌPC */
     RUN68_COMMAND cmd;
     BOOL    cont_flag = TRUE;
     int     ret;
@@ -410,7 +410,7 @@ static int exec_trap(BOOL *restart)
     OPBuf_clear();
 	do {
         BOOL ecode;
-        /* å®Ÿè¡Œã—ãŸå‘½ä»¤ã®æƒ…å ±ã‚’ä¿å­˜ã—ã¦ãŠã */
+        /* Às‚µ‚½–½—ß‚Ìî•ñ‚ğ•Û‘¶‚µ‚Ä‚¨‚­ */
         OP_info.pc    = 0;
         OP_info.code  = 0;
         OP_info.rmem  = 0;
@@ -455,7 +455,7 @@ static int exec_trap(BOOL *restart)
 		}
         if (trap_pc != 0 && pc == trap_pc)
         {
-            fprintf(stderr, "(%s) trapped:MPUãŒã‚¢ãƒ‰ãƒ¬ã‚¹$%06Xã®å‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸã€‚\n", pc);
+            fprintf(stderr, "(%s) trapped:MPU‚ªƒAƒhƒŒƒX$%06X‚Ì–½—ß‚ğÀs‚µ‚Ü‚µ‚½B\n", pc);
             debug_on = TRUE;
             if (stepcount != 0)
             {
@@ -464,7 +464,7 @@ static int exec_trap(BOOL *restart)
             }
         } else if (cwatchpoint != 0x4afc && cwatchpoint == *((unsigned short*)(prog_ptr + pc)))
         {
-            fprintf(stderr, "(run68) watchpoint:MPUãŒå‘½ä»¤0x%04xã‚’å®Ÿè¡Œã—ã¾ã—ãŸã€‚\n", cwatchpoint);
+            fprintf(stderr, "(run68) watchpoint:MPU‚ª–½—ß0x%04x‚ğÀs‚µ‚Ü‚µ‚½B\n", cwatchpoint);
             if (stepcount != 0)
             {
                 fprintf(stderr, "(run68) breakpoint:%d counts left.\n", stepcount);
@@ -501,11 +501,11 @@ static int exec_trap(BOOL *restart)
             }
         }
 		if ( (pc & 0xFF000001) != 0 ) {
-            err68b( "ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ", pc, OPBuf_getentry(0)->pc);
+            err68b( "ƒAƒhƒŒƒXƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½", pc, OPBuf_getentry(0)->pc);
 			break ;
 		}
 NextInstruction:
-        /* PCã®å€¤ã¨ãƒ‹ãƒ¼ãƒ¢ãƒ‹ãƒƒã‚¯ã‚’ä¿å­˜ã™ã‚‹ */
+        /* PC‚Ì’l‚Æƒj[ƒ‚ƒjƒbƒN‚ğ•Û‘¶‚·‚é */
         OP_info.pc = pc;
         OP_info.code = *((unsigned short*)(prog_ptr + pc));
         if ((ret = setjmp(jmp_when_abort)) != 0)
@@ -532,10 +532,10 @@ EndOfFunc:
 }
 
 /*
-   æ©Ÿèƒ½ï¼š
-     å‰²ã‚Šè¾¼ã¿ã‚’ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ãƒˆã›ãšã«å®Ÿè¡Œã™ã‚‹
-   æˆ»ã‚Šå€¤ï¼š
-     çµ‚äº†ã‚³ãƒ¼ãƒ‰
+   ‹@”\F
+     Š„‚è‚İ‚ğƒGƒ~ƒ…ƒŒ[ƒg‚¹‚¸‚ÉÀs‚·‚é
+   –ß‚è’lF
+     I—¹ƒR[ƒh
 */
 static int exec_notrap(BOOL *restart)
 {
@@ -548,7 +548,7 @@ static int exec_notrap(BOOL *restart)
     OPBuf_clear();
  	do {
         BOOL ecode;
-        /* å®Ÿè¡Œã—ãŸå‘½ä»¤ã®æƒ…å ±ã‚’ä¿å­˜ã—ã¦ãŠã */
+        /* Às‚µ‚½–½—ß‚Ìî•ñ‚ğ•Û‘¶‚µ‚Ä‚¨‚­ */
         OP_info.pc    = 0;
         OP_info.code  = 0;
         OP_info.rmem  = 0;
@@ -562,7 +562,7 @@ static int exec_notrap(BOOL *restart)
 		}
         if (trap_pc != 0 && pc == trap_pc)
         {
-            fprintf(stderr, "(run68) breakpoint:MPUãŒã‚¢ãƒ‰ãƒ¬ã‚¹$%06Xã®å‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸã€‚\n", pc);
+            fprintf(stderr, "(run68) breakpoint:MPU‚ªƒAƒhƒŒƒX$%06X‚Ì–½—ß‚ğÀs‚µ‚Ü‚µ‚½B\n", pc);
             debug_on = TRUE;
             if (stepcount != 0)
             {
@@ -573,7 +573,7 @@ static int exec_notrap(BOOL *restart)
                 && cwatchpoint == ((unsigned short)prog_ptr_u[pc] << 8)
                                  + (unsigned short)prog_ptr_u[pc+1])
         {
-            fprintf(stderr, "(run68) watchpoint:MPUãŒå‘½ä»¤0x%04xã‚’å®Ÿè¡Œã—ã¾ã—ãŸã€‚\n", cwatchpoint);
+            fprintf(stderr, "(run68) watchpoint:MPU‚ª–½—ß0x%04x‚ğÀs‚µ‚Ü‚µ‚½B\n", cwatchpoint);
             debug_on = TRUE;
             if (stepcount != 0)
             {
@@ -611,11 +611,11 @@ static int exec_notrap(BOOL *restart)
             }
         }
 		if ( (pc & 0xFF000001) != 0 ) {
-            err68b( "ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ", pc, OPBuf_getentry(0)->pc);
+            err68b( "ƒAƒhƒŒƒXƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½", pc, OPBuf_getentry(0)->pc);
 			break ;
 		}
 NextInstruction:
-        /* PCã®å€¤ã¨ãƒ‹ãƒ¼ãƒ¢ãƒ‹ãƒƒã‚¯ã‚’ä¿å­˜ã™ã‚‹ */
+        /* PC‚Ì’l‚Æƒj[ƒ‚ƒjƒbƒN‚ğ•Û‘¶‚·‚é */
         OP_info.pc = pc;
         OP_info.code = *((unsigned short*)(prog_ptr + pc));
         if ((ret = setjmp(jmp_when_abort)) != 0)
@@ -642,8 +642,8 @@ EndOfFunc:
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šå‰²ã‚Šè¾¼ã¿ãƒ™ã‚¯ã‚¿ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ä½œæˆã™ã‚‹
- æˆ»ã‚Šå€¤ï¼šãªã—
+ @‹@”\FŠ„‚è‚İƒxƒNƒ^ƒe[ƒuƒ‹‚ğì¬‚·‚é
+ –ß‚è’lF‚È‚µ
 */
 void	trap_table_make()
 {
@@ -651,9 +651,9 @@ void	trap_table_make()
 
 	SR_S_ON() ;
 
-	/* å‰²ã‚Šè¾¼ã¿ãƒ«ãƒ¼ãƒãƒ³ã®å‡¦ç†å…ˆè¨­å®š */
-	mem_set( 0x28, HUMAN_WORK, S_LONG ) ;		/* Aç³»åˆ—å‘½ä»¤ */
-	mem_set( 0x2C, HUMAN_WORK, S_LONG ) ;		/* Fç³»åˆ—å‘½ä»¤ */
+	/* Š„‚è‚İƒ‹[ƒ`ƒ“‚Ìˆ—æİ’è */
+	mem_set( 0x28, HUMAN_WORK, S_LONG ) ;		/* AŒn—ñ–½—ß */
+	mem_set( 0x2C, HUMAN_WORK, S_LONG ) ;		/* FŒn—ñ–½—ß */
 	mem_set( 0x80, TRAP0_WORK, S_LONG ) ;		/* trap0 */
 	mem_set( 0x84, TRAP1_WORK, S_LONG ) ;		/* trap1 */
 	mem_set( 0x88, TRAP2_WORK, S_LONG ) ;		/* trap2 */
@@ -668,16 +668,16 @@ void	trap_table_make()
 	mem_set( HUMAN_WORK    , 0x4e73, S_WORD ) ;	/* 0x4e73 = rte */
 	mem_set( HUMAN_WORK + 2, 0x4e75, S_WORD ) ;	/* 0x4e75 = rts */
 
-	/* IOCSã‚³ãƒ¼ãƒ«ãƒ™ã‚¯ã‚¿ã®è¨­å®š */
+	/* IOCSƒR[ƒ‹ƒxƒNƒ^‚Ìİ’è */
 	for( i = 0 ; i < 256 ; i ++ ) {
 		mem_set( 0x400 + i * 4, HUMAN_WORK + 2, S_LONG ) ;
 	}
 
-	/* IOCSãƒ¯ãƒ¼ã‚¯ã®è¨­å®š */
-	mem_set( 0x970, 79, S_WORD ) ;		/* ç”»é¢ã®æ¡æ•°-1 */
-	mem_set( 0x972, 24, S_WORD ) ;		/* ç”»é¢ã®è¡Œæ•°-1 */
+	/* IOCSƒ[ƒN‚Ìİ’è */
+	mem_set( 0x970, 79, S_WORD ) ;		/* ‰æ–Ê‚ÌŒ…”-1 */
+	mem_set( 0x972, 24, S_WORD ) ;		/* ‰æ–Ê‚Ìs”-1 */
 
-	/* DOSã‚³ãƒ¼ãƒ«ãƒ™ã‚¯ã‚¿ã®è¨­å®š */
+	/* DOSƒR[ƒ‹ƒxƒNƒ^‚Ìİ’è */
 	for( i = 0 ; i < 256 ; i ++ ) {
 		mem_set( 0x1800 + i * 4, HUMAN_WORK + 2, S_LONG ) ;
 	}
@@ -686,8 +686,8 @@ void	trap_table_make()
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šçµ‚äº†å‡¦ç†ã‚’ã™ã‚‹
- æˆ»ã‚Šå€¤ï¼šãªã—
+ @‹@”\FI—¹ˆ—‚ğ‚·‚é
+ –ß‚è’lF‚È‚µ
 */
 void	term( int flag )
 {

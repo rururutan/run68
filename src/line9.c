@@ -41,9 +41,9 @@ static	int	Sub1( char, char ) ;
 static	int	Sub2( char, char ) ;
 
 /*
- ã€€æ©Ÿèƒ½ï¼šï¼™ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\F‚Xƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 int	line9( char *pc_ptr )
 {
@@ -86,9 +86,9 @@ static	int	Suba( char code1, char code2 )
 	mode = ((code2 & 0x38) >> 3) ;
 	src_reg = (code2 & 0x07) ;
 
-	/* ã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+	/* ƒ\[ƒX‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
 	if (size == S_BYTE) {
-		err68a( "ä¸æ­£ãªå‘½ä»¤: suba.b <ea>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+		err68a( "•s³‚È–½—ß: suba.b <ea>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, mode, src_reg, size, &src_data)) {
 		return(TRUE);
@@ -104,7 +104,7 @@ static	int	Suba( char code1, char code2 )
 
 	dest_data = ra[dst_reg];
 
-	// subæ¼”ç®—
+	// sub‰‰Z
 	ra[dst_reg] = sub_long(src_data, dest_data, S_LONG);
 	// ra [ dst_reg ] -= src_data ;
 
@@ -113,16 +113,16 @@ static	int	Suba( char code1, char code2 )
 		size_char [ size ], src_data, save_pc ) ;
 #endif
 
-	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ–ã¯ãªã— */
+	/* ƒtƒ‰ƒO‚Ì•Ï‰»‚Í‚È‚µ */
 	// sub_conditions(src_data, dest_data, ra[dst_reg], size, 1);
 
 	return( FALSE ) ;
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šsubxå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fsubx–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Subx( char code1, char code2 )
 {
@@ -143,7 +143,7 @@ static	int	Subx( char code1, char code2 )
 
 	if ( (code2 & 0x08) != 0 ) {
 		/* -(An), -(An) */
-		err68a( "æœªå®šç¾©å‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸ", __FILE__, __LINE__ ) ;
+		err68a( "–¢’è‹`–½—ß‚ğÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;
 	}
 
@@ -167,7 +167,7 @@ static	int	Subx( char code1, char code2 )
 //			CCR_Z_OFF() ;
 //	}
 
-	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 	sub_conditions(rd[src_reg], dest_data, rd[dst_reg], size, save_z);
 
 #ifdef TEST_CCR
@@ -194,9 +194,9 @@ static	int	Subx( char code1, char code2 )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šsub Dn,<ea>å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fsub Dn,<ea>–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Sub1( char code1, char code2 )
 {
@@ -224,7 +224,7 @@ static	int	Sub1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -239,14 +239,14 @@ static	int	Sub1( char code1, char code2 )
 	before = sr & 0x1f;
 #endif
 
-	/* ãƒ¯ãƒ¼ã‚¯ãƒ¬ã‚¸ã‚¹ã‚¿ã¸ã‚³ãƒ”ãƒ¼ */
+	/* ƒ[ƒNƒŒƒWƒXƒ^‚ÖƒRƒs[ */
 	rd [ 8 ] = dest_data;
 
-	/* Subæ¼”ç®— */
+	/* Sub‰‰Z */
 	// rd [ 8 ] = sub_rd( 8, src_data, size ) ;
 	rd [ 8 ] = sub_long(src_data, dest_data, size ) ;
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -257,7 +257,7 @@ static	int	Sub1( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 	sub_conditions(src_data, dest_data, rd[ 8 ], size, 1);
 
 #ifdef TEST_CCR
@@ -284,9 +284,9 @@ static	int	Sub1( char code1, char code2 )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šsub <ea>,Dnå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fsub <ea>,Dn–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Sub2( char code1, char code2 )
 {
@@ -309,13 +309,13 @@ static	int	Sub2( char code1, char code2 )
 	size = ((code2 >> 6) & 0x03) ;
 
 	if (mode == EA_AD && size == S_BYTE) {
-		err68a( "ä¸æ­£ãªå‘½ä»¤: sub.b An, Dn ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+		err68a( "•s³‚È–½—ß: sub.b An, Dn ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, mode, src_reg, size, &src_data)) {
 		return(TRUE);
 	}
 
-	/* ãƒ¬ã‚¸ã‚¹ã‚¿ã¸ã®æ ¼ç´ã§ã‚ã‚‹ç‚ºã€long ã§å€¤ã‚’å¾—ã¦ãŠã‹ãªã„ã¨ã€æ ¼ç´æ™‚ã«ä¸Šä½ãƒ¯ãƒ¼ãƒ‰ã‚’ç ´å£Šã—ã¦ã—ã¾ã† */
+	/* ƒŒƒWƒXƒ^‚Ö‚ÌŠi”[‚Å‚ ‚éˆ×Along ‚Å’l‚ğ“¾‚Ä‚¨‚©‚È‚¢‚ÆAŠi”[‚ÉãˆÊƒ[ƒh‚ğ”j‰ó‚µ‚Ä‚µ‚Ü‚¤ */
 	if (get_data_at_ea(EA_All, EA_DD, dst_reg, S_LONG /*size*/, &dest_data)) {
 		return(TRUE);
 	}
@@ -327,7 +327,7 @@ static	int	Sub2( char code1, char code2 )
 	//rd [ dst_reg ] = sub_rd( dst_reg, src_data, size ) ;
 	rd [ dst_reg ] = sub_long(src_data, dest_data, size ) ;
 
-	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 	sub_conditions(src_data, dest_data, rd[ dst_reg ], size, 1);
 
 #ifdef TEST_CCR

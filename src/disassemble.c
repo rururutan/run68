@@ -37,7 +37,7 @@
 #include <assert.h>
 #include "run68.h"
 
-/* prog_ptr_uã¯ç¬¦å·ä»˜ãcharã§ä¸ä¾¿ãªã®ã§ã€ç¬¦å·ãªã—charã«å¤‰æ›ã—ã¦ãŠãã€‚*/
+/* prog_ptr_u‚Í•„†•t‚«char‚Å•s•Ö‚È‚Ì‚ÅA•„†‚È‚µchar‚É•ÏŠ·‚µ‚Ä‚¨‚­B*/
 #define prog_ptr_u ((unsigned char *)prog_ptr)
 
 static char *disa0(long addr, unsigned short code, long *next_addr, char *mnemonic);
@@ -53,12 +53,12 @@ static char *disac(long addr, unsigned short code, long *next_addr, char *mnemon
 static char *disae(long addr, unsigned short code, long *next_addr, char *mnemonic);
 
 /*
-   æ©Ÿèƒ½ï¼š
-     æŒ‡å®šã—ãŸã‚¢ãƒ‰ãƒ¬ã‚¹ã‹ã‚‰å§‹ã¾ã‚‹MPUå‘½ä»¤ã‚’æ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹ã€‚
-   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
-     long  addr      <in>  å‘½ä»¤ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
-     long *next_addr <out> æ¬¡ã®å‘½ä»¤ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
-   æˆ»ã‚Šå€¤ï¼š
+   ‹@”\F
+     w’è‚µ‚½ƒAƒhƒŒƒX‚©‚çn‚Ü‚éMPU–½—ß‚ğ•¶š—ñ‚É•ÏŠ·‚·‚éB
+   ƒpƒ‰ƒ[ƒ^F
+     long  addr      <in>  –½—ß‚ÌƒAƒhƒŒƒX
+     long *next_addr <out> Ÿ‚Ì–½—ß‚ÌƒAƒhƒŒƒX
+   –ß‚è’lF
 */
 
 char *disassemble(long addr, long* next_addr)
@@ -150,7 +150,7 @@ static char *disa0(long addr, unsigned short code, long *next_addr, char *mnemon
     unsigned long d1;
     char size = '?';
 
-    /* ã¾ãšã¯å…¨ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’èª¿ã¹ã‚‹ */
+    /* ‚Ü‚¸‚Í‘SƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğ’²‚×‚é */
     switch(code)
     {
     case 0x003c:  /* OR Immediate to CCR */
@@ -184,7 +184,7 @@ L1:
         *next_addr = addr + 4;
         goto EndOfFunc;
     }
-    /* æ¬¡ã«ã€ä¸Šä½8ãƒ“ãƒƒãƒˆã®ã¿å›ºå®šã®å‘½ä»¤ã‚’èª¿ã¹ã‚‹ */
+    /* Ÿ‚ÉAãˆÊ8ƒrƒbƒg‚Ì‚İŒÅ’è‚Ì–½—ß‚ğ’²‚×‚é */
     switch(code & 0xff00)
     {
     case 0x0000:  /* OR Immediate */
@@ -250,7 +250,7 @@ L2:
             size = 'l';
             break;
         case 0x00c0:
-            /* ã‚µã‚¤ã‚ºä¸æ˜ */
+            /* ƒTƒCƒY•s–¾ */
             goto ErrorReturn;
         }
         fill_space(mnemonic, 8);
@@ -267,12 +267,12 @@ L2:
             sprintf(p, "#$%08x,", d1);
             break;
         default:
-            /* å‘½ä»¤ãƒ‡ã‚³ãƒ¼ãƒ‰ã‚¨ãƒ©ãƒ¼ */
+            /* –½—ßƒfƒR[ƒhƒGƒ‰[ */
             goto ErrorReturn;
         }
         goto AddEA;
     }
-    /* æ®‹ã£ãŸå‘½ä»¤ã‚’æ‹¾ã†(äºŒã¤ã‚ã‚‹) */
+    /* c‚Á‚½–½—ß‚ğE‚¤(“ñ‚Â‚ ‚é) */
     if (code & 0x0100)
     {
         /* Dynamic Bit Operation */
@@ -298,7 +298,7 @@ L2:
         goto AddEA;
     } else if (code & 0x0038 == 0x0008)
     {
-        /* MOVEPå‘½ä»¤ */
+        /* MOVEP–½—ß */
         strcat(mnemonic, "movep");
         switch((code & 0x1c0) >> 6)
         {
@@ -336,7 +336,7 @@ L5:
     }
 AddEA:
     p = &mnemonic[strlen(mnemonic)];
-    /* å³å€¤ã¯æœ‰ã‚Šå¾—ãªã„ã®ã§ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚ºã«ã¯' 'ã‚’ä¸ãˆã‚‹ã€‚*/
+    /* ‘¦’l‚Í—L‚è“¾‚È‚¢‚Ì‚Åƒf[ƒ^ƒTƒCƒY‚É‚Í' '‚ğ—^‚¦‚éB*/
     effective_address(*next_addr, (short)((code & 0x38) >> 3), (short)(code & 0x7), size, 0xfff, p, next_addr);
 EndOfFunc:
     return mnemonic;
@@ -345,17 +345,17 @@ ErrorReturn:
 }
 
 /*
-   æ©Ÿèƒ½ï¼š
-   ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ï¼š
-     long   addr       <in>  ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã®ã‚¢ãƒ‰ãƒ¬ã‚¹(ä½¿ã†ã¨ã¯é™ã‚‰ãªã„)
-     ushort  mode       <in>  å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã®ãƒ¢ãƒ¼ãƒ‰ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰(0-7)
-     ushort  reg        <in>  å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã®ãƒ¬ã‚¸ã‚¹ã‚¿ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰(0-7)
-     char   size       <in>  å³å€¤ã®å ´åˆã®ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚º('b'/'w'/'l')
-     ushort mask       <in>  ç„¡åŠ¹ãªãƒ¢ãƒ¼ãƒ‰ã‚’ãƒ“ãƒƒãƒˆä½ç½®ã®1ã«ã‚ˆã‚ŠæŒ‡å®š
-     char   *str       <out> å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’æ–‡å­—åˆ—ã«ã—ã¦æ›¸ãè¾¼ã‚€
-     long   *next_addr <out> æ¬¡ã®ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã¾ãŸã¯å‘½ä»¤ã®ã‚¢ãƒ‰ãƒ¬ã‚¹
-   æˆ»ã‚Šå€¤ï¼š
-     BOOL   FALSEãªã‚‰ã‚¨ãƒ©ãƒ¼ã€‚ã‚¨ãƒ©ãƒ¼æ™‚ã‚‚next_addrã¯æœ‰åŠ¹ã€‚
+   ‹@”\F
+   ƒpƒ‰ƒ[ƒ^F
+     long   addr       <in>  ƒIƒyƒ‰ƒ“ƒh‚ÌƒAƒhƒŒƒX(g‚¤‚Æ‚ÍŒÀ‚ç‚È‚¢)
+     ushort  mode       <in>  ÀŒøƒAƒhƒŒƒX‚Ìƒ‚[ƒhƒtƒB[ƒ‹ƒh(0-7)
+     ushort  reg        <in>  ÀŒøƒAƒhƒŒƒX‚ÌƒŒƒWƒXƒ^ƒtƒB[ƒ‹ƒh(0-7)
+     char   size       <in>  ‘¦’l‚Ìê‡‚Ìƒf[ƒ^ƒTƒCƒY('b'/'w'/'l')
+     ushort mask       <in>  –³Œø‚Èƒ‚[ƒh‚ğƒrƒbƒgˆÊ’u‚Ì1‚É‚æ‚èw’è
+     char   *str       <out> ÀŒøƒAƒhƒŒƒX‚ğ•¶š—ñ‚É‚µ‚Ä‘‚«‚Ş
+     long   *next_addr <out> Ÿ‚ÌƒIƒyƒ‰ƒ“ƒh‚Ü‚½‚Í–½—ß‚ÌƒAƒhƒŒƒX
+   –ß‚è’lF
+     BOOL   FALSE‚È‚çƒGƒ‰[BƒGƒ‰[‚ànext_addr‚Í—LŒøB
 */
 static BOOL effective_address(long addr, short mode, short reg, char size,
                               unsigned short mask, char *str, long *next_addr)
@@ -367,49 +367,49 @@ static BOOL effective_address(long addr, short mode, short reg, char size,
 
     switch(mode)
     {
-    case 0:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³0:ãƒ‡ãƒ¼ã‚¿ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ */
+    case 0:  /* ƒpƒ^[ƒ“0:ƒf[ƒ^ƒŒƒWƒXƒ^’¼Ú */
         sprintf(str, "d%1d", reg);
         *next_addr = addr;
         break;
-    case 1:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³1:ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ */
+    case 1:  /* ƒpƒ^[ƒ“1:ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Ú */
         sprintf(str, "a%1d", reg);
         *next_addr = addr;
         break;
-    case 2:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³2:ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿é–“æ¥ */
+    case 2:  /* ƒpƒ^[ƒ“2:ƒAƒhƒŒƒXƒŒƒWƒXƒ^ŠÔÚ */
         sprintf(str, "(a%1d)", reg);
         *next_addr = addr;
         break;
-    case 3:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³3:ãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆä»˜ãã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿é–“æ¥ */
+    case 3:  /* ƒpƒ^[ƒ“3:ƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒg•t‚«ƒAƒhƒŒƒXƒŒƒWƒXƒ^ŠÔÚ */
         sprintf(str, "(a%1d)+", reg);
         *next_addr = addr;
         break;
-    case 4:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³4:ãƒ—ãƒªãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆä»˜ãã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿é–“æ¥ */
+    case 4:  /* ƒpƒ^[ƒ“4:ƒvƒŠƒfƒNƒŠƒƒ“ƒg•t‚«ƒAƒhƒŒƒXƒŒƒWƒXƒ^ŠÔÚ */
         sprintf(str, "-(a%1d)", reg);
         *next_addr = addr;
         break;
-    case 5:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³5:ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ãƒ¼ã‚¹ãƒ¡ãƒ³ãƒˆä»˜ãã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿é–“æ¥ */
-        /* ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ãƒ¼ã‚¹ãƒ¡ãƒ³ãƒˆã¯ç¬¦å·ä»˜ãã®ãƒ¯ãƒ¼ãƒ‰å€¤ã§ã‚ã‚‹ */
+    case 5:  /* ƒpƒ^[ƒ“5:ƒfƒBƒXƒvƒŒ[ƒXƒƒ“ƒg•t‚«ƒAƒhƒŒƒXƒŒƒWƒXƒ^ŠÔÚ */
+        /* ƒfƒBƒXƒvƒŒ[ƒXƒƒ“ƒg‚Í•„†•t‚«‚Ìƒ[ƒh’l‚Å‚ ‚é */
         disp = (short)((unsigned short)prog_ptr_u[addr] << 8) + (unsigned short)prog_ptr_u[addr + 1];
         sprintf(str, "%d(a%1d)", disp, reg);
         *next_addr = addr + 2;
         break;
-    case 6:  /* ãƒ‘ã‚¿ãƒ¼ãƒ³6:ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ä»˜ãã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿é–“æ¥ */
+    case 6:  /* ƒpƒ^[ƒ“6:ƒCƒ“ƒfƒbƒNƒX•t‚«ƒAƒhƒŒƒXƒŒƒWƒXƒ^ŠÔÚ */
         ext = (short)((unsigned short)prog_ptr_u[addr] << 8) + (unsigned short)prog_ptr_u[addr + 1];
         sprintf(str, "%d(a%1d,%c%1d.%c)", (signed char)(ext & 0xff),
                 reg, ext & 0x8000?'a':'d',
                 (ext & 0x7000) >> 12, ext & 0x0800?'l':'w');
         *next_addr = addr + 2;
         break;
-    case 7:  /* regãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã§æ›´ã«å ´åˆåˆ†ã‘ */
+    case 7:  /* regƒtƒB[ƒ‹ƒh‚ÅX‚Éê‡•ª‚¯ */
         switch(reg)
         {
-        case 0x0: /* ãƒ‘ã‚¿ãƒ¼ãƒ³7:çµ¶å¯¾ã‚·ãƒ§ãƒ¼ãƒˆã‚¢ãƒ‰ãƒ¬ã‚¹ */
+        case 0x0: /* ƒpƒ^[ƒ“7:â‘ÎƒVƒ‡[ƒgƒAƒhƒŒƒX */
             absw = ((unsigned short)prog_ptr_u[addr] << 8)
                  + (unsigned short)prog_ptr_u[addr + 1];
             sprintf(str, "$%06x", absw);
             *next_addr = addr + 2;
             break;
-        case 0x1: /* ãƒ‘ã‚¿ãƒ¼ãƒ³8:çµ¶å¯¾ãƒ­ãƒ³ã‚°ã‚¢ãƒ‰ãƒ¬ã‚¹ */
+        case 0x1: /* ƒpƒ^[ƒ“8:â‘Îƒƒ“ƒOƒAƒhƒŒƒX */
             absl = ((unsigned long)prog_ptr_u[addr] << 24)
                  + ((unsigned long)prog_ptr_u[addr + 1] << 16)
                  + ((unsigned long)prog_ptr_u[addr + 2] << 8)
@@ -417,21 +417,21 @@ static BOOL effective_address(long addr, short mode, short reg, char size,
             sprintf(str, "$%06x", absl);
             *next_addr = addr + 4;
             break;
-        case 0x2: /* ãƒ‘ã‚¿ãƒ¼ãƒ³9:ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ãƒ¼ã‚¹ãƒ¡ãƒ³ãƒˆä»˜ãPCç›¸å¯¾ */
-            /* ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ãƒ¼ã‚¹ãƒ¡ãƒ³ãƒˆã¯ç¬¦å·ä»˜ãã®ãƒ¯ãƒ¼ãƒ‰å€¤ã§ã‚ã‚‹ */
+        case 0x2: /* ƒpƒ^[ƒ“9:ƒfƒBƒXƒvƒŒ[ƒXƒƒ“ƒg•t‚«PC‘Š‘Î */
+            /* ƒfƒBƒXƒvƒŒ[ƒXƒƒ“ƒg‚Í•„†•t‚«‚Ìƒ[ƒh’l‚Å‚ ‚é */
             disp = (short)((unsigned short)prog_ptr_u[addr] << 8) + (unsigned short)prog_ptr_u[addr + 1];
             sprintf(str, "%d(pc)", disp);
             *next_addr = addr + 2;
             break;
-        case 0x3: /* ãƒ‘ã‚¿ãƒ¼ãƒ³10:ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ä»˜ãPCç›¸å¯¾ */
+        case 0x3: /* ƒpƒ^[ƒ“10:ƒCƒ“ƒfƒbƒNƒX•t‚«PC‘Š‘Î */
             ext = (short)((unsigned short)prog_ptr_u[addr] << 8) + (unsigned short)prog_ptr_u[addr + 1];
             sprintf(str, "%d(pc,%c%1d.%c)", (signed char)(ext & 0xff),
                     ext & 0x8000?'a':'d',
                     (ext & 0x7000) >> 12, ext & 0x0800?'l':'w');
             *next_addr = addr + 2;
             break;
-        case 0x4: /* ãƒ‘ã‚¿ãƒ¼ãƒ³11:å³å€¤(ã¾ãŸã¯ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿) */
-            /* ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ã®å ´åˆã¯ã“ã“ã«ã¯ç¾ã‚Œãªã„ */
+        case 0x4: /* ƒpƒ^[ƒ“11:‘¦’l(‚Ü‚½‚ÍƒXƒe[ƒ^ƒXƒŒƒWƒXƒ^) */
+            /* ƒXƒe[ƒ^ƒXƒŒƒWƒXƒ^‚Ìê‡‚Í‚±‚±‚É‚ÍŒ»‚ê‚È‚¢ */
             switch(size)
             {
             case 'b':
@@ -451,12 +451,12 @@ static BOOL effective_address(long addr, short mode, short reg, char size,
                 *next_addr = addr + 4;
                 break;
             default:
-                /* ã“ã“ã«ã¯æ¥ãªã„ã¯ãšã€‚*/
+                /* ‚±‚±‚É‚Í—ˆ‚È‚¢‚Í‚¸B*/
                 goto ErrorReturn;
             }
             sprintf(str, "#$%x", imm);
             break;
-        default: /* å­˜åœ¨ã—ãªã„ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ */
+        default: /* ‘¶İ‚µ‚È‚¢ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh */
             *next_addr = addr;
             goto ErrorReturn;
         }
@@ -474,7 +474,7 @@ static char *disa1_2_3(long addr, unsigned short code, long *next_addr, char *mn
 
     if ((code & 0x1c0) == 0x40)
     {
-        /* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ãŒãƒ‡ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®å ´åˆã¯"movea"ã¨ã™ã‚‹ã€‚*/
+        /* ƒAƒhƒŒƒXƒŒƒWƒXƒ^‚ªƒfƒXƒeƒBƒl[ƒVƒ‡ƒ“‚Ìê‡‚Í"movea"‚Æ‚·‚éB*/
         switch(code & 0xf000)
         {
         case 0x2000:
@@ -529,7 +529,7 @@ static char *disa4(long addr, unsigned short code, long *next_addr, char *mnemon
     int i;
 
     *next_addr = addr + 2;
-    /* ã¾ãšã¯å…¨ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* ‚Ü‚¸‚Í‘SƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğˆ—‚·‚é */
     switch(code)
     {
     case 0x4afc:
@@ -557,7 +557,7 @@ static char *disa4(long addr, unsigned short code, long *next_addr, char *mnemon
         strcat(mnemonic,"rtr");
         goto EndOfFunc;
     }
-    /* æ¬¡ã«ã€13ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* Ÿ‚ÉA13ƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xfff8)
     {
     case 0x4840:
@@ -585,14 +585,14 @@ static char *disa4(long addr, unsigned short code, long *next_addr, char *mnemon
         sprintf(mnemonic, "move    usp,a%1d", code & 0x7);
         goto EndOfFunc;
     }
-    /* æ¬¡ã«ã€12ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* Ÿ‚ÉA12ƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xfff0)
     {
     case 0x4e40:
         sprintf(mnemonic, "trap    #%d", code & 0xf);
         goto EndOfFunc;
     }
-    /* æ¬¡ã«ã€10ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* Ÿ‚ÉA10ƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xffc0)
     {
     case 0x40c0:
@@ -719,17 +719,17 @@ L0:
         strcat(mnemonic, "movem.l ");
         size = 'l';
 L1:
-        /* MOVEMå‘½ä»¤ã®ãƒ¬ã‚¸ã‚¹ã‚¿ãƒªã‚¹ãƒˆã‚’Automatonã§æ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹ */
+        /* MOVEM–½—ß‚ÌƒŒƒWƒXƒ^ƒŠƒXƒg‚ğAutomaton‚Å•¶š—ñ‚É•ÏŠ·‚·‚é */
         regmask = ((unsigned short)prog_ptr_u[addr + 2] << 8)
               + (unsigned short)prog_ptr_u[addr + 3];
-        /* ãƒ‡ãƒ¼ã‚¿ãƒ¬ã‚¸ã‚¹ã‚¿ */
+        /* ƒf[ƒ^ƒŒƒWƒXƒ^ */
         stat = 0;
         for (i = 0; i < 8; i ++)
         {
             unsigned short e;
             if ((code & 0x38) == 0x20)
             {
-                /* ãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã®é †åºãŒé€† */
+                /* ƒvƒŒƒfƒNƒŠƒƒ“ƒgƒ‚[ƒh‚Ì‚ÍƒŒƒWƒXƒ^‚Ì‡˜‚ª‹t */
                 e = regmask & (0x8000 >> i);
             } else
             {
@@ -788,13 +788,13 @@ L1:
         }
         dstat = stat;
         stat = 0;
-        /* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ */
+        /* ƒAƒhƒŒƒXƒŒƒWƒXƒ^ */
         for (i = 8; i < 16; i ++)
         {
             unsigned short e;
             if ((code & 0x38) == 0x20)
             {
-                /* ãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã®é †åºãŒé€† */
+                /* ƒvƒŒƒfƒNƒŠƒƒ“ƒgƒ‚[ƒh‚Ì‚ÍƒŒƒWƒXƒ^‚Ì‡˜‚ª‹t */
                 e = regmask & (0x8000 >> i);
             } else
             {
@@ -863,7 +863,7 @@ L1:
         }
         goto EndOfFunc;
     }
-    /* æœ€å¾Œã«ã€CHKã¨LEAå‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* ÅŒã‚ÉACHK‚ÆLEA–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xf1c0)
     {
     case 0x4180:
@@ -1253,7 +1253,7 @@ L0:
         /* ADD or ADDA */
         strcat(mnemonic, "add");
 L1:
-        /* ADD & SUBå…±é€šå‡¦ç† */
+        /* ADD & SUB‹¤’Êˆ— */
         switch((code & 0x1c0) >> 6)
         {
         case 0:
@@ -1397,7 +1397,7 @@ static char *disac(long addr, unsigned short code, long *next_addr, char *mnemon
     char *p;
     BOOL b;
 
-    /* ã¾ãšã€10ãƒ“ãƒƒãƒˆå›ºå®šã®å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* ‚Ü‚¸A10ƒrƒbƒgŒÅ’è‚Ì–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xf1f8)
     {
     case 0xc100:
@@ -1421,7 +1421,7 @@ static char *disac(long addr, unsigned short code, long *next_addr, char *mnemon
         *next_addr = addr + 2;
         goto EndOfFunc;
     }
-    /* æ®‹ã‚Šã®3å‘½ä»¤ã‚’å‡¦ç†ã™ã‚‹ */
+    /* c‚è‚Ì3–½—ß‚ğˆ—‚·‚é */
     switch(code & 0xf1c0)
     {
     case 0xc0c0:

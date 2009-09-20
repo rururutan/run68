@@ -33,9 +33,9 @@ static	int	Addq( char, char ) ;
 static	int	Subq( char, char ) ;
 
 /*
- ã€€æ©Ÿèƒ½ï¼šï¼•ãƒ©ã‚¤ãƒ³å‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\F‚Tƒ‰ƒCƒ“–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 int	line5( char *pc_ptr )
 {
@@ -58,9 +58,9 @@ int	line5( char *pc_ptr )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šdbccå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fdbcc–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Dbcc( char code1, char code2 )
 {
@@ -88,9 +88,9 @@ static	int	Dbcc( char code1, char code2 )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šsccå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fscc–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Scc( char code1, char code2 )
 {
@@ -105,14 +105,14 @@ static	int	Scc( char code1, char code2 )
 	reg  = (code2 & 0x07) ;
 	ret  = get_cond( (char)(code1 & 0x0F) ) ;
 
-	/* æ¡ä»¶ã‚ˆã‚Šãƒ“ãƒƒãƒˆã‚’æ±ºã‚ã‚‹ */
+	/* ğŒ‚æ‚èƒrƒbƒg‚ğŒˆ‚ß‚é */
 	if ( ret == TRUE ) {
 		src_data = 0xff;
 	} else {
 		src_data = 0;
 	}
 
-	/* ãƒ‡ã‚£ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+	/* ƒfƒBƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰‚¶‚½ˆ— */
 	if (set_data_at_ea(EA_VariableData, mode, reg, S_BYTE, src_data)) {
 		return(TRUE);
 	}
@@ -121,9 +121,9 @@ static	int	Scc( char code1, char code2 )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šaddqå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Faddq–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Addq( char code1, char code2 )
 {
@@ -145,15 +145,15 @@ static	int	Addq( char code1, char code2 )
 
 	if (mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "ä¸æ­£ãªå‘½ä»¤: addq.b #<data>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+			err68a( "•s³‚È–½—ß: addq.b #<data>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else {
-			/* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã¯å¿…ãšãƒ­ãƒ³ã‚°ãƒ¯ãƒ¼ãƒ‰ã«ãªã‚‹ */
+			/* ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Úƒ‚[ƒh‚Ì‚ÌƒAƒNƒZƒXƒTƒCƒY‚Í•K‚¸ƒƒ“ƒOƒ[ƒh‚É‚È‚é */
 			size = S_LONG;
 		}
 	}
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -164,14 +164,14 @@ static	int	Addq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ãƒ¯ãƒ¼ã‚¯ãƒ¬ã‚¸ã‚¹ã‚¿ã«ã‚³ãƒ”ãƒ¼ */
+	/* ƒ[ƒNƒŒƒWƒXƒ^‚ÉƒRƒs[ */
 	rd[8] = dest_data;
 
-	/* Addæ¼”ç®— */
+	/* Add‰‰Z */
 	//rd [ 8 ] = add_rd( 8, (long)src_data, size ) ;
 	rd [ 8 ] = add_long((long)src_data, dest_data, size ) ;
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -182,9 +182,9 @@ static	int	Addq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	// ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ã®å ´åˆã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã¯å¤‰åŒ–ã—ãªã„
+	// ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Ú‚Ìê‡‚ÍƒŒƒWƒXƒ^‚Í•Ï‰»‚µ‚È‚¢
 	if (mode != EA_AD) {
-		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 		add_conditions((long)src_data, dest_data, rd[8], size, 1);
 	}
 
@@ -192,9 +192,9 @@ static	int	Addq( char code1, char code2 )
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šsubqå‘½ä»¤ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\Fsubq–½—ß‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 static	int	Subq( char code1, char code2 )
 {
@@ -215,15 +215,15 @@ static	int	Subq( char code1, char code2 )
 
 	if (mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "ä¸æ­£ãªå‘½ä»¤: subq.b #<data>, An ã‚’å®Ÿè¡Œã—ã‚ˆã†ã¨ã—ã¾ã—ãŸã€‚", __FILE__, __LINE__ ) ;
+			err68a( "•s³‚È–½—ß: subq.b #<data>, An ‚ğÀs‚µ‚æ‚¤‚Æ‚µ‚Ü‚µ‚½B", __FILE__, __LINE__ ) ;
 			return(TRUE);
 		} else {
-			/* ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ãƒ¢ãƒ¼ãƒ‰ã®æ™‚ã®ã‚¢ã‚¯ã‚»ã‚¹ã‚µã‚¤ã‚ºã¯å¿…ãšãƒ­ãƒ³ã‚°ãƒ¯ãƒ¼ãƒ‰ã«ãªã‚‹ */
+			/* ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Úƒ‚[ƒh‚Ì‚ÌƒAƒNƒZƒXƒTƒCƒY‚Í•K‚¸ƒƒ“ƒOƒ[ƒh‚É‚È‚é */
 			size = S_LONG;
 		}
 	}
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒã‚¹ãƒˆã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®å–å¾— */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒ|ƒXƒgƒCƒ“ƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìæ“¾ */
 	if (mode == EA_AIPI) {
 		work_mode = EA_AI;
 	} else {
@@ -234,14 +234,14 @@ static	int	Subq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	/* ãƒ¯ãƒ¼ã‚¯ãƒ¬ã‚¸ã‚¹ã‚¿ã«ã‚³ãƒ”ãƒ¼ */
+	/* ƒ[ƒNƒŒƒWƒXƒ^‚ÉƒRƒs[ */
 	rd[8] = dest_data;
 
-	/* Addæ¼”ç®— */
+	/* Add‰‰Z */
 	//rd [ 8 ] = sub_rd( 8, (long)src_data, size ) ;
 	rd [ 8 ] = sub_long((long)src_data, dest_data, size ) ;
 
-	/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒãƒ—ãƒ¬ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆé–“æ¥ã®å ´åˆã¯é–“æ¥ã§ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š */
+	/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªƒvƒŒƒfƒNƒŠƒƒ“ƒgŠÔÚ‚Ìê‡‚ÍŠÔÚ‚Åƒf[ƒ^‚Ìİ’è */
 	if (mode == EA_AIPD) {
 		work_mode = EA_AI;
 	} else {
@@ -252,9 +252,9 @@ static	int	Subq( char code1, char code2 )
 		return(TRUE);
 	}
 
-	// ã‚¢ãƒ‰ãƒ¬ã‚¹ãƒ¬ã‚¸ã‚¹ã‚¿ç›´æ¥ã®å ´åˆã¯ãƒ¬ã‚¸ã‚¹ã‚¿ã¯å¤‰åŒ–ã—ãªã„
+	// ƒAƒhƒŒƒXƒŒƒWƒXƒ^’¼Ú‚Ìê‡‚ÍƒŒƒWƒXƒ^‚Í•Ï‰»‚µ‚È‚¢
 	if (mode != EA_AD) {
-		/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+		/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 		sub_conditions((long)src_data, dest_data, rd[8], size, 1);
 	}
 

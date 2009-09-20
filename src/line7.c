@@ -25,9 +25,9 @@
 #include "run68.h"
 
 /*
- ã€€æ©Ÿèƒ½ï¼šï¼—ãƒ©ã‚¤ãƒ³å‘½ä»¤(moveq)ã‚’å®Ÿè¡Œã™ã‚‹
- æˆ»ã‚Šå€¤ï¼š TRUE = å®Ÿè¡Œçµ‚äº†
-         FALSE = å®Ÿè¡Œç¶™ç¶š
+ @‹@”\F‚Vƒ‰ƒCƒ“–½—ß(moveq)‚ğÀs‚·‚é
+ –ß‚è’lF TRUE = ÀsI—¹
+         FALSE = ÀsŒp‘±
 */
 int	line7( char *pc_ptr )
 {
@@ -38,7 +38,7 @@ int	line7( char *pc_ptr )
 	code = *(pc_ptr++) ;
 	pc += 2 ;
 	if ( (code & 0x01) != 0 ) {
-		err68a( "ãŠã‹ã—ãªå‘½ä»¤ã‚’å®Ÿè¡Œã—ã¾ã—ãŸ", __FILE__, __LINE__ ) ;
+		err68a( "‚¨‚©‚µ‚È–½—ß‚ğÀs‚µ‚Ü‚µ‚½", __FILE__, __LINE__ ) ;
 		return( TRUE ) ;
 	}
 	reg = ((code >> 1) & 0x07) ;
@@ -49,7 +49,7 @@ int	line7( char *pc_ptr )
 		rd [ reg ] = data ;
 	}
 
-	/* ãƒ•ãƒ©ã‚°ã®å¤‰åŒ– */
+	/* ƒtƒ‰ƒO‚Ì•Ï‰» */
 	general_conditions(rd[reg], S_LONG);
 
 #ifdef	TRACE

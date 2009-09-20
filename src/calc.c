@@ -25,8 +25,8 @@
 // long sub_long(long src, long dest, int size);
 
 /*
- ã€€æ©Ÿèƒ½ï¼šdestã«srcã‚’sizeã‚µã‚¤ã‚ºã§åŠ ç®—ã™ã‚‹
- æˆ»ã‚Šå€¤ï¼šç­”ãˆ
+ @‹@”\Fdest‚Ésrc‚ğsizeƒTƒCƒY‚Å‰ÁZ‚·‚é
+ –ß‚è’lF“š‚¦
 */
 long add_long(long src, long dest, int size) {
 
@@ -48,8 +48,8 @@ long add_long(long src, long dest, int size) {
 }
 
 /*
- ã€€æ©Ÿèƒ½ï¼šdestã‹ã‚‰srcã‚’sizeã‚µã‚¤ã‚ºã§æ¸›ç®—ã™ã‚‹
- æˆ»ã‚Šå€¤ï¼šç­”ãˆ
+ @‹@”\Fdest‚©‚çsrc‚ğsizeƒTƒCƒY‚ÅŒ¸Z‚·‚é
+ –ß‚è’lF“š‚¦
 */
 long sub_long(long src, long dest, int size) {
 

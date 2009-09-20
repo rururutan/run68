@@ -33,22 +33,22 @@
 #include "run68.h"
 
 /*
- * ã€èª¬æ˜Žã€‘
- *   å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã™ã‚‹ã€‚
+ * yà–¾z
+ *   ŽÀŒøƒAƒhƒŒƒX‚ðŽæ“¾‚·‚éB
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘Ž®z
  *   retcode = get_ea(save_pc, AceptAdrMode, mode, reg, &data);
  *
- * ã€å¼•æ•°ã€‘
- *   long save_pc;      <in>  PCç›¸å¯¾æ™‚ã®åŸºæº–ã¨ãªã‚‹PCå€¤
- *   int  AceptAdrMode; <in>  ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ MD_??
- *   int  mode;         <in>  ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ MD_??
- *   int  reg;          <in>  ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·ã¾ãŸã¯ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã€€MR_??
- *   long *data;        <out> å–å¾—ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹å ´æ‰€ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+ * yˆø”z
+ *   long save_pc;      <in>  PC‘Š‘ÎŽž‚ÌŠî€‚Æ‚È‚éPC’l
+ *   int  AceptAdrMode; <in>  ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh MD_??
+ *   int  mode;         <in>  ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh MD_??
+ *   int  reg;          <in>  ƒŒƒWƒXƒ^”Ô†‚Ü‚½‚ÍƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh@MR_??
+ *   long *data;        <out> Žæ“¾‚·‚éƒf[ƒ^‚ðŠi”[‚·‚éêŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^
  *
- * ã€è¿”å€¤ã€‘ 
- *   TURE:  ã‚¨ãƒ©ãƒ¼
- *   FALSE: æ­£å¸¸
+ * y•Ô’lz 
+ *   TURE:  ƒGƒ‰[
+ *   FALSE: ³í
  *
  */
 
@@ -63,19 +63,19 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 //	save_pc = pc;
 	retcode = FALSE ;
 
-	/* æ“ä½œã—ã‚„ã™ã„ã‚ˆã†ã«ãƒ¢ãƒ¼ãƒ‰ã‚’çµ±åˆ */
+	/* ‘€ì‚µ‚â‚·‚¢‚æ‚¤‚Éƒ‚[ƒh‚ð“‡ */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
 
-	/* AceptAdrMode ã§è¨±ã•ã‚ŒãŸã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã§ãªã‘ã‚Œã°ã‚¨ãƒ©ãƒ¼ */
+	/* AceptAdrMode ‚Å‹–‚³‚ê‚½ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚Å‚È‚¯‚ê‚ÎƒGƒ‰[ */
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+		err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;
 
 	} else {
 
-		/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+		/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰ž‚¶‚½ˆ— */
 		switch (gmode) {
 			case EA_AI:
 				*data = ra [ reg ] ;
@@ -106,7 +106,7 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 				*data = save_pc + idx ;
 				break ;
 			default:
-				err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+				err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 				retcode = TRUE ;
 		}
 	}
@@ -116,21 +116,21 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 /* Get Data at Effective Address */
 
 /*
- * ã€èª¬æ˜Žã€‘
- *   å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã§ç¤ºã•ã‚ŒãŸå€¤ã‚’å–å¾—ã™ã‚‹ã€‚
+ * yà–¾z
+ *   ŽÀŒøƒAƒhƒŒƒX‚ÅŽ¦‚³‚ê‚½’l‚ðŽæ“¾‚·‚éB
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘Ž®z
  *   retcode = get_data_at_ea(AceptAdrMode, mode, reg, &data);
  *
- * ã€å¼•æ•°ã€‘
- *   int AceptAdrMode; <in>  å‡¦ç†å¯èƒ½ãªã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ç¾¤ EA_????*
- *   int mode;         <in>  ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ MD_??
- *   int reg;          <in>  ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·ã¾ãŸã¯ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã€€MR_??
- *   long *data;       <out> å–å¾—ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹å ´æ‰€ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+ * yˆø”z
+ *   int AceptAdrMode; <in>  ˆ—‰Â”\‚ÈƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒhŒQ EA_????*
+ *   int mode;         <in>  ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh MD_??
+ *   int reg;          <in>  ƒŒƒWƒXƒ^”Ô†‚Ü‚½‚ÍƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh@MR_??
+ *   long *data;       <out> Žæ“¾‚·‚éƒf[ƒ^‚ðŠi”[‚·‚éêŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^
  *
- * ã€è¿”å€¤ã€‘ 
- *   TURE:  ã‚¨ãƒ©ãƒ¼
- *   FALSE: æ­£å¸¸
+ * y•Ô’lz 
+ *   TURE:  ƒGƒ‰[
+ *   FALSE: ³í
  *
  */
 
@@ -145,19 +145,19 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 	save_pc = pc;
 	retcode = FALSE ;
 
-	/* æ“ä½œã—ã‚„ã™ã„ã‚ˆã†ã«ãƒ¢ãƒ¼ãƒ‰ã‚’çµ±åˆ */
+	/* ‘€ì‚µ‚â‚·‚¢‚æ‚¤‚Éƒ‚[ƒh‚ð“‡ */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
 
-	/* AceptAdrMode ã§è¨±ã•ã‚ŒãŸã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã§ãªã‘ã‚Œã°ã‚¨ãƒ©ãƒ¼ */
+	/* AceptAdrMode ‚Å‹–‚³‚ê‚½ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚Å‚È‚¯‚ê‚ÎƒGƒ‰[ */
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+		err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;
 
 	} else {
 
-		/* ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+		/* ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰ž‚¶‚½ˆ— */
 		switch (gmode) {
 			case EA_DD:
 				switch( size ) {
@@ -191,7 +191,7 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 			case EA_AIPI:
 				*data = mem_get( ra [ reg ], (char)size ) ;
 				if ( reg == 7 && size == S_BYTE ) {
-					/* ã‚·ã‚¹ãƒ†ãƒ ã‚¹ã‚¿ãƒƒã‚¯ã®ãƒã‚¤ãƒ³ã‚¿ã¯å¸¸ã«å¶æ•° */
+					/* ƒVƒXƒeƒ€ƒXƒ^ƒbƒN‚Ìƒ|ƒCƒ“ƒ^‚Íí‚É‹ô” */
 					inc_ra( (char)reg, (char)S_WORD ) ;
 				} else {
 					inc_ra( (char)reg, (char)size ) ;
@@ -199,7 +199,7 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 				break ;
 			case EA_AIPD:
 				if ( reg == 7 && size == S_BYTE ) {
-					/* ã‚·ã‚¹ãƒ†ãƒ ã‚¹ã‚¿ãƒƒã‚¯ã®ãƒã‚¤ãƒ³ã‚¿ã¯å¸¸ã«å¶æ•° */
+					/* ƒVƒXƒeƒ€ƒXƒ^ƒbƒN‚Ìƒ|ƒCƒ“ƒ^‚Íí‚É‹ô” */
 					dec_ra( (char)reg, (char)S_WORD ) ;
 				} else {
 					dec_ra( (char)reg, (char)size ) ;
@@ -236,7 +236,7 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 				*data = imi_get( (char)size ) ;
 				break ;
 			default:
-				err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+				err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 				retcode = TRUE ;
 		}
 	}
@@ -244,21 +244,21 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 }
 
 /*
- * ã€èª¬æ˜Žã€‘
- *   ä¸Žãˆã‚‰ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã§ç¤ºã•ã‚ŒãŸå ´æ‰€ã«è¨­å®šã™ã‚‹ã€‚
+ * yà–¾z
+ *   —^‚¦‚ç‚ê‚½ƒf[ƒ^‚ðŽÀŒøƒAƒhƒŒƒX‚ÅŽ¦‚³‚ê‚½êŠ‚ÉÝ’è‚·‚éB
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘Ž®z
  *   retcode = set_data_at_ea(AceptAdrMode, mode, reg, data);
  *
- * ã€å¼•æ•°ã€‘
- *   int AceptAdrMode; <in>  å‡¦ç†å¯èƒ½ãªã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ç¾¤ EA_????*
- *   int mode;         <in>  ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ MD_??
- *   int reg;          <in>  ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·ã¾ãŸã¯ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã€€MR_??
- *   long data;        <in>  è¨­å®šã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+ * yˆø”z
+ *   int AceptAdrMode; <in>  ˆ—‰Â”\‚ÈƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒhŒQ EA_????*
+ *   int mode;         <in>  ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh MD_??
+ *   int reg;          <in>  ƒŒƒWƒXƒ^”Ô†‚Ü‚½‚ÍƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh@MR_??
+ *   long data;        <in>  Ý’è‚·‚éƒf[ƒ^
  *
- * ã€è¿”å€¤ã€‘ 
- *   TURE:  ã‚¨ãƒ©ãƒ¼
- *   FALSE: æ­£å¸¸
+ * y•Ô’lz 
+ *   TURE:  ƒGƒ‰[
+ *   FALSE: ³í
  *
  */
 
@@ -273,19 +273,19 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 	save_pc = pc;
 	retcode = FALSE ;
 
-	/* æ“ä½œã—ã‚„ã™ã„ã‚ˆã†ã«ãƒ¢ãƒ¼ãƒ‰ã‚’çµ±åˆ */
+	/* ‘€ì‚µ‚â‚·‚¢‚æ‚¤‚Éƒ‚[ƒh‚ð“‡ */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
 
-	/* AceptAdrMode ã§è¨±ã•ã‚ŒãŸã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã§ãªã‘ã‚Œã°ã‚¨ãƒ©ãƒ¼ */
+	/* AceptAdrMode ‚Å‹–‚³‚ê‚½ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚Å‚È‚¯‚ê‚ÎƒGƒ‰[ */
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+		err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 		retcode = TRUE ;
 
 	} else {
 
-		/* ãƒ‡ã‚£ã‚¹ãƒ†ã‚£ãƒãƒ¼ã‚·ãƒ§ãƒ³ã®ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã«å¿œã˜ãŸå‡¦ç† */
+		/* ƒfƒBƒXƒeƒBƒl[ƒVƒ‡ƒ“‚ÌƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚É‰ž‚¶‚½ˆ— */
 		switch( gmode ) {
 			case EA_DD:
 				switch( size ) {
@@ -323,7 +323,7 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 			case EA_AIPI:
 				mem_set( ra [ reg ], data, (char)size ) ;
 				if ( reg == 7 && size == S_BYTE ) {
-					/* ã‚·ã‚¹ãƒ†ãƒ ã‚¹ã‚¿ãƒƒã‚¯ã®ãƒã‚¤ãƒ³ã‚¿ã¯å¸¸ã«å¶æ•° */
+					/* ƒVƒXƒeƒ€ƒXƒ^ƒbƒN‚Ìƒ|ƒCƒ“ƒ^‚Íí‚É‹ô” */
 					inc_ra( (char)reg, (char)S_WORD ) ;
 				} else {
 					inc_ra ( (char)reg , (char)size ) ;
@@ -331,7 +331,7 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 				break ;
 			case EA_AIPD:
 				if ( reg == 7 && size == S_BYTE ) {
-					/* ã‚·ã‚¹ãƒ†ãƒ ã‚¹ã‚¿ãƒƒã‚¯ã®ãƒã‚¤ãƒ³ã‚¿ã¯å¸¸ã«å¶æ•° */
+					/* ƒVƒXƒeƒ€ƒXƒ^ƒbƒN‚Ìƒ|ƒCƒ“ƒ^‚Íí‚É‹ô” */
 					dec_ra( (char)reg, (char)S_WORD ) ;
 				} else {
 					dec_ra ( (char)reg , (char)size ) ;
@@ -366,7 +366,7 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 				mem_set( save_pc + idx, data, (char)size ) ;
 				break ;
 			default:
-				err68a( "ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ãŒç•°å¸¸ã§ã™ã€‚", __FILE__, __LINE__ ) ;
+				err68a( "ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh‚ªˆÙí‚Å‚·B", __FILE__, __LINE__ ) ;
 				retcode = TRUE ;
 		}
 	}
@@ -375,22 +375,22 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 }
 
 /*
- * ã€èª¬æ˜Žã€‘
- *   å®ŸåŠ¹ã‚¢ãƒ‰ãƒ¬ã‚¹ã§ç¤ºã•ã‚ŒãŸå€¤ã‚’å–å¾—ã™ã‚‹ã€‚
- *   ã“ã®æ™‚ã€PCã‚’ç§»å‹•ã•ã›ãªã„ã€‚
+ * yà–¾z
+ *   ŽÀŒøƒAƒhƒŒƒX‚ÅŽ¦‚³‚ê‚½’l‚ðŽæ“¾‚·‚éB
+ *   ‚±‚ÌŽžAPC‚ðˆÚ“®‚³‚¹‚È‚¢B
  *
- * ã€é–¢æ•°æ›¸å¼ã€‘
+ * yŠÖ”‘Ž®z
  *   retcode = get_data_at_ea_noinc(AceptAdrMode, mode, reg, &data);
  *
- * ã€å¼•æ•°ã€‘
- *   int AceptAdrMode; <in>  å‡¦ç†å¯èƒ½ãªã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ç¾¤ EA_????*
- *   int mode;         <in>  ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ MD_??
- *   int reg;          <in>  ãƒ¬ã‚¸ã‚¹ã‚¿ç•ªå·ã¾ãŸã¯ã‚¢ãƒ‰ãƒ¬ãƒƒã‚·ãƒ³ã‚°ãƒ¢ãƒ¼ãƒ‰ã€€MR_??
- *   long *data;       <out> å–å¾—ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹å ´æ‰€ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+ * yˆø”z
+ *   int AceptAdrMode; <in>  ˆ—‰Â”\‚ÈƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒhŒQ EA_????*
+ *   int mode;         <in>  ƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh MD_??
+ *   int reg;          <in>  ƒŒƒWƒXƒ^”Ô†‚Ü‚½‚ÍƒAƒhƒŒƒbƒVƒ“ƒOƒ‚[ƒh@MR_??
+ *   long *data;       <out> Žæ“¾‚·‚éƒf[ƒ^‚ðŠi”[‚·‚éêŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^
  *
- * ã€è¿”å€¤ã€‘ 
- *   TURE:  ã‚¨ãƒ©ãƒ¼
- *   FALSE: æ­£å¸¸
+ * y•Ô’lz 
+ *   TURE:  ƒGƒ‰[
+ *   FALSE: ³í
  *
  */
 
