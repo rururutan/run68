@@ -137,7 +137,7 @@ int    dos_call( UChar code )
     long    len ;
     short    srt ;
     short    fhdl ;
-    long    c ;
+    long    c = 0;
     int    i ;
     if (func_trace_f) {
         printf( "$%06x FUNC(%02X):", pc-2, code) ;
@@ -1333,6 +1333,7 @@ static    long    Dskfre( short drv, long buf )
         dspace.sectors_per_cluster *
         dspace.bytes_per_sector;
 #endif
+    return disksize;
 }
 
 /*
