@@ -1772,7 +1772,7 @@ static    long    Read( short hdl, long buf, long len )
 static    long    Write( short hdl, long buf, long len )
 {
     char    *write_buf ;
-    long    write_len ;
+    long    write_len = 0;
     unsigned len2 ;
 
     if ( finfo [ hdl ].fh == NULL )

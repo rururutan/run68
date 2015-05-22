@@ -445,7 +445,7 @@ static void clear_breakpoint()
 
 static void display_history(int argc, char **argv)
 {
-    int n;
+    int n = 0;
     if (argc == 1)
     {
         n = 10;
@@ -533,7 +533,7 @@ static void display_list(int argc, char **argv)
 
 static unsigned long get_stepcount(int argc, char **argv)
 {
-    unsigned long count;
+    unsigned long count = 0;
     if (argc == 1)
     {
         return 0;

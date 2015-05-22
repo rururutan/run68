@@ -349,14 +349,15 @@ void	text_color( short c )
 }
 
 /*
- 　機能：カーソル位置を得る
+   機能：カーソル位置を得る
  戻り値：カーソル位置
 */
 long	get_locate()
 {
-	UShort	x, y ;
+	UShort x = 0, y = 0;
 
 #if defined(WIN32)
+	// @Todo
 #elif defined(DOSX)
 	union	REGS inreg, outreg ;
 	short	save_s ;
@@ -373,9 +374,6 @@ long	get_locate()
 	mem_set( 0x976, y, S_WORD ) ;
 	if ( save_s == 0 )
 		SR_S_OFF() ;
-#else
-	x = 0 ;
-	y = 0 ;
 #endif
 
 	return( (x << 16) | y ) ;
@@ -507,7 +505,7 @@ void OPBuf_display(n)
         }
     }
 }
- 
+
 /*
  　機能：PCの指すメモリからインデックスレジスタ＋８ビットディスプレースメント
  　　　　の値を得る

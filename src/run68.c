@@ -455,7 +455,7 @@ static int exec_trap(BOOL *restart)
 		}
         if (trap_pc != 0 && pc == trap_pc)
         {
-            fprintf(stderr, "(%s) trapped:MPUがアドレス$%06Xの命令を実行しました。\n", pc);
+            fprintf(stderr, "(run68) trapped:MPUがアドレス$%06Xの命令を実行しました。\n", pc);
             debug_on = TRUE;
             if (stepcount != 0)
             {
@@ -546,7 +546,7 @@ static int exec_notrap(BOOL *restart)
 
     *restart = FALSE;
     OPBuf_clear();
- 	do {
+	do {
         BOOL ecode;
         /* 実行した命令の情報を保存しておく */
         OP_info.pc    = 0;
@@ -642,10 +642,10 @@ EndOfFunc:
 }
 
 /*
- 　機能：割り込みベクタテーブルを作成する
+   機能：割り込みベクタテーブルを作成する
  戻り値：なし
 */
-void	trap_table_make()
+static void trap_table_make()
 {
 	int	i ;
 

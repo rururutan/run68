@@ -91,8 +91,10 @@ void	read_ini(char *path, char *prog)
 			break ;
 	}
 	i ++ ;
-	if ( strlen( &(prog [ i ]) ) > 22 )
-		return ;
+	if ( strlen( &(prog [ i ]) ) > 22 ) {
+		fclose(fp);
+		return;
+	}
 	sprintf( sec_name, "[%s]\n", &(prog [ i ]) ) ;
 	strlwr( sec_name ) ;
 	/* “à—e‚ð’²‚×‚é */
