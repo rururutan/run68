@@ -21,14 +21,14 @@ SRCS =	calc.c doscall.c exec.c getini.c iocscall.c key.c \
 	line6.c line7.c line8.c line9.c lineb.c linec.c \
 	lined.c linee.c linef.c \
 	load.c mem.c run68.c debugger.c eaaccess.c disassemble.c \
-	conditions.c
+	conditions.c ansicolor-w32.c
 
 OBJS =	calc.o doscall.o exec.o getini.o iocscall.o key.o \
 	line0.o line2.o line4.o line5.o \
 	line6.o line7.o line8.o line9.o lineb.o linec.o \
 	lined.o linee.o linef.o \
 	load.o mem.o run68.o debugger.o eaaccess.o disassemble.o \
-	conditions.o
+	conditions.o ansicolor-w32.o
 
 CC = gcc
 

@@ -24,22 +24,21 @@ SRCS =	calc.c doscall.c exec.c getini.c iocscall.c key.c \
 	line6.c line7.c line8.c line9.c lineb.c linec.c \
 	lined.c linee.c linef.c \
 	load.c mem.c run68.c debugger.c eaaccess.c disassemble.c \
-	conditions.c
+	conditions.c ansicolor-w32.c
 
 OBJS =	calc.obj doscall.obj exec.obj getini.obj iocscall.obj key.obj \
 	line0.obj line2.obj line4.obj line5.obj \
 	line6.obj line7.obj line8.obj line9.obj lineb.obj linec.obj \
 	lined.obj linee.obj linef.obj \
 	load.obj mem.obj run68.obj debugger.obj eaaccess.obj disassemble.obj \
-	conditions.obj
+	conditions.obj ansicolor-w32.obj
 
 #CC = gcc
 RM = del
 
-#LDFLAGS = -lc -lcygwin -lm -lg -lmsvcrt40
 LDFLAGS = 
 DEFS = -DFNC_TRACE -DENV_FROM_INI
-CFLAGS = /W4 /Ot /c $(DEFS)
+CFLAGS = /W2 /Ot /c $(DEFS)
 RELEASE_DIR = ../Release
 ARCHIVE_DIR = ../archives
 

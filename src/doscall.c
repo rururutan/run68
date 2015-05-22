@@ -70,6 +70,8 @@
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "ansicolor-w32.h"
+#include <io.h>
 
 static long Gets( long );
 static long Kflush( short );
@@ -139,6 +141,9 @@ int dos_call( UChar code )
     short    fhdl;
     long c = 0;
     int    i;
+#if defined(WIN32)
+    DWORD st;
+#endif
     if (func_trace_f) {
         printf( "$%06x FUNC(%02X):", pc-2, code);
     }
@@ -169,11 +174,14 @@ int dos_call( UChar code )
             printf("%-10s char='%c'\n", "PUTCHAR", c);
     }
 #if defined(WIN32)
-            {
-            long nwritten;
-            /* Win32API */
-            WriteFile( finfo[ 1 ].fh, &c, 1,
-                       (LPDWORD)&nwritten, NULL);
+            if (GetConsoleMode(finfo[1].fh, &st) != 0) {
+                 // 非リダイレクト
+                 WriteW32( 1, finfo[ 1 ].fh, data_ptr, 1 );
+            } else {
+                long nwritten;
+                /* Win32API */
+                WriteFile( finfo[ 1 ].fh, &c, 1,
+                           (LPDWORD)&nwritten, NULL);
             }
 #elif defined(DOSX)
             _dos_write( fileno(finfo[ 1 ].fh), &c, 1, &drv );
@@ -254,7 +262,9 @@ int dos_call( UChar code )
             printf("%-10s str=%s\n", "PRINT", data_ptr);
     }
 #if defined(WIN32)
-            {
+            if (GetConsoleMode(finfo[1].fh, &st) != 0) {
+                 WriteW32( 1, finfo[ 1 ].fh, data_ptr, len );
+            } else {
             long nwritten;
             /* Win32API */
             WriteFile( finfo[ 1 ].fh, data_ptr, len,
@@ -463,14 +473,24 @@ int dos_call( UChar code )
             printf("%-10s file_no=%d char=0x%02X\n", "FPUTC", fhdl, srt);
     }
 #if defined(WIN32)
-            if (WriteFile(finfo [ fhdl ].fh, &srt,
-                1, (LPDWORD)&len, NULL) == FALSE)
+            if (GetConsoleMode(finfo[fhdl].fh, &st) != 0 &&
+                (fhdl == 1 || fhdl == 2) ) {
+                // 非リダイレクトで標準出力か標準エラー出力
+                 WriteW32( fhdl, finfo[fhdl].fh, &srt, 1 );
+                rd [ 0 ] = 0;
+            } else {
+                if (WriteFile(finfo [ fhdl ].fh, &srt,
+                    1, (LPDWORD)&len, NULL) == FALSE)
+                    rd [ 0 ] = 0;
+                else
+                    rd [ 0 ] = 1;
+            }
 #else
             if ( fputc( srt, finfo [ fhdl ].fh ) == EOF )
-#endif
                 rd [ 0 ] = 0;
             else
                 rd [ 0 ] = 1;
+#endif
             break;
         case 0x1E:    /* FPUTS */
             data = mem_get( stack_adr, S_LONG );
@@ -480,8 +500,14 @@ int dos_call( UChar code )
             printf("%-10s file_no=%d str=\"%s\"\n", "FPUTS", fhdl, data_ptr);
     }
 #if defined(WIN32)
-            WriteFile(finfo [ fhdl ].fh, data_ptr,
+            if (GetConsoleMode(finfo[1].fh, &st) != 0 &&
+                (fhdl == 1 || fhdl == 2) ) {
+                // 非リダイレクトで標準出力か標準エラー出力
+                len = WriteW32( fhdl, finfo [ fhdl ].fh, data_ptr, strlen(data_ptr) );
+            } else {
+                WriteFile(finfo [ fhdl ].fh, data_ptr,
                 strlen(data_ptr), (LPDWORD)&len, NULL);
+            }
             rd[0] = len;
 #else
             if ( fprintf( finfo [ fhdl ].fh, "%s", data_ptr ) == -1 )
@@ -1685,8 +1711,8 @@ static long Fgets( long adr, short hdl )
 {
     char    buf [ 257 ];
     char    *p;
-    Ulong len;
-    UChar    max;
+    size_t  len;
+    UChar   max;
 
     if ( finfo [ hdl ].fh == NULL )
         return( -6 );    /* オープンされていない */
