@@ -114,16 +114,16 @@ void	read_ini(char *path, char *prog)
 		/* キーワードを見る */
 		if (flag == TRUE)
         {
-    		if ( stricmp( buf, "envlower\n" ) == 0 )
+			if ( stricmp( buf, "envlower\n" ) == 0 )
 	    		ini_info.env_lower = TRUE;
-		    else if ( stricmp( buf, "trapemulate\n" ) == 0 )
+			else if ( stricmp( buf, "trapemulate\n" ) == 0 )
 			    ini_info.trap_emulate = TRUE;
-    		else if ( stricmp( buf, "pc98\n" ) == 0 )
+			else if ( stricmp( buf, "pc98\n" ) == 0 )
 	    		ini_info.pc98_key = TRUE;
-		    else if ( stricmp( buf, "iothrough\n" ) == 0 )
+			else if ( stricmp( buf, "iothrough\n" ) == 0 )
 			    ini_info.io_through = TRUE;
-    		else if ( strncmp( buf, "mainmemory=", 11 ) == 0 ) {
-	    		if (strlen(buf) < 13 || 14 < strlen(buf))
+			else if ( strncmp( buf, "mainmemory=", 11 ) == 0 ) {
+				if (strlen(buf) < 13 || 14 < strlen(buf))
 		    		continue;
                 if ('0' <= buf[11] && buf[11] <= '9')
                 {
@@ -139,7 +139,7 @@ void	read_ini(char *path, char *prog)
                 }
 			    if ( 1 <= c && c <= 12 )
 				    mem_aloc = 0x100000 * c;
-    		}
+			}
         }
     }
 	fclose( fp );
@@ -184,7 +184,7 @@ void	readenv_from_ini(char *path)
 			continue;
 		}
 
-    	if (env_flag == TRUE)
+		if (env_flag == TRUE)
         {
             /* 環境変数はiniファイルに記述する。*/
             /* bufに格納された文字列の書式を確認すべきである。*/
@@ -198,15 +198,15 @@ void	readenv_from_ini(char *path)
                     read_ptr = buf;
         			while( *mem_ptr != '\0' && *mem_ptr != '=' )
 		        		*(mem_ptr ++) = *(read_ptr ++);
-        	    }
+				}
 #ifdef	TRACE
-	        	mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len;
-       			printf( "env: %s\n", mem_ptr );
+				mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len;
+				printf( "env: %s\n", mem_ptr );
 #endif
        			env_len += strlen(buf) + 1;
 	        }
         }
     }
-   	mem_set( ra [ 3 ] + 4 + env_len, 0, S_BYTE );
+	mem_set( ra [ 3 ] + 4 + env_len, 0, S_BYTE );
 	fclose( fp );
 }

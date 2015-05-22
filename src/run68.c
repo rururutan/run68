@@ -100,7 +100,7 @@ jmp_buf jmp_when_abort;
  /* 命令実行情報(グローバル変数) */
 EXEC_INSTRUCTION_INFO OP_info;
 
-int	main( int argc, char *argv[], char *envp[] )
+int main( int argc, char *argv[], char *envp[] )
 {
 	char	fname [ 89 ];		/* 実行ファイル名 */
 	FILE	*fp;			/* 実行ファイルのファイルポインタ */
@@ -689,7 +689,7 @@ static void trap_table_make()
  　機能：終了処理をする
  戻り値：なし
 */
-void	term( int flag )
+void term( int flag )
 {
 	free( (void *)prog_ptr );
 	if ( flag == FALSE ) {

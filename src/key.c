@@ -35,7 +35,7 @@ static	void	put_fnckey2( int, char * );
  　機能：ファンクションキーに割り当てた文字列を得る
  戻り値：なし
 */
-void	get_fnckey( int no, char *p )
+void get_fnckey( int no, char *p )
 {
 	if ( no == 0 ) {
 		memcpy( p, fnc_key1, 20 * 32 );
@@ -51,7 +51,7 @@ void	get_fnckey( int no, char *p )
  　機能：ファンクションキーに文字列を割り当てる
  戻り値：なし
 */
-void	put_fnckey( int no, char *p )
+void put_fnckey( int no, char *p )
 {
 	int	i;
 
@@ -71,7 +71,7 @@ void	put_fnckey( int no, char *p )
  　機能：個々のファンクションキーに文字列を割り当てる(その1)
  戻り値：なし
 */
-void	put_fnckey1( int no, char *p )
+void put_fnckey1( int no, char *p )
 {
 	int	kno;
 	int	i;
@@ -102,7 +102,7 @@ void	put_fnckey1( int no, char *p )
  　機能：個々のファンクションキーに文字列を割り当てる(その2)
  戻り値：なし
 */
-void	put_fnckey2( int no, char *p )
+void put_fnckey2( int no, char *p )
 {
 	int	kno;
 	int	i;
@@ -161,7 +161,7 @@ void	put_fnckey2( int no, char *p )
  　機能：キーコードを変換する
  戻り値：変換後のキーコード
 */
-UChar	cnv_key98( UChar c )
+UChar cnv_key98( UChar c )
 {
 	switch( c ) {
 		case 0x0A:	/* ↓ */

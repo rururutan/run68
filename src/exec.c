@@ -53,7 +53,7 @@ extern char *disassemble(long addr, long* next_addr);
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
-int	prog_exec()
+int prog_exec()
 {
 	char	*pc_ptr;
 	long	adr;
@@ -119,7 +119,7 @@ int	prog_exec()
  戻り値： TRUE = 成立
  　　　　FALSE = 不成立
 */
-int	get_cond( char cond )
+int get_cond( char cond )
 {
 	switch( cond ) {
 		case 0x00:	/* t */
@@ -213,7 +213,7 @@ void	err68( char *mes )
 	int	line	<in>	行番号
  戻り値：なし
 */
-void	err68a( char *mes, char *file, int line )
+void err68a( char *mes, char *file, int line )
 {
     OPBuf_insert(&OP_info);
 	fprintf(stderr, "run68 exec error: %s PC=%06X\n", mes, pc);
@@ -248,7 +248,7 @@ void err68b(char *mes, long pc, long ppc)
  　機能：アドレスレジスタをインクリメントする
  戻り値：なし
 */
-void	inc_ra( char reg, char size )
+void inc_ra( char reg, char size )
 {
 	if ( reg == 7 && size == S_BYTE ) {
 		ra [ 7 ] += 2;
@@ -271,7 +271,7 @@ void	inc_ra( char reg, char size )
  　機能：アドレスレジスタをデクリメントする
  戻り値：なし
 */
-void	dec_ra( char reg, char size )
+void dec_ra( char reg, char size )
 {
 	if ( reg == 7 && size == S_BYTE ) {
 		ra [ 7 ] -= 2;
@@ -294,7 +294,7 @@ void	dec_ra( char reg, char size )
  　機能：テキストカラーを設定する
  戻り値：なし
 */
-void	text_color( short c )
+void text_color( short c )
 {
 	switch( c ) {
 		case  0:
@@ -352,7 +352,7 @@ void	text_color( short c )
    機能：カーソル位置を得る
  戻り値：カーソル位置
 */
-long	get_locate()
+long get_locate()
 {
 	UShort x = 0, y = 0;
 
@@ -541,7 +541,7 @@ int get_idx(int *pc, char *regstr)
  　　　　サイズに応じてPCを進める
  戻り値：データの値
 */
-long	get_imi(int *pc, char size )
+long get_imi(int *pc, char size )
 {
 	UChar	*mem;
 	long	d;
@@ -648,6 +648,5 @@ void get_operand(char *buf, int *pc, int AddressingMode, int RegisterNumber, int
             }
             break;
     }
-
 }
 

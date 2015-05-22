@@ -46,69 +46,63 @@
  *   int  reg;          <in>  レジスタ番号またはアドレッシングモード　MR_??
  *   long *data;        <out> 取得するデータを格納する場所へのポインタ
  *
- * 【返値】 
+ * 【返値】
  *   TURE:  エラー
  *   FALSE: 正常
  *
  */
 
-BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
-
+BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data)
+{
 	short	disp;
 	long	idx;
-	BOOL	retcode;
-	int	gmode;
-//	long	save_pc;
-
-//	save_pc = pc;
-	retcode = FALSE;
+	BOOL	retcode = FALSE;
 
 	/* 操作しやすいようにモードを統合 */
-	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
+	int gmode = (mode < 7) ? mode : (7 + reg);	/* gmode = 0-11 */
 
 	/* AceptAdrMode で許されたアドレッシングモードでなければエラー */
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
 		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
-		retcode = TRUE;
+		return TRUE;
 
-	} else {
+	}
 
-		/* アドレッシングモードに応じた処理 */
-		switch (gmode) {
-			case EA_AI:
-				*data = ra [ reg ];
-				break;
-			case EA_AID:
-				disp = (short)imi_get( S_WORD );
-				*data = ra [ reg ] + (int)disp;
-				break;
-			case EA_AIX:
-				idx = idx_get();
-				*data = ra [ reg ] + idx;
-				break;
-			case EA_SRT:
-				idx = imi_get( S_WORD );
-				if ( (idx & 0x8000) != 0 )
-					idx |= 0xFFFF0000;
-				*data = idx;
-				break;
-			case EA_LNG:
-				*data = imi_get( S_LONG );
-				break;
-			case EA_PC:
-				disp = (short)imi_get( S_WORD );
-				*data = save_pc + (int)disp;
-				break;
-			case EA_PCX:
-				idx = idx_get();
-				*data = save_pc + idx;
-				break;
-			default:
-				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
-				retcode = TRUE;
-		}
+	/* アドレッシングモードに応じた処理 */
+	switch (gmode) {
+		case EA_AI:
+			*data = ra [ reg ];
+			break;
+		case EA_AID:
+			disp = (short)imi_get( S_WORD );
+			*data = ra [ reg ] + (int)disp;
+			break;
+		case EA_AIX:
+			idx = idx_get();
+			*data = ra [ reg ] + idx;
+			break;
+		case EA_SRT:
+			idx = imi_get( S_WORD );
+			if ( (idx & 0x8000) != 0 )
+				idx |= 0xFFFF0000;
+			*data = idx;
+			break;
+		case EA_LNG:
+			*data = imi_get( S_LONG );
+			break;
+		case EA_PC:
+			disp = (short)imi_get( S_WORD );
+			*data = save_pc + (int)disp;
+			break;
+		case EA_PCX:
+			idx = idx_get();
+			*data = save_pc + idx;
+			break;
+		default:
+			err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+			retcode = TRUE;
 	}
 	return( retcode );
 }
@@ -128,14 +122,14 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
  *   int reg;          <in>  レジスタ番号またはアドレッシングモード　MR_??
  *   long *data;       <out> 取得するデータを格納する場所へのポインタ
  *
- * 【返値】 
+ * 【返値】
  *   TURE:  エラー
  *   FALSE: 正常
  *
  */
 
-BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
-
+BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data)
+{
 	short	disp;
 	long	idx;
 	BOOL	retcode;
@@ -256,14 +250,14 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
  *   int reg;          <in>  レジスタ番号またはアドレッシングモード　MR_??
  *   long data;        <in>  設定するデータ
  *
- * 【返値】 
+ * 【返値】
  *   TURE:  エラー
  *   FALSE: 正常
  *
  */
 
-BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
-
+BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data)
+{
 	short	disp;
 	long	idx;
 	BOOL	retcode;
@@ -388,13 +382,14 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
  *   int reg;          <in>  レジスタ番号またはアドレッシングモード　MR_??
  *   long *data;       <out> 取得するデータを格納する場所へのポインタ
  *
- * 【返値】 
+ * 【返値】
  *   TURE:  エラー
  *   FALSE: 正常
  *
  */
 
-BOOL get_data_at_ea_noinc(int AceptAdrMode, int mode, int reg, int size, long *data) {
+BOOL get_data_at_ea_noinc(int AceptAdrMode, int mode, int reg, int size, long *data)
+{
 	long save_pc;
 	BOOL retcode;
 
@@ -404,5 +399,3 @@ BOOL get_data_at_ea_noinc(int AceptAdrMode, int mode, int reg, int size, long *d
 
 	return(retcode);
 }
-
-

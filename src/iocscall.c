@@ -28,25 +28,25 @@
 #include <windows.h>
 #endif
 
-static	long	Putc( UShort );
-static	long	Color( short );
-static	void	Putmes( void );
-static	long	Dateget( void );
-static	long	Timeget( void );
-static	long	Datebin( long );
-static	long	Timebin( long );
-static	long	Dateasc( long, long );
-static	long	Timeasc( long, long );
-static	void	Dayasc( long, long );
-static	long	Intvcs( long, long );
-static	void	Dmamove( long, long, long, long );
+static long	Putc( UShort );
+static long	Color( short );
+static void	Putmes( void );
+static long	Dateget( void );
+static long	Timeget( void );
+static long	Datebin( long );
+static long	Timebin( long );
+static long	Dateasc( long, long );
+static long	Timeasc( long, long );
+static void	Dayasc( long, long );
+static long	Intvcs( long, long );
+static void	Dmamove( long, long, long, long );
 
 /*
  　機能：IOCSCALLを実行する
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
-int	iocs_call()
+int iocs_call()
 {
 	UChar	*data_ptr;
 	ULong	ul;
@@ -224,7 +224,7 @@ int	iocs_call()
  　機能：文字を表示する
  戻り値：カーソル位置
 */
-static	long	Putc( UShort code )
+static long Putc( UShort code )
 {
 	if ( code == 0x1A ) {
 		printf( "%c[0J", 0x1B ); /* 最終行左端まで消去 */
@@ -240,7 +240,7 @@ static	long	Putc( UShort code )
  　機能：文字のカラー属性を指定する
  戻り値：変更前のカラーまたは現在のカラー
 */
-static	long	Color( short arg )
+static long Color( short arg )
 {
 	if ( arg == -1 )	/* 現在のカラーを調べる(未サポート) */
 		return( 3 );
@@ -254,7 +254,7 @@ static	long	Color( short arg )
  　機能：文字列を表示する
  戻り値：なし
 */
-static	void	Putmes()
+static void Putmes()
 {
 	char	temp [ 97 ];
 	char	*p;
@@ -284,7 +284,7 @@ static	void	Putmes()
  　機能：日付を得る
  戻り値：BCDの日付データ
 */
-static	long	Dateget()
+static long Dateget()
 {
 	long	ret;
 #if defined(WIN32)
@@ -315,7 +315,7 @@ static	long	Dateget()
  　機能：時刻を得る
  戻り値：BCDの時刻データ
 */
-static	long	Timeget()
+static long Timeget()
 {
 	long	ret;
 #if defined(WIN32)
@@ -344,7 +344,7 @@ static	long	Timeget()
  　機能：BCD表現の日付データをバイナリ表現に直す
  戻り値：バイナリの日付データ
 */
-static	long	Datebin( long bcd )
+static long Datebin( long bcd )
 {
 	UShort	youbi;
 	UShort	year;
@@ -363,7 +363,7 @@ static	long	Datebin( long bcd )
  　機能：BCD表現の時刻データをバイナリ表現に直す
  戻り値：バイナリの時刻データ
 */
-static	long	Timebin( long bcd )
+static long Timebin( long bcd )
 {
 	UShort	hh;
 	UShort	mm;
@@ -380,7 +380,7 @@ static	long	Timebin( long bcd )
  　機能：バイナリ表現の日付データを文字列に直す
  戻り値：-1のときエラー
 */
-static	long	Dateasc( long data, long adr )
+static long Dateasc( long data, long adr )
 {
 	char	*data_ptr;
 	UShort	year;
@@ -429,7 +429,7 @@ static	long	Dateasc( long data, long adr )
  　機能：バイナリ表現の時刻データを文字列に直す
  戻り値：-1のときエラー
 */
-static	long	Timeasc( long data, long adr )
+static long Timeasc( long data, long adr )
 {
 	char	*data_ptr;
 	UShort	hh;
@@ -458,7 +458,7 @@ static	long	Timeasc( long data, long adr )
  　機能：曜日番号から文字列を得る
  戻り値：なし
 */
-static	void	Dayasc( long data, long adr )
+static void Dayasc( long data, long adr )
 {
 	char	*data_ptr;
 
@@ -497,7 +497,7 @@ static	void	Dayasc( long data, long adr )
  　機能：ベクタ・テーブルを書き換える
  戻り値：設定前の処理アドレス
 */
-static	long	Intvcs( long no, long adr )
+static long Intvcs( long no, long adr )
 {
 	long	adr2;
 	long	mae = 0;
@@ -519,7 +519,7 @@ static	long	Intvcs( long no, long adr )
  　機能：DMA転送をする
  戻り値：設定前の処理アドレス
 */
-static	void	Dmamove( long md, long size, long adr1, long adr2 )
+static void Dmamove( long md, long size, long adr1, long adr2 )
 {
 	char	*p1;
 	char	*p2;

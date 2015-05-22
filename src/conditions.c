@@ -47,7 +47,7 @@ void ccr2bitmap(short ccr, char *bitmap) {
 		} else {
 			bitmap[j++] = '0';
 		}
-	} 
+	}
 	bitmap[j] = '\0';
 }
 
@@ -121,13 +121,13 @@ long getBitsByDataSize(long num, int size) {
  *   long result;    <in>  Result値
  *   int  size;      <in>  アクセスサイズ
  *
- * 【返値】 
+ * 【返値】
  *   なし
  *
  */
 
 void general_conditions(long result, int size) {
-	
+
 	int 	Rm;
 
 	Rm = (getMSB(result, size) != (long)0);
@@ -145,7 +145,7 @@ void general_conditions(long result, int size) {
 	} else {
 		CCR_Z_OFF();
 	}
-	
+
 	/* Negative Flag */
 	if (Rm != 0) {
 		CCR_N_ON();
@@ -169,13 +169,13 @@ void general_conditions(long result, int size) {
  *   BOOL zero_flag; <in>  addx用演算前 zero flag 値。
  *                         その他の場合は常に 1 を指定のこと。
  *
- * 【返値】 
+ * 【返値】
  *   なし
  *
  */
 
 void add_conditions(long src, long dest, long result, int size, BOOL zero_flag) {
-	
+
 	int 	Sm, Dm, Rm;
 
 	Sm = (getMSB(src,    size) != (long)0);
@@ -204,7 +204,7 @@ void add_conditions(long src, long dest, long result, int size, BOOL zero_flag) 
 	} else {
 		CCR_Z_OFF();
 	}
-	
+
 	/* Negative Flag */
 	if (Rm != 0) {
 		CCR_N_ON();
@@ -229,13 +229,13 @@ void add_conditions(long src, long dest, long result, int size, BOOL zero_flag) 
  *   BOOL zero_flag; <in>  subx用演算前 zero flag 値。
  *                         その他の場合は常に 1 を指定のこと。
  *
- * 【返値】 
+ * 【返値】
  *   なし
  *
  */
 
 void cmp_conditions(long src, long dest, long result, int size) {
-	
+
 	int 	Sm, Dm, Rm;
 
 	Sm = (getMSB(src,    size) != (long)0);
@@ -262,7 +262,7 @@ void cmp_conditions(long src, long dest, long result, int size) {
 	} else {
 		CCR_Z_OFF();
 	}
-	
+
 	/* Negative Flag */
 	if (Rm != 0) {
 		CCR_N_ON();
@@ -287,7 +287,7 @@ void cmp_conditions(long src, long dest, long result, int size) {
  *   BOOL zero_flag; <in>  subx用演算前 zero flag 値。
  *                         その他の場合は常に 1 を指定のこと。
  *
- * 【返値】 
+ * 【返値】
  *   なし
  *
  */
@@ -331,7 +331,7 @@ void sub_conditions(long src, long dest, long result, int size, BOOL zero_flag) 
  */
 
 void neg_conditions(long dest, long result, int size, BOOL zero_flag) {
-	
+
 	int 	Dm, Rm;
 
 	Dm = (getMSB(dest,   size) != (long)0);
@@ -359,7 +359,7 @@ void neg_conditions(long dest, long result, int size, BOOL zero_flag) {
 	} else {
 		CCR_Z_OFF();
 	}
-	
+
 	/* Negative Flag */
 	if (Rm != 0) {
 		CCR_N_ON();
@@ -367,5 +367,3 @@ void neg_conditions(long dest, long result, int size, BOOL zero_flag) {
 		CCR_N_OFF();
 	}
 }
-
-
