@@ -1162,7 +1162,6 @@ static	int	Nbcd( char code2 )
 	long	dst_data;
 	long	kekka;
 	long	X;
-	long	h,l;
 
 /*
 	0: 2byte: dm
