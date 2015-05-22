@@ -28,46 +28,46 @@
 #include "run68.h"
 
 /*
- 　機能：６ライン命令を実行する
+ 　機能：6ライン命令を実行する
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
 int	line6( char *pc_ptr )
 {
         char	code;
-	char	cond ;
-	char	disp ;
-	short	disp_w ;
+	char	cond;
+	char	disp;
+	short	disp_w;
 
 	code = *pc_ptr;
-	cond = (*pc_ptr & 0x0F) ;
-	disp = *(pc_ptr + 1) ;
-	pc += 2 ;
+	cond = (*pc_ptr & 0x0F);
+	disp = *(pc_ptr + 1);
+	pc += 2;
 
 	if ( cond == 0x01 ) {	/* bsr */
-		ra [ 7 ] -= 4 ;
+		ra [ 7 ] -= 4;
 		if ( disp == 0 ) {
-			disp_w = (short)imi_get( S_WORD ) ;
-			mem_set( ra [ 7 ], pc, S_LONG ) ;
-			pc += (disp_w - 2) ;
+			disp_w = (short)imi_get( S_WORD );
+			mem_set( ra [ 7 ], pc, S_LONG );
+			pc += (disp_w - 2);
 		} else {
-			mem_set( ra [ 7 ], pc, S_LONG ) ;
-			pc += disp ;
+			mem_set( ra [ 7 ], pc, S_LONG );
+			pc += disp;
 		}
-		return( FALSE ) ;
+		return( FALSE );
 	}
 
 	if ( get_cond( cond ) == TRUE ) {
 		if ( disp == 0 ) {
-			disp_w = (short)imi_get( S_WORD ) ;
-			pc += (disp_w - 2) ;
+			disp_w = (short)imi_get( S_WORD );
+			pc += (disp_w - 2);
 		} else {
-			pc += disp ;
+			pc += disp;
 		}
 	} else {
 		if ( disp == 0 )
-			pc += 2 ;
+			pc += 2;
 	}
 
-	return( FALSE ) ;
+	return( FALSE );
 }

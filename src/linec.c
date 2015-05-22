@@ -38,31 +38,31 @@
 #include <stdio.h>
 #include "run68.h"
 
-static	int	And1( char, char ) ;
-static	int	And2( char, char ) ;
-static	int	Exg( char, char ) ;
-static	int	Mulu( char, char ) ;
-static	int	Muls( char, char ) ;
+static	int	And1( char, char );
+static	int	And2( char, char );
+static	int	Exg( char, char );
+static	int	Mulu( char, char );
+static	int	Muls( char, char );
 
 /*
- 　機能：Ｃライン命令を実行する
+ 　機能：Cライン命令を実行する
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
 int	linec( char *pc_ptr )
 {
-	char	code1, code2 ;
+	char	code1, code2;
 
-	code1 = *(pc_ptr++) ;
-	code2 = *pc_ptr ;
-	pc += 2 ;
+	code1 = *(pc_ptr++);
+	code2 = *pc_ptr;
+	pc += 2;
 	if ( (code1 & 0x01) == 0 ) {
 		if ( (code2 & 0xC0) == 0xC0 )
-			return( Mulu( code1, code2 ) ) ;
-		return( And2( code1, code2 ) ) ;
+			return( Mulu( code1, code2 ) );
+		return( And2( code1, code2 ) );
 	} else {
 		if ( (code2 & 0xC0) == 0xC0 )
-			return( Muls( code1, code2 ) ) ;
+			return( Muls( code1, code2 ) );
 		if ( (code2 & 0xF0) == 0x00 ) {
 			/* abcd */
 			char	src_reg = (code2 & 0x7);
@@ -166,14 +166,14 @@ int	linec( char *pc_ptr )
 
 			return( FALSE );
 /*
-			err68a( "未定義命令(abcd)を実行しました", __FILE__, __LINE__ ) ;
-			return( TRUE ) ;	 abcd 
+			err68a( "未定義命令(abcd)を実行しました", __FILE__, __LINE__ );
+			return( TRUE );	 abcd 
 */
 		}
 		if ( (code2 & 0x30) == 0x00 ) {
-			return( Exg( code1, code2 ) ) ;
+			return( Exg( code1, code2 ) );
 		}
-		return( And1( code1, code2 ) ) ;
+		return( And1( code1, code2 ) );
 	}
 }
 
@@ -184,21 +184,21 @@ int	linec( char *pc_ptr )
 */
 static	int	And1( char code1, char code2 )
 {
-	char	size ;
-	char	mode ;
-	char	src_reg ;
-	char	dst_reg ;
-	short	disp = 0 ;
-	long	data ;
-	long	save_pc ;
+	char	size;
+	char	mode;
+	char	src_reg;
+	char	dst_reg;
+	short	disp = 0;
+	long	data;
+	long	save_pc;
 	int	work_mode;
 	long	src_data;
 
-	save_pc = pc ;
-	size = ((code2 >> 6) & 0x03) ;
-	mode = ((code2 & 0x38) >> 3) ;
-	src_reg = ((code1 & 0x0E) >> 1) ;
-	dst_reg = (code2 & 0x07) ;
+	save_pc = pc;
+	size = ((code2 >> 6) & 0x03);
+	mode = ((code2 & 0x38) >> 3);
+	src_reg = ((code1 & 0x0E) >> 1);
+	dst_reg = (code2 & 0x07);
 
 	/* ソースのアドレッシングモードに応じた処理 */
 	if (get_data_at_ea(EA_All, EA_DD, src_reg, size, &src_data)) {
@@ -236,20 +236,20 @@ static	int	And1( char code1, char code2 )
 #ifdef	TRACE
 	switch( size ) {
 		case S_BYTE:
-			rd [ 8 ] = ( rd [ src_reg ] & 0xFF ) ;
-			break ;
+			rd [ 8 ] = ( rd [ src_reg ] & 0xFF );
+			break;
 		case S_WORD:
-			rd [ 8 ] = ( rd [ src_reg ] & 0xFFFF) ;
-			break ;
+			rd [ 8 ] = ( rd [ src_reg ] & 0xFFFF);
+			break;
 		default:	/* S_LONG */
-			rd [ 8 ] = rd [ src_reg ] ;
-			break ;
+			rd [ 8 ] = rd [ src_reg ];
+			break;
 	}
 	printf( "trace: and.%c    src=0x%08X PC=%06lX\n",
-		size_char [ size ], rd [ 8 ], save_pc ) ;
+		size_char [ size ], rd [ 8 ], save_pc );
 #endif
 
-	return( FALSE ) ;
+	return( FALSE );
 }
 
 /*
@@ -259,21 +259,21 @@ static	int	And1( char code1, char code2 )
 */
 static	int	And2( char code1, char code2 )
 {
-	char	size ;
-	char	mode ;
-	char	src_reg ;
-	char	dst_reg ;
-	long	src_data ;
-	long	save_pc ;
+	char	size;
+	char	mode;
+	char	src_reg;
+	char	dst_reg;
+	long	src_data;
+	long	save_pc;
     int     work_pc;
 	long	data;
 
-	save_pc = pc ;
-	work_pc = pc ;
-	mode = ((code2 & 0x38) >> 3) ;
-	src_reg = (code2 & 0x07) ;
-	dst_reg = ((code1 & 0x0E) >> 1) ;
-	size = ((code2 >> 6) & 0x03) ;
+	save_pc = pc;
+	work_pc = pc;
+	mode = ((code2 & 0x38) >> 3);
+	src_reg = (code2 & 0x07);
+	dst_reg = ((code1 & 0x0E) >> 1);
+	size = ((code2 >> 6) & 0x03);
 
 
 	/* ソースのアドレッシングモードに応じた処理 */
@@ -296,7 +296,7 @@ static	int	And2( char code1, char code2 )
 	/* フラグの変化 */
 	general_conditions(data, size);
 
-	return( FALSE ) ;
+	return( FALSE );
 }
 
 /*
@@ -306,41 +306,41 @@ static	int	And2( char code1, char code2 )
 */
 static	int	Exg( char code1, char code2 )
 {
-	char	src_reg ;
-	char	dst_reg ;
-	char	mode ;
-	long	tmp ;
+	char	src_reg;
+	char	dst_reg;
+	char	mode;
+	long	tmp;
 
-	mode = ((code2 & 0xF8) >> 3) ;
-	src_reg = ((code1 & 0x0E) >> 1) ;
-	dst_reg = (code2 & 0x07) ;
+	mode = ((code2 & 0xF8) >> 3);
+	src_reg = ((code1 & 0x0E) >> 1);
+	dst_reg = (code2 & 0x07);
 
 	switch( mode ) {
 		case 0x08:
-			tmp = rd [ src_reg ] ;
-			rd [ src_reg ] = rd [ dst_reg ] ;
-			rd [ dst_reg ] = tmp ;
-			break ;
+			tmp = rd [ src_reg ];
+			rd [ src_reg ] = rd [ dst_reg ];
+			rd [ dst_reg ] = tmp;
+			break;
 		case 0x09:
-			tmp = ra [ src_reg ] ;
-			ra [ src_reg ] = ra [ dst_reg ] ;
-			ra [ dst_reg ] = tmp ;
-			break ;
+			tmp = ra [ src_reg ];
+			ra [ src_reg ] = ra [ dst_reg ];
+			ra [ dst_reg ] = tmp;
+			break;
 		case 0x11:
-			tmp = rd [ src_reg ] ;
-			rd [ src_reg ] = ra [ dst_reg ] ;
-			ra [ dst_reg ] = tmp ;
-			break ;
+			tmp = rd [ src_reg ];
+			rd [ src_reg ] = ra [ dst_reg ];
+			ra [ dst_reg ] = tmp;
+			break;
 		default:
-			err68a( "EXG: 不正なOPモードです。", __FILE__, __LINE__ ) ;
-			return( TRUE ) ;
+			err68a( "EXG: 不正なOPモードです。", __FILE__, __LINE__ );
+			return( TRUE );
 	}
 
 #ifdef	TRACE
-	printf( "trace: exg      PC=%06lX\n", pc ) ;
+	printf( "trace: exg      PC=%06lX\n", pc );
 #endif
 
-	return( FALSE ) ;
+	return( FALSE );
 }
 
 /*
@@ -350,21 +350,21 @@ static	int	Exg( char code1, char code2 )
 */
 static	int	Mulu( char code1, char code2 )
 {
-	char	src_reg ;
-	char	dst_reg ;
-	char	mode ;
-	UShort	src_data ;
-	UShort	dst_data ;
-	ULong	ans ;
-	long	save_pc ;
+	char	src_reg;
+	char	dst_reg;
+	char	mode;
+	UShort	src_data;
+	UShort	dst_data;
+	ULong	ans;
+	long	save_pc;
 	long	src_data_l;
 
-	save_pc = pc ;
-	mode = ((code2 & 0x38) >> 3) ;
-	src_reg = (code2 & 0x07) ;
-	dst_reg = ((code1 & 0x0E) >> 1) ;
+	save_pc = pc;
+	mode = ((code2 & 0x38) >> 3);
+	src_reg = (code2 & 0x07);
+	dst_reg = ((code1 & 0x0E) >> 1);
 
-	dst_data = (rd [ dst_reg ] & 0xFFFF) ;
+	dst_data = (rd [ dst_reg ] & 0xFFFF);
 
 	/* ソースのアドレッシングモードに応じた処理 */
 	if (get_data_at_ea(EA_Data, mode, src_reg, S_WORD, &src_data_l)) {
@@ -372,16 +372,16 @@ static	int	Mulu( char code1, char code2 )
 	}
 	src_data = (UShort)src_data_l;
 
-	ans = src_data * dst_data ;
-	rd [ dst_reg ] = ans ;
+	ans = src_data * dst_data;
+	rd [ dst_reg ] = ans;
 #ifdef	TRACE
-	printf( "trace: mulu     src=%u PC=%06lX\n", src_data, save_pc ) ;
+	printf( "trace: mulu     src=%u PC=%06lX\n", src_data, save_pc );
 #endif
 
 	/* フラグの変化 */
 	general_conditions(ans, S_LONG);
 
-	return( FALSE ) ;
+	return( FALSE );
 }
 
 /*
@@ -391,21 +391,21 @@ static	int	Mulu( char code1, char code2 )
 */
 static	int	Muls( char code1, char code2 )
 {
-	char	src_reg ;
-	char	dst_reg ;
-	char	mode ;
-	short	src_data ;
-	short	dst_data ;
-	long	ans ;
-	long	save_pc ;
+	char	src_reg;
+	char	dst_reg;
+	char	mode;
+	short	src_data;
+	short	dst_data;
+	long	ans;
+	long	save_pc;
 	long	src_data_l;
 
-	save_pc = pc ;
-	mode = ((code2 & 0x38) >> 3) ;
-	src_reg = (code2 & 0x07) ;
-	dst_reg = ((code1 & 0x0E) >> 1) ;
+	save_pc = pc;
+	mode = ((code2 & 0x38) >> 3);
+	src_reg = (code2 & 0x07);
+	dst_reg = ((code1 & 0x0E) >> 1);
 
-	dst_data = (rd [ dst_reg ] & 0xFFFF) ;
+	dst_data = (rd [ dst_reg ] & 0xFFFF);
 
 	/* ソースのアドレッシングモードに応じた処理 */
 	if (get_data_at_ea(EA_Data, mode, src_reg, S_WORD, &src_data_l)) {
@@ -413,15 +413,15 @@ static	int	Muls( char code1, char code2 )
 	}
 	src_data = (UShort)src_data_l;
 
-	ans = src_data * dst_data ;
-	rd [ dst_reg ] = ans ;
+	ans = src_data * dst_data;
+	rd [ dst_reg ] = ans;
 
 #ifdef	TRACE
-	printf( "trace: muls     src=%d PC=%06lX\n", src_data, save_pc ) ;
+	printf( "trace: muls     src=%d PC=%06lX\n", src_data, save_pc );
 #endif
 
 	/* フラグの変化 */
 	general_conditions(ans, S_LONG);
 
-	return( FALSE ) ;
+	return( FALSE );
 }

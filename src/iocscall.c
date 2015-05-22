@@ -28,18 +28,18 @@
 #include <windows.h>
 #endif
 
-static	long	Putc( UShort ) ;
-static	long	Color( short ) ;
-static	void	Putmes( void ) ;
-static	long	Dateget( void ) ;
-static	long	Timeget( void ) ;
-static	long	Datebin( long ) ;
-static	long	Timebin( long ) ;
-static	long	Dateasc( long, long ) ;
-static	long	Timeasc( long, long ) ;
-static	void	Dayasc( long, long ) ;
-static	long	Intvcs( long, long ) ;
-static	void	Dmamove( long, long, long, long ) ;
+static	long	Putc( UShort );
+static	long	Color( short );
+static	void	Putmes( void );
+static	long	Dateget( void );
+static	long	Timeget( void );
+static	long	Datebin( long );
+static	long	Timebin( long );
+static	long	Dateasc( long, long );
+static	long	Timeasc( long, long );
+static	void	Dayasc( long, long );
+static	long	Intvcs( long, long );
+static	void	Dmamove( long, long, long, long );
 
 /*
  　機能：IOCSCALLを実行する
@@ -48,176 +48,176 @@ static	void	Dmamove( long, long, long, long ) ;
 */
 int	iocs_call()
 {
-	UChar	*data_ptr ;
-	ULong	ul ;
-	UChar	no ;
-	int	x, y ;
-	short	save_s ;
+	UChar	*data_ptr;
+	ULong	ul;
+	UChar	no;
+	int	x, y;
+	short	save_s;
 
-	no = rd [ 0 ] ;
+	no = rd [ 0 ];
 
     if (func_trace_f)
     {
-        printf( "IOCS(%02X): PC=%06lX\n", no, pc ) ;
+        printf( "IOCS(%02X): PC=%06lX\n", no, pc );
     }
 	switch( no ) {
 		case 0x20:	/* B_PUTC */
-			rd [ 0 ] = Putc( (rd [ 1 ] & 0xFFFF) ) ;
-			break ;
+			rd [ 0 ] = Putc( (rd [ 1 ] & 0xFFFF) );
+			break;
 		case 0x21:	/* B_PRINT */
-			data_ptr = (UChar *)prog_ptr + ra [ 1 ] ;
-			printf( "%s", data_ptr ) ;
-			ra [ 1 ] += strlen((char *)data_ptr) ;
-			rd [ 0 ] = get_locate() ;
-			break ;
+			data_ptr = (UChar *)prog_ptr + ra [ 1 ];
+			printf( "%s", data_ptr );
+			ra [ 1 ] += strlen((char *)data_ptr);
+			rd [ 0 ] = get_locate();
+			break;
 		case 0x22:	/* B_COLOR */
-			rd [ 0 ] = Color( (rd [ 1 ] & 0xFFFF) ) ;
-			break ;
+			rd [ 0 ] = Color( (rd [ 1 ] & 0xFFFF) );
+			break;
 		case 0x23:	/* B_LOCATE */
 			if ( rd [ 1 ] != -1 ) {
-				x = (rd [ 1 ] & 0xFFFF) + 1 ;
-				y = (rd [ 2 ] & 0xFFFF) + 1 ;
-				printf( "%c[%d;%dH", 0x1B, y, x ) ;
+				x = (rd [ 1 ] & 0xFFFF) + 1;
+				y = (rd [ 2 ] & 0xFFFF) + 1;
+				printf( "%c[%d;%dH", 0x1B, y, x );
 			}
-			rd [ 0 ] = get_locate() ;
-			break ;
+			rd [ 0 ] = get_locate();
+			break;
 		case 0x24:	/* B_DOWN_S */
-			printf( "%c[s\n%c[u%c[1B", 0x1B, 0x1B, 0x1B ) ;
-			break ;
+			printf( "%c[s\n%c[u%c[1B", 0x1B, 0x1B, 0x1B );
+			break;
 		case 0x25:	/* B_UP_S *//* (スクロール未サポート) */
-			printf( "%c[1A", 0x1B ) ;
-			break ;
+			printf( "%c[1A", 0x1B );
+			break;
 		case 0x2F:	/* B_PUTMES */
-			Putmes() ;
-			break ;
+			Putmes();
+			break;
 		case 0x54:	/* DATEGET */
-			rd [ 0 ] = Dateget() ;
-			break ;
+			rd [ 0 ] = Dateget();
+			break;
 		case 0x55:	/* DATEBIN */
-			rd [ 0 ] = Datebin( rd [ 1 ] ) ;
-			break ;
+			rd [ 0 ] = Datebin( rd [ 1 ] );
+			break;
 		case 0x56:	/* TIMEGET */
-			rd [ 0 ] = Timeget() ;
-			break ;
+			rd [ 0 ] = Timeget();
+			break;
 		case 0x57:	/* TIMEBIN */
-			rd [ 0 ] = Timebin( rd [ 1 ] ) ;
-			break ;
+			rd [ 0 ] = Timebin( rd [ 1 ] );
+			break;
 		case 0x5A:	/* DATEASC */
-			rd [ 0 ] = Dateasc( rd [ 1 ], ra [ 1 ] ) ;
-			break ;
+			rd [ 0 ] = Dateasc( rd [ 1 ], ra [ 1 ] );
+			break;
 		case 0x5B:	/* TIMEASC */
-			rd [ 0 ] = Timeasc( rd [ 1 ], ra [ 1 ] ) ;
-			break ;
+			rd [ 0 ] = Timeasc( rd [ 1 ], ra [ 1 ] );
+			break;
 		case 0x5C:	/* DAYASC */
-			Dayasc( rd [ 1 ], ra [ 1 ] ) ;
-			break ;
+			Dayasc( rd [ 1 ], ra [ 1 ] );
+			break;
 		case 0x6C:	/* VDISPST */
-			save_s = SR_S_REF() ;
-			SR_S_ON() ;
+			save_s = SR_S_REF();
+			SR_S_ON();
 			if ( ra [ 1 ] == 0 ) {
-				mem_set( 0x118, 0, S_LONG ) ;
+				mem_set( 0x118, 0, S_LONG );
 			} else {
-				rd [ 0 ] = mem_get( 0x118, S_LONG ) ;
+				rd [ 0 ] = mem_get( 0x118, S_LONG );
 				if ( rd [ 0 ] == 0 )
-					mem_set( 0x118, ra [ 1 ], S_LONG ) ;
+					mem_set( 0x118, ra [ 1 ], S_LONG );
 			}
 			if ( save_s == 0 )
-				SR_S_OFF() ;
-			break ;
+				SR_S_OFF();
+			break;
 		case 0x6D:	/* CRTCRAS */
-			save_s = SR_S_REF() ;
-			SR_S_ON() ;
+			save_s = SR_S_REF();
+			SR_S_ON();
 			if ( ra [ 1 ] == 0 ) {
-				mem_set( 0x138, 0, S_LONG ) ;
+				mem_set( 0x138, 0, S_LONG );
 			} else {
-				rd [ 0 ] = mem_get( 0x138, S_LONG ) ;
+				rd [ 0 ] = mem_get( 0x138, S_LONG );
 				if ( rd [ 0 ] == 0 )
-					mem_set( 0x138, ra [ 1 ], S_LONG ) ;
+					mem_set( 0x138, ra [ 1 ], S_LONG );
 			}
 			if ( save_s == 0 )
-				SR_S_OFF() ;
-			break ;
+				SR_S_OFF();
+			break;
 		case 0x6E:	/* HSYNCST */
-			err68( "水平同期割り込みを設定しようとしました" ) ;
-			return( TRUE ) ;
+			err68( "水平同期割り込みを設定しようとしました" );
+			return( TRUE );
 		case 0x7F:	/* ONTIME */
 #if defined(WIN32)
             ul = GetTickCount() / 1000;
-			rd [ 0 ] = (ul % (60 * 60 * 24)) * 100 ;
-			rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF) ;
+			rd [ 0 ] = (ul % (60 * 60 * 24)) * 100;
+			rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF);
 #elif defined(DOSX)
-			ul = time( NULL ) ;
-			rd [ 0 ] = (ul % (60 * 60 * 24)) * 100 ;
-			rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF) ;
+			ul = time( NULL );
+			rd [ 0 ] = (ul % (60 * 60 * 24)) * 100;
+			rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF);
 #else
-			ul = GetTickCount() / 10 ;
-			rd [ 0 ] = (ul % 0x83D600) ;
-			rd [ 1 ] = (ul / 0x83D600) ;
+			ul = GetTickCount() / 10;
+			rd [ 0 ] = (ul % 0x83D600);
+			rd [ 1 ] = (ul / 0x83D600);
 #endif
-			break ;
+			break;
 		case 0x80:	/* B_INTVCS */
-			rd [ 0 ] = Intvcs( rd [ 1 ], ra [ 1 ] ) ;
-			break ;
+			rd [ 0 ] = Intvcs( rd [ 1 ], ra [ 1 ] );
+			break;
 		case 0x81:	/* B_SUPER */
 			if ( ra [ 1 ] == 0 ) {
 				/* user -> super */
 				if ( SR_S_REF() != 0 ) {
-					rd [ 0 ] = -1 ;	/* エラー */
+					rd [ 0 ] = -1;	/* エラー */
 				} else {
-					rd [ 0 ] = ra [ 7 ] ;
-					SR_S_ON() ;
+					rd [ 0 ] = ra [ 7 ];
+					SR_S_ON();
 				}
 			} else {
 				/* super -> user */
-				ra [ 7 ] = ra [ 1 ] ;
-				rd [ 0 ] = 0 ;
-				SR_S_OFF() ;
+				ra [ 7 ] = ra [ 1 ];
+				rd [ 0 ] = 0;
+				SR_S_OFF();
 			}
-			break ;
+			break;
 		case 0x82:	/* B_BPEEK */
-			save_s = SR_S_REF() ;
-			SR_S_ON() ;
+			save_s = SR_S_REF();
+			SR_S_ON();
 			rd [ 0 ] = ( ( rd [ 0 ] & 0xFFFFFF00 ) |
-				     ( mem_get( ra [ 1 ], S_BYTE ) & 0xFF ) ) ;
+				     ( mem_get( ra [ 1 ], S_BYTE ) & 0xFF ) );
 			if ( save_s == 0 )
-				SR_S_OFF() ;
-			ra [ 1 ] += 1 ;
-			break ;
+				SR_S_OFF();
+			ra [ 1 ] += 1;
+			break;
 		case 0x83:	/* B_WPEEK */
-			save_s = SR_S_REF() ;
-			SR_S_ON() ;
+			save_s = SR_S_REF();
+			SR_S_ON();
 			rd [ 0 ] = ( ( rd [ 0 ] & 0xFFFF0000 ) |
-				     ( mem_get( ra [ 1 ], S_WORD ) & 0xFFFF ) ) ;
+				     ( mem_get( ra [ 1 ], S_WORD ) & 0xFFFF ) );
 			if ( save_s == 0 )
-				SR_S_OFF() ;
-			ra [ 1 ] += 2 ;
-			break ;
+				SR_S_OFF();
+			ra [ 1 ] += 2;
+			break;
 		case 0x84:	/* B_LPEEK */
-			save_s = SR_S_REF() ;
-			SR_S_ON() ;
-			rd [ 0 ] = mem_get( ra [ 1 ], S_LONG ) ;
+			save_s = SR_S_REF();
+			SR_S_ON();
+			rd [ 0 ] = mem_get( ra [ 1 ], S_LONG );
 			if ( save_s == 0 )
-				SR_S_OFF() ;
-			ra [ 1 ] += 4 ;
-			break ;
+				SR_S_OFF();
+			ra [ 1 ] += 4;
+			break;
 		case 0x8A:	/* DMAMOVE */
-			Dmamove( rd [ 1 ], rd [ 2 ], ra [ 1 ], ra [ 2 ] ) ;
-			break ;
+			Dmamove( rd [ 1 ], rd [ 2 ], ra [ 1 ], ra [ 2 ] );
+			break;
 		case 0xAE:	/* OS_CURON */
-			printf( "%c[>5l", 0x1B ) ;
-			break ;
+			printf( "%c[>5l", 0x1B );
+			break;
 		case 0xAF:	/* OS_CUROF */
-			printf( "%c[>5h", 0x1B ) ;
-			break ;
+			printf( "%c[>5h", 0x1B );
+			break;
 		default:
     if (func_trace_f)
     {
-			printf( "IOCS(%02X): Unknown IOCS call. Ignored.\n", no ) ;
+			printf( "IOCS(%02X): Unknown IOCS call. Ignored.\n", no );
     }
-			break ;
+			break;
 	}
 
-	return( FALSE ) ;
+	return( FALSE );
 }
 
 /*
@@ -227,13 +227,13 @@ int	iocs_call()
 static	long	Putc( UShort code )
 {
 	if ( code == 0x1A ) {
-		printf( "%c[0J", 0x1B ) ; /* 最終行左端まで消去 */
+		printf( "%c[0J", 0x1B ); /* 最終行左端まで消去 */
 	} else {
 		if ( code >= 0x0100 )
-			putchar( code >> 8 ) ;
-		putchar( code ) ;
+			putchar( code >> 8 );
+		putchar( code );
 	}
-	return( get_locate() ) ;
+	return( get_locate() );
 }
 
 /*
@@ -242,12 +242,12 @@ static	long	Putc( UShort code )
 */
 static	long	Color( short arg )
 {
-	if ( arg == -1 )	/* 現在のカラーを調べる（未サポート）*/
-		return( 3 ) ;
+	if ( arg == -1 )	/* 現在のカラーを調べる(未サポート) */
+		return( 3 );
 
-	text_color( arg ) ;
+	text_color( arg );
 
-	return( 3 ) ;
+	return( 3 );
 }
 
 /*
@@ -256,28 +256,28 @@ static	long	Color( short arg )
 */
 static	void	Putmes()
 {
-	char	temp [ 97 ] ;
-	char	*p ;
-	int	x, y ;
-	int	keta ;
-	int	len ;
+	char	temp [ 97 ];
+	char	*p;
+	int	x, y;
+	int	keta;
+	int	len;
 
-	x = (rd [ 2 ] & 0xFFFF) + 1 ;
-	y = (rd [ 3 ] & 0xFFFF) + 1 ;
-	keta = (rd [ 4 ] & 0xFFFF) + 1 ;
+	x = (rd [ 2 ] & 0xFFFF) + 1;
+	y = (rd [ 3 ] & 0xFFFF) + 1;
+	keta = (rd [ 4 ] & 0xFFFF) + 1;
 
-	p = prog_ptr + ra [ 1 ] ;
-	len = strlen( p ) ;
+	p = prog_ptr + ra [ 1 ];
+	len = strlen( p );
 	if ( keta > 96 )
-		keta = 96 ;
-	memcpy( temp, p, keta ) ;
-	temp [ keta ] = '\0' ;
+		keta = 96;
+	memcpy( temp, p, keta );
+	temp [ keta ] = '\0';
 
-	printf( "%c[%d;%dH", 0x1B, y, x ) ;
-	text_color( (rd [ 1 ] & 0xFF) ) ;
-	printf("%s", temp) ;
+	printf( "%c[%d;%dH", 0x1B, y, x );
+	text_color( (rd [ 1 ] & 0xFF) );
+	printf("%s", temp);
 
-	ra [ 1 ] += len ;
+	ra [ 1 ] += len;
 }
 
 /*
@@ -286,29 +286,29 @@ static	void	Putmes()
 */
 static	long	Dateget()
 {
-	long	ret ;
+	long	ret;
 #if defined(WIN32)
     SYSTEMTIME st;
     GetSystemTime(&st);
-	ret = (st.wDayOfWeek << 24) ;
-	ret |= (((st.wYear - 1980) / 10) << 20) ;
-	ret |= (((st.wYear - 1980) % 10) << 16) ;
-	ret |= ((st.wMonth / 10) << 12) ;
-	ret |= ((st.wMonth % 10) << 8) ;
-	ret |= ((st.wDay / 10) << 4) ;
-	ret |= (st.wDay % 10) ;
+	ret = (st.wDayOfWeek << 24);
+	ret |= (((st.wYear - 1980) / 10) << 20);
+	ret |= (((st.wYear - 1980) % 10) << 16);
+	ret |= ((st.wMonth / 10) << 12);
+	ret |= ((st.wMonth % 10) << 8);
+	ret |= ((st.wDay / 10) << 4);
+	ret |= (st.wDay % 10);
 #else
-	struct dos_date_t ddate ;
-	dos_getdate( &ddate ) ;
-	ret = (ddate.dayofweek << 24) ;
-	ret |= (((ddate.year - 1980) / 10) << 20) ;
-	ret |= (((ddate.year - 1980) % 10) << 16) ;
-	ret |= ((ddate.month / 10) << 12) ;
-	ret |= ((ddate.month % 10) << 8) ;
-	ret |= ((ddate.day / 10) << 4) ;
-	ret |= (ddate.day % 10) ;
+	struct dos_date_t ddate;
+	dos_getdate( &ddate );
+	ret = (ddate.dayofweek << 24);
+	ret |= (((ddate.year - 1980) / 10) << 20);
+	ret |= (((ddate.year - 1980) % 10) << 16);
+	ret |= ((ddate.month / 10) << 12);
+	ret |= ((ddate.month % 10) << 8);
+	ret |= ((ddate.day / 10) << 4);
+	ret |= (ddate.day % 10);
 #endif
-	return( ret ) ;
+	return( ret );
 }
 
 /*
@@ -317,27 +317,27 @@ static	long	Dateget()
 */
 static	long	Timeget()
 {
-	long	ret ;
+	long	ret;
 #if defined(WIN32)
     SYSTEMTIME st;
     GetSystemTime(&st);
-	ret  = ((st.wHour / 10) << 20) ;
-	ret |= ((st.wHour % 10) << 16) ;
-	ret |= ((st.wMinute / 10) << 12) ;
-	ret |= ((st.wMinute % 10) << 8) ;
-	ret |= ((st.wSecond / 10) << 4) ;
-	ret |= (st.wSecond % 10) ;
+	ret  = ((st.wHour / 10) << 20);
+	ret |= ((st.wHour % 10) << 16);
+	ret |= ((st.wMinute / 10) << 12);
+	ret |= ((st.wMinute % 10) << 8);
+	ret |= ((st.wSecond / 10) << 4);
+	ret |= (st.wSecond % 10);
 #else
-	struct dos_time_t dtime ;
-	dos_gettime( &dtime ) ;
-	ret  = ((dtime.hour / 10) << 20) ;
-	ret |= ((dtime.hour % 10) << 16) ;
-	ret |= ((dtime.minute / 10) << 12) ;
-	ret |= ((dtime.minute % 10) << 8) ;
-	ret |= ((dtime.second / 10) << 4) ;
-	ret |= (dtime.second % 10) ;
+	struct dos_time_t dtime;
+	dos_gettime( &dtime );
+	ret  = ((dtime.hour / 10) << 20);
+	ret |= ((dtime.hour % 10) << 16);
+	ret |= ((dtime.minute / 10) << 12);
+	ret |= ((dtime.minute % 10) << 8);
+	ret |= ((dtime.second / 10) << 4);
+	ret |= (dtime.second % 10);
 #endif
-	return( ret ) ;
+	return( ret );
 }
 
 /*
@@ -346,17 +346,17 @@ static	long	Timeget()
 */
 static	long	Datebin( long bcd )
 {
-	UShort	youbi ;
-	UShort	year ;
-	UShort	month ;
-	UShort	day ;
+	UShort	youbi;
+	UShort	year;
+	UShort	month;
+	UShort	day;
 
-	youbi = ( bcd >> 24 ) ;
-	year  = (( bcd >> 20 ) & 0xF) * 10 + (( bcd >> 16 ) & 0xF) + 1980 ;
-	month = (( bcd >> 12 ) & 0xF) * 10 + (( bcd >> 8 ) & 0xF) ;
-	day   = (( bcd >> 4 ) & 0xF) * 10 + (bcd & 0xF) ;
+	youbi = ( bcd >> 24 );
+	year  = (( bcd >> 20 ) & 0xF) * 10 + (( bcd >> 16 ) & 0xF) + 1980;
+	month = (( bcd >> 12 ) & 0xF) * 10 + (( bcd >> 8 ) & 0xF);
+	day   = (( bcd >> 4 ) & 0xF) * 10 + (bcd & 0xF);
 
-	return( (youbi << 28) | (year << 16) | (month << 8) | day ) ;
+	return( (youbi << 28) | (year << 16) | (month << 8) | day );
 }
 
 /*
@@ -365,15 +365,15 @@ static	long	Datebin( long bcd )
 */
 static	long	Timebin( long bcd )
 {
-	UShort	hh ;
-	UShort	mm ;
-	UShort	ss ;
+	UShort	hh;
+	UShort	mm;
+	UShort	ss;
 
-	hh = (( bcd >> 20 ) & 0xF) * 10 + (( bcd >> 16 ) & 0xF) ;
-	mm = (( bcd >> 12 ) & 0xF) * 10 + (( bcd >> 8 ) & 0xF) ;
-	ss = (( bcd >> 4 ) & 0xF) * 10 + (bcd & 0xF) ;
+	hh = (( bcd >> 20 ) & 0xF) * 10 + (( bcd >> 16 ) & 0xF);
+	mm = (( bcd >> 12 ) & 0xF) * 10 + (( bcd >> 8 ) & 0xF);
+	ss = (( bcd >> 4 ) & 0xF) * 10 + (bcd & 0xF);
 
-	return( (hh << 16) | (mm << 8) | ss ) ;
+	return( (hh << 16) | (mm << 8) | ss );
 }
 
 /*
@@ -382,47 +382,47 @@ static	long	Timebin( long bcd )
 */
 static	long	Dateasc( long data, long adr )
 {
-	char	*data_ptr ;
-	UShort	year ;
-	UShort	month ;
-	UShort	day ;
-	int	form ;
+	char	*data_ptr;
+	UShort	year;
+	UShort	month;
+	UShort	day;
+	int	form;
 
-	data_ptr = prog_ptr + adr ;
+	data_ptr = prog_ptr + adr;
 
-	form = data >> 28 ;
-	year = ((data >> 16) & 0xFFF) ;
+	form = data >> 28;
+	year = ((data >> 16) & 0xFFF);
 	if ( year < 1980 || year > 2079 )
-		return( -1 ) ;
-	month = ((data >> 8) & 0xFF) ;
+		return( -1 );
+	month = ((data >> 8) & 0xFF);
 	if ( month < 1 || month > 12 )
-		return( -1 ) ;
-	day = (data & 0xFF) ;
+		return( -1 );
+	day = (data & 0xFF);
 	if ( day < 1 || day > 31 )
-		return( -1 ) ;
+		return( -1 );
 
 	switch( form ) {
 		case 0:
-			sprintf( data_ptr, "%04d/%02d/%02d", year, month, day) ;
-			ra [ 1 ] += 10 ;
-			break ;
+			sprintf( data_ptr, "%04d/%02d/%02d", year, month, day);
+			ra [ 1 ] += 10;
+			break;
 		case 1:
-			sprintf( data_ptr, "%04d-%02d-%02d", year, month, day) ;
-			ra [ 1 ] += 10 ;
-			break ;
+			sprintf( data_ptr, "%04d-%02d-%02d", year, month, day);
+			ra [ 1 ] += 10;
+			break;
 		case 2:
-			sprintf( data_ptr, "%02d/%02d/%02d", year % 100, month, day) ;
-			ra [ 1 ] += 8 ;
-			break ;
+			sprintf( data_ptr, "%02d/%02d/%02d", year % 100, month, day);
+			ra [ 1 ] += 8;
+			break;
 		case 3:
-			sprintf( data_ptr, "%02d-%02d-%02d", year % 100, month, day) ;
-			ra [ 1 ] += 8 ;
-			break ;
+			sprintf( data_ptr, "%02d-%02d-%02d", year % 100, month, day);
+			ra [ 1 ] += 8;
+			break;
 		default:
-			return( -1 ) ;
+			return( -1 );
 	}
 
-	return( 0 ) ;
+	return( 0 );
 }
 
 /*
@@ -431,27 +431,27 @@ static	long	Dateasc( long data, long adr )
 */
 static	long	Timeasc( long data, long adr )
 {
-	char	*data_ptr ;
-	UShort	hh ;
-	UShort	mm ;
-	UShort	ss ;
+	char	*data_ptr;
+	UShort	hh;
+	UShort	mm;
+	UShort	ss;
 
-	data_ptr = prog_ptr + adr ;
+	data_ptr = prog_ptr + adr;
 
-	hh = ((data >> 16) & 0xFF) ;
+	hh = ((data >> 16) & 0xFF);
 	if ( hh < 0 || hh > 23 )
-		return( -1 ) ;
-	mm = ((data >> 8) & 0xFF) ;
+		return( -1 );
+	mm = ((data >> 8) & 0xFF);
 	if ( mm < 0 || mm > 59 )
-		return( -1 ) ;
-	ss = (data & 0xFF) ;
+		return( -1 );
+	ss = (data & 0xFF);
 	if ( ss < 0 || ss > 59 )
-		return( -1 ) ;
+		return( -1 );
 
-	sprintf( data_ptr, "%02d:%02d:%02d", hh, mm, ss) ;
-	ra [ 1 ] += 8 ;
+	sprintf( data_ptr, "%02d:%02d:%02d", hh, mm, ss);
+	ra [ 1 ] += 8;
 
-	return( 0 ) ;
+	return( 0 );
 }
 
 /*
@@ -460,37 +460,37 @@ static	long	Timeasc( long data, long adr )
 */
 static	void	Dayasc( long data, long adr )
 {
-	char	*data_ptr ;
+	char	*data_ptr;
 
-	data_ptr = prog_ptr + adr ;
+	data_ptr = prog_ptr + adr;
 
 	switch( data ) {
 		case 0:
-			strcpy( data_ptr, "日" ) ;
-			break ;
+			strcpy( data_ptr, "日" );
+			break;
 		case 1:
-			strcpy( data_ptr, "月" ) ;
-			break ;
+			strcpy( data_ptr, "月" );
+			break;
 		case 2:
-			strcpy( data_ptr, "火" ) ;
-			break ;
+			strcpy( data_ptr, "火" );
+			break;
 		case 3:
-			strcpy( data_ptr, "水" ) ;
-			break ;
+			strcpy( data_ptr, "水" );
+			break;
 		case 4:
-			strcpy( data_ptr, "木" ) ;
-			break ;
+			strcpy( data_ptr, "木" );
+			break;
 		case 5:
-			strcpy( data_ptr, "金" ) ;
-			break ;
+			strcpy( data_ptr, "金" );
+			break;
 		case 6:
-			strcpy( data_ptr, "土" ) ;
-			break ;
+			strcpy( data_ptr, "土" );
+			break;
 		default:
-			ra [ 1 ] -= 2 ;
-			break ;
+			ra [ 1 ] -= 2;
+			break;
 	}
-	ra [ 1 ] += 2 ;
+	ra [ 1 ] += 2;
 }
 
 /*
@@ -499,20 +499,20 @@ static	void	Dayasc( long data, long adr )
 */
 static	long	Intvcs( long no, long adr )
 {
-	long	adr2 ;
-	long	mae = 0 ;
-	short	save_s ;
+	long	adr2;
+	long	mae = 0;
+	short	save_s;
 
-	no &= 0xFFFF ;
-	adr2 = no * 4 ;
-	save_s = SR_S_REF() ;
-	SR_S_ON() ;
-	mae = mem_get( adr2, S_LONG ) ;
-	mem_set( adr2, adr, S_LONG ) ;
+	no &= 0xFFFF;
+	adr2 = no * 4;
+	save_s = SR_S_REF();
+	SR_S_ON();
+	mae = mem_get( adr2, S_LONG );
+	mem_set( adr2, adr, S_LONG );
 	if ( save_s == 0 )
-		SR_S_OFF() ;
+		SR_S_OFF();
 
-	return( mae ) ;
+	return( mae );
 }
 
 /*
@@ -521,22 +521,22 @@ static	long	Intvcs( long no, long adr )
 */
 static	void	Dmamove( long md, long size, long adr1, long adr2 )
 {
-	char	*p1 ;
-	char	*p2 ;
-	long	tmp ;
+	char	*p1;
+	char	*p2;
+	long	tmp;
 
 	if ( (md & 0x80) != 0 ) {
 		/* adr1 -> adr2転送にする */
-		tmp = adr1 ;
-		adr1 = adr2 ;
-		adr2 = tmp ;
+		tmp = adr1;
+		adr1 = adr2;
+		adr2 = tmp;
 	}
 
 	/* adr1,adr2共にインクリメントモードでない場合は未サポート */
 	if ( (md & 0x0F) != 5 )
-		return ;
+		return;
 
-	p1 = prog_ptr + adr1 ;
-	p2 = prog_ptr + adr2 ;
-	memcpy( p2, p1, size ) ;
+	p1 = prog_ptr + adr1;
+	p2 = prog_ptr + adr2;
+	memcpy( p2, p1, size );
 }

@@ -348,8 +348,8 @@ ErrorReturn:
    機能：
    パラメータ：
      long   addr       <in>  オペランドのアドレス(使うとは限らない)
-     ushort  mode       <in>  実効アドレスのモードフィールド(0-7)
-     ushort  reg        <in>  実効アドレスのレジスタフィールド(0-7)
+     ushort mode       <in>  実効アドレスのモードフィールド(0-7)
+     ushort reg        <in>  実効アドレスのレジスタフィールド(0-7)
      char   size       <in>  即値の場合のデータサイズ('b'/'w'/'l')
      ushort mask       <in>  無効なモードをビット位置の1により指定
      char   *str       <out> 実効アドレスを文字列にして書き込む

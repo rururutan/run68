@@ -25,36 +25,36 @@
 #include "run68.h"
 
 /*
- 　機能：７ライン命令(moveq)を実行する
+ 　機能：7ライン命令(moveq)を実行する
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
 int	line7( char *pc_ptr )
 {
-	char	code ;
-	char	reg ;
-	char	data ;
+	char	code;
+	char	reg;
+	char	data;
 
-	code = *(pc_ptr++) ;
-	pc += 2 ;
+	code = *(pc_ptr++);
+	pc += 2;
 	if ( (code & 0x01) != 0 ) {
-		err68a( "おかしな命令を実行しました", __FILE__, __LINE__ ) ;
-		return( TRUE ) ;
+		err68a( "おかしな命令を実行しました", __FILE__, __LINE__ );
+		return( TRUE );
 	}
-	reg = ((code >> 1) & 0x07) ;
-	data = *pc_ptr ;
+	reg = ((code >> 1) & 0x07);
+	data = *pc_ptr;
 	if ( data < 0 ) {
-		rd [ reg ] = (0xFFFFFF00 | data) ;
+		rd [ reg ] = (0xFFFFFF00 | data);
 	} else {
-		rd [ reg ] = data ;
+		rd [ reg ] = data;
 	}
 
 	/* フラグの変化 */
 	general_conditions(rd[reg], S_LONG);
 
 #ifdef	TRACE
-	printf( "trace: moveq    src=%d PC=%06lX\n", data, pc ) ;
+	printf( "trace: moveq    src=%d PC=%06lX\n", data, pc );
 #endif
 
-	return( FALSE ) ;
+	return( FALSE );
 }

@@ -405,17 +405,17 @@ static void run68_dump(int argc, char **argv)
 static void display_registers()
 {
     int i;
-	fprintf(stderr, "D0-D7=%08lX" , rd [ 0 ] ) ;
-	for ( i = 1 ; i < 8 ; i++ ) {
-		fprintf(stderr, ",%08lX" , rd [ i ] ) ;
+	fprintf(stderr, "D0-D7=%08lX" , rd [ 0 ] );
+	for ( i = 1; i < 8; i++ ) {
+		fprintf(stderr, ",%08lX" , rd [ i ] );
 	}
-	fprintf(stderr,"\n") ;
-	fprintf(stderr, "A0-A7=%08lX" , ra [ 0 ] ) ;
-	for ( i = 1 ; i < 8 ; i++ ) {
-		fprintf(stderr, ",%08lX" , ra [ i ] ) ;
+	fprintf(stderr,"\n");
+	fprintf(stderr, "A0-A7=%08lX" , ra [ 0 ] );
+	for ( i = 1; i < 8; i++ ) {
+		fprintf(stderr, ",%08lX" , ra [ i ] );
 	}
-	fprintf(stderr,"\n") ;
-	fprintf(stderr, "  PC=%08lX    SR=%04X\n" , pc, sr ) ;
+	fprintf(stderr,"\n");
+	fprintf(stderr, "  PC=%08lX    SR=%04X\n" , pc, sr );
 }
 
 static void set_breakpoint(int argc, char **argv)

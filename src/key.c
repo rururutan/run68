@@ -22,14 +22,14 @@
 static	char	fnc_key1 [ 20 ] [ 32 ] = {
   "", "", "", "", "", "", "", "", "", "",
   "", "", "", "", "", "", "", "", "", ""
-} ;
+};
 static	char	fnc_key2 [ 12 ] [ 6 ] = {
   "", "", "", "", "", "",
   "", "", "", "", "", ""
-} ;
+};
 
-static	void	put_fnckey1( int, char * ) ;
-static	void	put_fnckey2( int, char * ) ;
+static	void	put_fnckey1( int, char * );
+static	void	put_fnckey2( int, char * );
 
 /*
  　機能：ファンクションキーに割り当てた文字列を得る
@@ -38,13 +38,13 @@ static	void	put_fnckey2( int, char * ) ;
 void	get_fnckey( int no, char *p )
 {
 	if ( no == 0 ) {
-		memcpy( p, fnc_key1, 20 * 32 ) ;
-		memcpy( p + 20 * 32, fnc_key2, 12 * 6 ) ;
+		memcpy( p, fnc_key1, 20 * 32 );
+		memcpy( p + 20 * 32, fnc_key2, 12 * 6 );
 	}
 	if ( no >= 1 && no <= 20 )
-		memcpy( p, fnc_key1 [ no - 1 ], 32 ) ;
+		memcpy( p, fnc_key1 [ no - 1 ], 32 );
 	if ( no >= 21 && no <= 32 )
-		memcpy( p, fnc_key2 [ no - 21 ], 6 ) ;
+		memcpy( p, fnc_key2 [ no - 21 ], 6 );
 }
 
 /*
@@ -53,107 +53,107 @@ void	get_fnckey( int no, char *p )
 */
 void	put_fnckey( int no, char *p )
 {
-	int	i ;
+	int	i;
 
 	if ( no == 0 ) {
-		for( i = 0 ; i < 20 ; i++, p += 32 )
-			put_fnckey1( i, p ) ;
-		for( i = 0 ; i < 12 ; i++, p += 6 )
-			put_fnckey2( i, p ) ;
+		for( i = 0; i < 20; i++, p += 32 )
+			put_fnckey1( i, p );
+		for( i = 0; i < 12; i++, p += 6 )
+			put_fnckey2( i, p );
 	}
 	if ( no >= 1 && no <= 20 )
-		put_fnckey1( no - 1, p ) ;
+		put_fnckey1( no - 1, p );
 	if ( no >= 21 && no <= 32 )
-		put_fnckey2( no - 21, p ) ;
+		put_fnckey2( no - 21, p );
 }
 
 /*
- 　機能：個々のファンクションキーに文字列を割り当てる（その１）
+ 　機能：個々のファンクションキーに文字列を割り当てる(その1)
  戻り値：なし
 */
 void	put_fnckey1( int no, char *p )
 {
-	int	kno ;
-	int	i ;
+	int	kno;
+	int	i;
 
 	if ( *p == (char)0xFE ) {
-		memcpy( fnc_key1 [ no ], p, 8 ) ;
-		p += 8 ;
-		strcpy( &(fnc_key1 [ no ] [ 8 ]), p ) ;
+		memcpy( fnc_key1 [ no ], p, 8 );
+		p += 8;
+		strcpy( &(fnc_key1 [ no ] [ 8 ]), p );
 	} else {
-		strcpy( fnc_key1 [ no ], p ) ;
+		strcpy( fnc_key1 [ no ], p );
 	}
 	if ( no < 10 )
-		kno = 0x3B + no ;
+		kno = 0x3B + no;
 	else
-		kno = 0x54 + no - 10 ;
+		kno = 0x54 + no - 10;
 	if ( *p == '\0' ) {
-		printf("%c[0;%d;\"%c%c\"p", 0x1B, kno, 0, kno) ;
+		printf("%c[0;%d;\"%c%c\"p", 0x1B, kno, 0, kno);
 	} else {
-		for( i = 0 ; p [ i ] != '\0' ; i++ ) {
+		for( i = 0; p [ i ] != '\0'; i++ ) {
 			if ( p [ i ] == 0x1A )
-				return ;
+				return;
 		}
-		printf("%c[0;%d;\"%s\"p", 0x1B, kno, p) ;
+		printf("%c[0;%d;\"%s\"p", 0x1B, kno, p);
 	}
 }
 
 /*
- 　機能：個々のファンクションキーに文字列を割り当てる（その２）
+ 　機能：個々のファンクションキーに文字列を割り当てる(その2)
  戻り値：なし
 */
 void	put_fnckey2( int no, char *p )
 {
-	int	kno ;
-	int	i ;
+	int	kno;
+	int	i;
 
-	strcpy( fnc_key2 [ no ], p ) ;
+	strcpy( fnc_key2 [ no ], p );
 	switch( no ) {
 		case 0:	/* ROLL UP */
-			kno = 0x51 ;	/* PAGE DOWN */
-			break ;
+			kno = 0x51;	/* PAGE DOWN */
+			break;
 		case 1:	/* ROLL DOWN */
-			kno = 0x49 ;	/* PAGE UP */
-			break ;
+			kno = 0x49;	/* PAGE UP */
+			break;
 		case 2:	/* INS */
-			kno = 0x52 ;
-			break ;
+			kno = 0x52;
+			break;
 		case 3:	/* DEL */
-			kno = 0x53 ;
-			break ;
+			kno = 0x53;
+			break;
 		case 4:	/* ↑ */
-			kno = 0x48 ;
-			break ;
+			kno = 0x48;
+			break;
 		case 5:	/* ← */
-			kno = 0x4B ;
-			break ;
+			kno = 0x4B;
+			break;
 		case 6:	/* → */
-			kno = 0x4D ;
-			break ;
+			kno = 0x4D;
+			break;
 		case 7:	/* ↓ */
-			kno = 0x50 ;
-			break ;
+			kno = 0x50;
+			break;
 		case 8:	/* CLR */
-			kno = 0x97 ;	/* ALT+HOME */
-			break ;
+			kno = 0x97;	/* ALT+HOME */
+			break;
 		case 9:	/* HELP */
-			kno = 0x86 ;	/* F12 */
-			break ;
+			kno = 0x86;	/* F12 */
+			break;
 		case 10:/* HOME */
-			kno = 0x47 ;
-			break ;
+			kno = 0x47;
+			break;
 		default:/* UNDO */
-			kno = 0x4F ;	/* END */
-			break ;
+			kno = 0x4F;	/* END */
+			break;
 	}
 	if ( *p == '\0' ) {
-		printf("%c[0;%d;\"%c%c\"p", 0x1B, kno, 0, kno) ;
+		printf("%c[0;%d;\"%c%c\"p", 0x1B, kno, 0, kno);
 	} else {
-		for( i = 0 ; p [ i ] != '\0' ; i++ ) {
+		for( i = 0; p [ i ] != '\0'; i++ ) {
 			if ( p [ i ] == 0x1A )
-				return ;
+				return;
 		}
-		printf("%c[0;%d;\"%s\"p", 0x1B, kno, p) ;
+		printf("%c[0;%d;\"%s\"p", 0x1B, kno, p);
 	}
 }
 
@@ -166,19 +166,19 @@ UChar	cnv_key98( UChar c )
 	switch( c ) {
 		case 0x0A:	/* ↓ */
 			c = 0x1F;
-			break ;
+			break;
 		case 0x0B:	/* ↑ */
 			c = 0x1E;
-			break ;
+			break;
 		case 0x0C:	/* → */
 			c = 0x1C;
-			break ;
+			break;
 		case 0x1A:	/* CLR */
 			c = 0x0C;
-			break ;
+			break;
 		case 0x1E:	/* HOME */
 			c = 0x0B;
-			break ;
+			break;
 	}
-	return( c ) ;
+	return( c );
 }

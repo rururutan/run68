@@ -34,17 +34,17 @@ void	read_ini(char *path, char *prog)
 	char	sec_name[MAX_PATH];
 	FILE	*fp;
 	int	flag = TRUE;
-	int	i ;
-	int	c ;
+	int	i;
+	int	c;
     char    *p;
     long    l;
 
 	/* 情報構造体の初期化 */
-	ini_info.env_lower    = FALSE ;
-	ini_info.trap_emulate = FALSE ;
-	ini_info.pc98_key     = FALSE ;
-	ini_info.io_through   = FALSE ;
-	mem_aloc = 0x100000 ;
+	ini_info.env_lower    = FALSE;
+	ini_info.trap_emulate = FALSE;
+	ini_info.pc98_key     = FALSE;
+	ini_info.io_through   = FALSE;
+	mem_aloc = 0x100000;
 
 /* INIファイルのフルパス名を得る。*/
     /* まずはファイル名を取得する。*/
@@ -84,47 +84,47 @@ void	read_ini(char *path, char *prog)
 #endif
     /* フルパス名を使ってファイルをオープンする。*/
 	if ( (fp=fopen(path, "r")) == NULL )
-		return ;
+		return;
 	/* プログラム名を得る */
-	for( i = strlen( prog ) - 1 ; i >= 0 ; i-- ) {
+	for( i = strlen( prog ) - 1; i >= 0; i-- ) {
 		if ( prog [ i ] == '\\' || prog [ i ] == '/' || prog [ i ] == ':' )
-			break ;
+			break;
 	}
-	i ++ ;
+	i ++;
 	if ( strlen( &(prog [ i ]) ) > 22 ) {
 		fclose(fp);
 		return;
 	}
-	sprintf( sec_name, "[%s]\n", &(prog [ i ]) ) ;
-	strlwr( sec_name ) ;
+	sprintf( sec_name, "[%s]\n", &(prog [ i ]) );
+	strlwr( sec_name );
 	/* 内容を調べる */
 	while( fgets(buf, 1023, fp) != NULL ) {
-		strlwr(buf) ;
+		strlwr(buf);
 
 		/* セクションを見る */
 		if ( buf[ 0 ] == '[' ) {
             flag = FALSE;
             if ( stricmp( buf, "[all]\n" ) == 0 )
-				flag = TRUE ;
+				flag = TRUE;
 			else if ( stricmp( buf, sec_name ) == 0 )
-				flag = TRUE ;
-			continue ;
+				flag = TRUE;
+			continue;
 		}
 
 		/* キーワードを見る */
 		if (flag == TRUE)
         {
     		if ( stricmp( buf, "envlower\n" ) == 0 )
-	    		ini_info.env_lower = TRUE ;
+	    		ini_info.env_lower = TRUE;
 		    else if ( stricmp( buf, "trapemulate\n" ) == 0 )
-			    ini_info.trap_emulate = TRUE ;
+			    ini_info.trap_emulate = TRUE;
     		else if ( stricmp( buf, "pc98\n" ) == 0 )
-	    		ini_info.pc98_key = TRUE ;
+	    		ini_info.pc98_key = TRUE;
 		    else if ( stricmp( buf, "iothrough\n" ) == 0 )
-			    ini_info.io_through = TRUE ;
+			    ini_info.io_through = TRUE;
     		else if ( strncmp( buf, "mainmemory=", 11 ) == 0 ) {
 	    		if (strlen(buf) < 13 || 14 < strlen(buf))
-		    		continue ;
+		    		continue;
                 if ('0' <= buf[11] && buf[11] <= '9')
                 {
                     c = buf[11] - '0';
@@ -138,40 +138,40 @@ void	read_ini(char *path, char *prog)
                     continue;
                 }
 			    if ( 1 <= c && c <= 12 )
-				    mem_aloc = 0x100000 * c ;
+				    mem_aloc = 0x100000 * c;
     		}
         }
     }
-	fclose( fp ) ;
+	fclose( fp );
 }
 
 /* run68.iniファイルから環境変数の初期値を取得する。*/
 void	readenv_from_ini(char *path)
 {
-	char	buf [ 1024 ] ;
-	FILE	*fp ;
-	int	len ;
+	char	buf [ 1024 ];
+	FILE	*fp;
+	int	len;
 	char	*mem_ptr;       /* メモリ管理ブロック */
 	char	*read_ptr;
 	int     env_len = 0;    /* 環境の長さ */
     BOOL    env_flag;
 
-	/* INIファイルの名前（パス含む）を得る */
-	strcpy( buf, path ) ;
+	/* INIファイルの名前(パス含む)を得る */
+	strcpy( buf, path );
 	if ( (len=strlen( buf )) < 4 )
-		return ;
-	buf [ len - 3 ] = 'i' ;
-	buf [ len - 2 ] = 'n' ;
-	buf [ len - 1 ] = 'i' ;
+		return;
+	buf [ len - 3 ] = 'i';
+	buf [ len - 2 ] = 'n';
+	buf [ len - 1 ] = 'i';
 	if ( (fp=fopen( buf, "r" )) == NULL )
-		return ;
+		return;
 
     /* 環境変数はiniファイルに記述する。*/
-   	mem_set( ra [ 3 ], ENV_SIZE, S_LONG ) ;
-   	mem_set( ra [ 3 ] + 4, 0, S_BYTE ) ;
+   	mem_set( ra [ 3 ], ENV_SIZE, S_LONG );
+   	mem_set( ra [ 3 ] + 4, 0, S_BYTE );
 	/* 内容を調べる */
 	while( fgets( buf, 1023, fp ) != NULL ) {
-		strlwr( buf ) ;
+		strlwr( buf );
         if (strlen(buf) != 0 && buf[strlen(buf)-1] == '\n')
             buf[strlen(buf)-1] = '\0';
 
@@ -179,9 +179,9 @@ void	readenv_from_ini(char *path)
 		if ( buf[ 0 ] == '[' ) {
             env_flag = FALSE;
             if ( strcmp( buf, "[environment]" ) == 0 ) {
-				env_flag = TRUE ;
+				env_flag = TRUE;
 			}
-			continue ;
+			continue;
 		}
 
     	if (env_flag == TRUE)
@@ -190,23 +190,23 @@ void	readenv_from_ini(char *path)
             /* bufに格納された文字列の書式を確認すべきである。*/
             if ( env_len + strlen(buf) < ENV_SIZE - 5 )
             {
-                mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len ;
-		        strcpy( mem_ptr, buf) ;
+                mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len;
+		        strcpy( mem_ptr, buf);
 			    if ( ini_info.env_lower == TRUE ) {
-                    strcpy( buf, buf) ;
-		            strlwr(buf) ;
-                    read_ptr = buf ;
+                    strcpy( buf, buf);
+		            strlwr(buf);
+                    read_ptr = buf;
         			while( *mem_ptr != '\0' && *mem_ptr != '=' )
-		        		*(mem_ptr ++) = *(read_ptr ++) ;
+		        		*(mem_ptr ++) = *(read_ptr ++);
         	    }
 #ifdef	TRACE
-	        	mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len ;
-       			printf( "env: %s\n", mem_ptr ) ;
+	        	mem_ptr = prog_ptr + ra [ 3 ] + 4 + env_len;
+       			printf( "env: %s\n", mem_ptr );
 #endif
-       			env_len += strlen(buf) + 1 ;
+       			env_len += strlen(buf) + 1;
 	        }
         }
     }
-   	mem_set( ra [ 3 ] + 4 + env_len, 0, S_BYTE ) ;
-	fclose( fp ) ;
+   	mem_set( ra [ 3 ] + 4 + env_len, 0, S_BYTE );
+	fclose( fp );
 }

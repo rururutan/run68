@@ -39,29 +39,29 @@
 #include "run68.h"
 
 /*
- 　機能：１/２/３ライン命令(move / movea)を実行する
+ 　機能：1/2/3ライン命令(move / movea)を実行する
  戻り値： TRUE = 実行終了
          FALSE = 実行継続
 */
 int	line2( char *pc_ptr )
 {
-	long	save_pc ;
-	char	src_mode ;
-	char	dst_mode ;
-	char	src_reg ;
-	char	dst_reg ;
-	char	code1, code2 ;
-	long	src_data ;
+	long	save_pc;
+	char	src_mode;
+	char	dst_mode;
+	char	src_reg;
+	char	dst_reg;
+	char	code1, code2;
+	long	src_data;
 	int	size;
 
-	code1 = *(pc_ptr++) ;
-	code2 = *pc_ptr ;
-	pc += 2 ;
-	save_pc = pc ;
-	dst_reg  = ((code1 & 0x0E) >> 1) ;
-	dst_mode = (((code1 & 0x01) << 2) | ((code2 >> 6) & 0x03)) ;
-	src_mode = ((code2 & 0x38) >> 3) ;
-	src_reg  = (code2 & 0x07) ;
+	code1 = *(pc_ptr++);
+	code2 = *pc_ptr;
+	pc += 2;
+	save_pc = pc;
+	dst_reg  = ((code1 & 0x0E) >> 1);
+	dst_mode = (((code1 & 0x01) << 2) | ((code2 >> 6) & 0x03));
+	src_mode = ((code2 & 0x38) >> 3);
+	src_reg  = (code2 & 0x07);
 
 	/* アクセスサイズの決定 */
 	switch ((code1 >> 4) & 0x03) {
@@ -75,13 +75,13 @@ int	line2( char *pc_ptr )
 			size = S_LONG;
 			break;
 		default:
-			err68a( "存在しないアクセスサイズです。", __FILE__, __LINE__ ) ;
-			return( TRUE ) ;
+			err68a( "存在しないアクセスサイズです。", __FILE__, __LINE__ );
+			return( TRUE );
 	}
 
 	/* ソースのアドレッシングモードに応じた処理 */
 	if (src_mode == EA_AD && size == S_BYTE) {
-		err68a( "不正な命令: move[a].b An, <ea> を実行しようとしました。", __FILE__, __LINE__ ) ;
+		err68a( "不正な命令: move[a].b An, <ea> を実行しようとしました。", __FILE__, __LINE__ );
 		return(TRUE);
 	} else if (get_data_at_ea(EA_All, src_mode, src_reg, size, &src_data)) {
 		return(TRUE);
@@ -90,7 +90,7 @@ int	line2( char *pc_ptr )
 	/* movea 実効時の処理 */
 	if (dst_mode == EA_AD) {
 		if (size == S_BYTE) {
-			err68a( "不正な命令: movea.b <ea>, An を実行しようとしました。", __FILE__, __LINE__ ) ;
+			err68a( "不正な命令: movea.b <ea>, An を実行しようとしました。", __FILE__, __LINE__ );
 			return(TRUE);
 		} else if (size == S_WORD) {
 			if (src_data & 0x8000) {
@@ -115,5 +115,5 @@ int	line2( char *pc_ptr )
 
 	}
 
-	return( FALSE ) ;
+	return( FALSE );
 }

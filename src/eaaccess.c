@@ -61,7 +61,7 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 //	long	save_pc;
 
 //	save_pc = pc;
-	retcode = FALSE ;
+	retcode = FALSE;
 
 	/* 操作しやすいようにモードを統合 */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
@@ -70,47 +70,47 @@ BOOL get_ea(long save_pc, int AceptAdrMode, int mode, int reg, long *data) {
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-		retcode = TRUE ;
+		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+		retcode = TRUE;
 
 	} else {
 
 		/* アドレッシングモードに応じた処理 */
 		switch (gmode) {
 			case EA_AI:
-				*data = ra [ reg ] ;
-				break ;
+				*data = ra [ reg ];
+				break;
 			case EA_AID:
-				disp = (short)imi_get( S_WORD ) ;
-				*data = ra [ reg ] + (int)disp ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				*data = ra [ reg ] + (int)disp;
+				break;
 			case EA_AIX:
-				idx = idx_get() ;
-				*data = ra [ reg ] + idx ;
-				break ;
+				idx = idx_get();
+				*data = ra [ reg ] + idx;
+				break;
 			case EA_SRT:
-				idx = imi_get( S_WORD ) ;
+				idx = imi_get( S_WORD );
 				if ( (idx & 0x8000) != 0 )
-					idx |= 0xFFFF0000 ;
-				*data = idx ;
-				break ;
+					idx |= 0xFFFF0000;
+				*data = idx;
+				break;
 			case EA_LNG:
-				*data = imi_get( S_LONG ) ;
-				break ;
+				*data = imi_get( S_LONG );
+				break;
 			case EA_PC:
-				disp = (short)imi_get( S_WORD ) ;
-				*data = save_pc + (int)disp ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				*data = save_pc + (int)disp;
+				break;
 			case EA_PCX:
-				idx = idx_get() ;
-				*data = save_pc + idx ;
-				break ;
+				idx = idx_get();
+				*data = save_pc + idx;
+				break;
 			default:
-				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-				retcode = TRUE ;
+				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+				retcode = TRUE;
 		}
 	}
-	return( retcode ) ;
+	return( retcode );
 }
 
 /* Get Data at Effective Address */
@@ -143,7 +143,7 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 	long	save_pc;
 
 	save_pc = pc;
-	retcode = FALSE ;
+	retcode = FALSE;
 
 	/* 操作しやすいようにモードを統合 */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
@@ -152,8 +152,8 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-		retcode = TRUE ;
+		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+		retcode = TRUE;
 
 	} else {
 
@@ -162,85 +162,85 @@ BOOL get_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long *data) {
 			case EA_DD:
 				switch( size ) {
 					case S_BYTE:
-						*data = (rd [ reg ] & 0xFF) ;
-						break ;
+						*data = (rd [ reg ] & 0xFF);
+						break;
 					case S_WORD:
-						*data = (rd [ reg ] & 0xFFFF) ;
-						break ;
+						*data = (rd [ reg ] & 0xFFFF);
+						break;
 					case S_LONG:
-						*data = rd [ reg ] ;
-						break ;
+						*data = rd [ reg ];
+						break;
 				}
 				break;
 			case EA_AD:
 				switch( size ) {
 					case S_BYTE:
-						*data = (ra [ reg ] & 0xFF) ;
+						*data = (ra [ reg ] & 0xFF);
 						break;
 					case S_WORD:
-						*data = (ra [ reg ] & 0xFFFF) ;
-						break ;
+						*data = (ra [ reg ] & 0xFFFF);
+						break;
 					case S_LONG:
-						*data = ra [ reg ] ;
-						break ;
+						*data = ra [ reg ];
+						break;
 				}
-				break ;
+				break;
 			case EA_AI:
-				*data = mem_get( ra [ reg ], (char)size ) ;
-				break ;
+				*data = mem_get( ra [ reg ], (char)size );
+				break;
 			case EA_AIPI:
-				*data = mem_get( ra [ reg ], (char)size ) ;
+				*data = mem_get( ra [ reg ], (char)size );
 				if ( reg == 7 && size == S_BYTE ) {
 					/* システムスタックのポインタは常に偶数 */
-					inc_ra( (char)reg, (char)S_WORD ) ;
+					inc_ra( (char)reg, (char)S_WORD );
 				} else {
-					inc_ra( (char)reg, (char)size ) ;
+					inc_ra( (char)reg, (char)size );
 				}
-				break ;
+				break;
 			case EA_AIPD:
 				if ( reg == 7 && size == S_BYTE ) {
 					/* システムスタックのポインタは常に偶数 */
-					dec_ra( (char)reg, (char)S_WORD ) ;
+					dec_ra( (char)reg, (char)S_WORD );
 				} else {
-					dec_ra( (char)reg, (char)size ) ;
+					dec_ra( (char)reg, (char)size );
 				}
-				*data = mem_get( ra [ reg ], (char)size ) ;
-				break ;
+				*data = mem_get( ra [ reg ], (char)size );
+				break;
 			case EA_AID:
-				disp = (short)imi_get( S_WORD ) ;
-				*data = mem_get( ra [ reg ] + disp, (char)size ) ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				*data = mem_get( ra [ reg ] + disp, (char)size );
+				break;
 			case EA_AIX:
-				idx = idx_get() ;
-				*data = mem_get( ra [ reg ] + (int)idx, (char)size ) ;
-				break ;
+				idx = idx_get();
+				*data = mem_get( ra [ reg ] + (int)idx, (char)size );
+				break;
 			case EA_SRT:
-				idx = imi_get( S_WORD ) ;
+				idx = imi_get( S_WORD );
 				if ( (idx & 0x8000) != 0 )
-					idx |= 0xFFFF0000 ;
-				*data = mem_get( idx, (char)size ) ;
-				break ;
+					idx |= 0xFFFF0000;
+				*data = mem_get( idx, (char)size );
+				break;
 			case EA_LNG:
-				idx = imi_get( S_LONG ) ;
-				*data = mem_get( idx, (char)size ) ;
-				break ;
+				idx = imi_get( S_LONG );
+				*data = mem_get( idx, (char)size );
+				break;
 			case EA_PC:
-				disp = (short)imi_get( S_WORD ) ;
-				*data = mem_get( save_pc + disp, (char)size ) ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				*data = mem_get( save_pc + disp, (char)size );
+				break;
 			case EA_PCX:
-				idx = idx_get() ;
-				*data = mem_get( save_pc + idx, (char)size ) ;
-				break ;
+				idx = idx_get();
+				*data = mem_get( save_pc + idx, (char)size );
+				break;
 			case EA_IM:
-				*data = imi_get( (char)size ) ;
-				break ;
+				*data = imi_get( (char)size );
+				break;
 			default:
-				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-				retcode = TRUE ;
+				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+				retcode = TRUE;
 		}
 	}
-	return( retcode ) ;
+	return( retcode );
 }
 
 /*
@@ -271,7 +271,7 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 	long	save_pc;
 
 	save_pc = pc;
-	retcode = FALSE ;
+	retcode = FALSE;
 
 	/* 操作しやすいようにモードを統合 */
 	gmode = mode < 7 ? mode : 7 + reg;	/* gmode = 0-11 */
@@ -280,8 +280,8 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 
 	if ((AceptAdrMode & (1 << gmode)) == 0) {
 
-		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-		retcode = TRUE ;
+		err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+		retcode = TRUE;
 
 	} else {
 
@@ -291,87 +291,87 @@ BOOL set_data_at_ea(int AceptAdrMode, int mode, int reg, int size, long data) {
 				switch( size ) {
 					case S_BYTE:
 						rd [ reg ] = ( rd [ reg ] & 0xFFFFFF00 ) |
-								( data & 0xFF) ;
-						break ;
+								( data & 0xFF);
+						break;
 					case S_WORD:
 						rd [ reg ] = ( rd [ reg ] & 0xFFFF0000 ) |
-								( data & 0xFFFF) ;
-						break ;
+								( data & 0xFFFF);
+						break;
 					case S_LONG:
-						rd [ reg ] = data ;
-						break ;
+						rd [ reg ] = data;
+						break;
 				}
-				break ;
+				break;
 			case EA_AD:
 				switch( size ) {
 					case S_BYTE:
 						ra [ reg ] = ( ra [ reg ] & 0xFFFFFF00 ) |
-								( data & 0xFF ) ;
-						break ;
+								( data & 0xFF );
+						break;
 					case S_WORD:
 						ra [ reg ] = ( ra [ reg ] & 0xFFFF0000 ) |
-								( data & 0xFFFF ) ;
-						break ;
+								( data & 0xFFFF );
+						break;
 					case S_LONG:
-						ra [ reg ] = data ;
-						break ;
+						ra [ reg ] = data;
+						break;
 				}
-				break ;
+				break;
 			case EA_AI:
-				mem_set( ra [ reg ], data, (char)size ) ;
-				break ;
+				mem_set( ra [ reg ], data, (char)size );
+				break;
 			case EA_AIPI:
-				mem_set( ra [ reg ], data, (char)size ) ;
+				mem_set( ra [ reg ], data, (char)size );
 				if ( reg == 7 && size == S_BYTE ) {
 					/* システムスタックのポインタは常に偶数 */
-					inc_ra( (char)reg, (char)S_WORD ) ;
+					inc_ra( (char)reg, (char)S_WORD );
 				} else {
-					inc_ra ( (char)reg , (char)size ) ;
+					inc_ra ( (char)reg , (char)size );
 				}
-				break ;
+				break;
 			case EA_AIPD:
 				if ( reg == 7 && size == S_BYTE ) {
 					/* システムスタックのポインタは常に偶数 */
-					dec_ra( (char)reg, (char)S_WORD ) ;
+					dec_ra( (char)reg, (char)S_WORD );
 				} else {
-					dec_ra ( (char)reg , (char)size ) ;
+					dec_ra ( (char)reg , (char)size );
 				}
 
-				mem_set( ra [ reg ], data, (char)size ) ;
-				break ;
+				mem_set( ra [ reg ], data, (char)size );
+				break;
 			case EA_AID:
-				disp = (short)imi_get( S_WORD ) ;
-				mem_set( ra [ reg ] + (int)disp, data, (char)size ) ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				mem_set( ra [ reg ] + (int)disp, data, (char)size );
+				break;
 			case EA_AIX:
-				idx = idx_get() ;
-				mem_set( ra [ reg ] + idx, data, (char)size ) ;
-				break ;
+				idx = idx_get();
+				mem_set( ra [ reg ] + idx, data, (char)size );
+				break;
 			case EA_SRT:
-				idx = imi_get( S_WORD ) ;
+				idx = imi_get( S_WORD );
 				if ( (idx & 0x8000) != 0 )
-					idx |= 0xFFFF0000 ;
-				mem_set( idx, data, (char)size ) ;
-				break ;
+					idx |= 0xFFFF0000;
+				mem_set( idx, data, (char)size );
+				break;
 			case EA_LNG:
-				idx = imi_get( S_LONG ) ;
-				mem_set( idx, data, (char)size ) ;
-				break ;
+				idx = imi_get( S_LONG );
+				mem_set( idx, data, (char)size );
+				break;
 			case EA_PC:
-				disp = (short)imi_get( S_WORD ) ;
-				mem_set( save_pc + (int)disp, data, (char)size ) ;
-				break ;
+				disp = (short)imi_get( S_WORD );
+				mem_set( save_pc + (int)disp, data, (char)size );
+				break;
 			case EA_PCX:
-				idx = idx_get() ;
-				mem_set( save_pc + idx, data, (char)size ) ;
-				break ;
+				idx = idx_get();
+				mem_set( save_pc + idx, data, (char)size );
+				break;
 			default:
-				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ ) ;
-				retcode = TRUE ;
+				err68a( "アドレッシングモードが異常です。", __FILE__, __LINE__ );
+				retcode = TRUE;
 		}
 	}
 
-	return( retcode ) ;
+	return( retcode );
 }
 
 /*
