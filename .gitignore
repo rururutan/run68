@@ -1,0 +1,10 @@
+*.exe
+*.obj
+*.old
+*.pdb
+*.idb
+*.user
+*.ncb
+*.suo
+*.aps
+*.*~
