@@ -37,9 +37,9 @@ OBJS =	calc.obj doscall.obj exec.obj getini.obj iocscall.obj key.obj \
 RM = del
 
 #LDFLAGS = -lc -lcygwin -lm -lg -lmsvcrt40
-LDFLAGS = -lmsvcrt40
+LDFLAGS = 
 DEFS = -DFNC_TRACE -DENV_FROM_INI
-CFLAGS = /c $(DEFS)
+CFLAGS = /W4 /Ot /c $(DEFS)
 RELEASE_DIR = ../Release
 ARCHIVE_DIR = ../archives
 
@@ -49,7 +49,7 @@ ARCHIVE_DIR = ../archives
 all: run68.exe
 
 run68.exe: $(OBJS)
-	$(CC) $(LDFLAGS) -o run68.exe $(OBJS)
+	$(CC) $(LDFLAGS) /Ferun68.exe $(OBJS)
 
 $(OBJS): $(SRCS)
 $(SRCS): run68.h
