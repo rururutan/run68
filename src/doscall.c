@@ -131,7 +131,6 @@ long Getenv_common(const char *name_p, char *buf_p);
 int dos_call( UChar code )
 {
 	char    *data_ptr;
-	/*    unsigned drv; -- 一度も使われていない */
 	long stack_adr;
 	long data;
 	long env;
@@ -201,22 +200,20 @@ int dos_call( UChar code )
 			BOOL b;
 			rd [ 0 ] = 0;
 			b = PeekConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
-			if (read_len == 0)
-			  {
-				  /* Do nothing. */
-			  } else if(ir.EventType != KEY_EVENT || !ir.Event.KeyEvent.bKeyDown
-						|| c == 0x0)
-				{
-					/* 不要なイベントは読み捨てる */
-					b = ReadConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
-				} else if ( srt != 0xFE )
-				  {
-					  b = ReadConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
-					  c = ir.Event.KeyEvent.uChar.AsciiChar;
-					  if ( ini_info.pc98_key == TRUE )
-						c = cnv_key98( c );
-					  rd [ 0 ] = c;
-				  }
+			if (read_len == 0) {
+				/* Do nothing. */
+			} else if(ir.EventType != KEY_EVENT || !ir.Event.KeyEvent.bKeyDown
+					  || c == 0x0)
+			{
+				/* 不要なイベントは読み捨てる */
+				b = ReadConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
+			} else if ( srt != 0xFE ) {
+				b = ReadConsoleInput(finfo [0].fh, &ir, 1, (LPDWORD)&read_len);
+				c = ir.Event.KeyEvent.uChar.AsciiChar;
+				if ( ini_info.pc98_key == TRUE )
+				  c = cnv_key98( c );
+				rd [ 0 ] = c;
+			}
 #else
 			rd [ 0 ] = 0;
 			if ( kbhit() != 0 ) {
@@ -277,7 +274,7 @@ int dos_call( UChar code )
 		/* printf( "%s", data_ptr ); */
 		rd [ 0 ] = 0;
 		break;
-	  case 0x0A:
+	  case 0x0A:     /* GETS */
 		buf = mem_get( stack_adr, S_LONG );
 		if (func_trace_f) {
 			printf("%-10s\n", "GETS");
@@ -331,11 +328,10 @@ int dos_call( UChar code )
 			sprintf(drv, "%c:", srt+'A');
 			/* Win32 API */
 			b = SetCurrentDirectory(drv);
-			if (b)
-			  {
-				  /* When succeeded. */
-				  rd [ 0 ] = srt;
-			  }
+			if (b) {
+				/* When succeeded. */
+				rd [ 0 ] = srt;
+			}
 		}
 #elif defined(DOSX)
 		srt += 1;
@@ -348,13 +344,11 @@ int dos_call( UChar code )
 			char drv[512];
 			BOOL b;
 			b = GetCurrentDirectoryA(sizeof(drv), drv);
-			if (b && strlen(drv) != 0 && (drv[0] - 'A') == rd[0])
-			  {
-				  /* OK, nothing to do. */
-			  } else
-				{
-					rd [ 0 ] = -15;    /* ドライブ指定誤り */
-				}
+			if (b && strlen(drv) != 0 && (drv[0] - 'A') == rd[0]) {
+				/* OK, nothing to do. */
+			} else {
+				rd [ 0 ] = -15;    /* ドライブ指定誤り */
+			}
 		}
 #elif defined(DOSX)
 		dos_getdrive( &drv );
@@ -398,13 +392,11 @@ int dos_call( UChar code )
 			char path[512];
 			BOOL b;
 			b = GetCurrentDirectory(sizeof(path), path);
-			if (b && strlen(path) != 0)
-			  {
-				  rd [ 0 ] = path[0] - 'A';
-			  } else
-				{
-					rd [ 0 ] = -15;    /* ドライブ指定誤り */
-				}
+			if (b && strlen(path) != 0) {
+				rd [ 0 ] = path[0] - 'A';
+			} else {
+				rd [ 0 ] = -15;    /* ドライブ指定誤り */
+			}
 		}
 #elif defined(DOSX)
 		dos_getdrive( &drv );
@@ -412,51 +404,43 @@ int dos_call( UChar code )
 #endif
 		break;
 	  case 0x1B:    /* FGETC */
-		if (func_trace_f)
-		  {
-			  printf("%-10s\n", "FGETC");
-		  }
+		if (func_trace_f) {
+			printf("%-10s\n", "FGETC");
+		}
 		fhdl = (short)mem_get( stack_adr, S_WORD );
-		if ( finfo [ fhdl ].mode == 1 )
-		  {
-			  rd [ 0 ] = -1;
-		  } else
-			{
+		if ( finfo [ fhdl ].mode == 1 ) {
+			rd [ 0 ] = -1;
+		} else {
 #if defined(WIN32)
-				DWORD read_len;
-				BOOL b = FALSE;
-				INPUT_RECORD ir;
-				if (GetFileType(finfo [ fhdl ].fh) == FILE_TYPE_CHAR)
-				  {
-					  /* 標準入力のハンドルがキャラクタタイプだったら、ReadConsoleを試してみる。*/
-					  while(TRUE)
-						{
-							b = ReadConsoleInput(finfo [ fhdl ].fh, &ir, 1, (LPDWORD)&read_len);
-							if (b == FALSE)
-							  {
-								  /* コンソールではなかった。*/
-								  ReadFile(finfo [ fhdl ].fh, &c, 1, (LPDWORD)&read_len, NULL);
-								  break;
-							  }
-							if (read_len == 1 && ir.EventType == KEY_EVENT
-								&& ir.Event.KeyEvent.bKeyDown)
-							  {
-								  c = ir.Event.KeyEvent.uChar.AsciiChar;
-								  if (0x01 <= c && c <= 0xff)
-									break;
-							  }
-						}
-				  } else
-					{
+			DWORD read_len;
+			BOOL b = FALSE;
+			INPUT_RECORD ir;
+			if (GetFileType(finfo [ fhdl ].fh) == FILE_TYPE_CHAR) {
+				/* 標準入力のハンドルがキャラクタタイプだったら、ReadConsoleを試してみる。*/
+				while(TRUE) {
+					b = ReadConsoleInput(finfo [ fhdl ].fh, &ir, 1, (LPDWORD)&read_len);
+					if (b == FALSE) {
+						/* コンソールではなかった。*/
 						ReadFile(finfo [ fhdl ].fh, &c, 1, (LPDWORD)&read_len, NULL);
+						break;
 					}
-				if (read_len == 0)
-				  c = EOF;
-				rd[0] = c;
-#else
-				rd [ 0 ] = fgetc( finfo [ fhdl ].fh );
-#endif
+					if (read_len == 1 && ir.EventType == KEY_EVENT
+						&& ir.Event.KeyEvent.bKeyDown) {
+						c = ir.Event.KeyEvent.uChar.AsciiChar;
+						if (0x01 <= c && c <= 0xff)
+						  break;
+					}
+				}
+			} else {
+				ReadFile(finfo [ fhdl ].fh, &c, 1, (LPDWORD)&read_len, NULL);
 			}
+			if (read_len == 0)
+				c = EOF;
+			rd[0] = c;
+#else
+			rd [ 0 ] = fgetc( finfo [ fhdl ].fh );
+#endif
+		}
 		break;
 	  case 0x1C:    /* FGETS */
 		data = mem_get( stack_adr, S_LONG );
@@ -726,18 +710,16 @@ int dos_call( UChar code )
 		rd [ 0 ] = Read( srt, data, len );
 		if (func_trace_f) {
 			char *str = prog_ptr + data;
-			printf("%-10s file_no=%d size=%d ret=%d str=", "READ", srt, len,
-				   rd[0]);
-			for (i = 0; i < (len <= 30 ? len : 30); i ++)
-			  {
-				  if (str[i] == 0)
+			printf("%-10s file_no=%d size=%d ret=%d str=", "READ", srt, len, rd[0]);
+			for (i = 0; i < (len <= 30 ? len : 30); i ++) {
+				if (str[i] == 0)
 					break;
-				  if (str[i] < ' ')
+				if (str[i] < ' ')
 					printf("\\%03o", (unsigned char)str[i]);
-				  putchar(str[i]);
-			  }
+				putchar(str[i]);
+			}
 			if (len > 30)
-			  printf(" ...(truncated)");
+				printf(" ...(truncated)");
 			printf("\n");
 		}
 		break;
@@ -748,16 +730,14 @@ int dos_call( UChar code )
 		rd [ 0 ] = Write( srt, data, len );
 		if (func_trace_f) {
 			char *str = prog_ptr + data;
-			printf("%-10s file_no=%d size=%d ret=%d str=", "WRITE", srt, len,
-				   rd[0]);
-			for (i = 0; i < (len <= 30 ? len : 30); i ++)
-			  {
-				  if (str[i] == 0)
+			printf("%-10s file_no=%d size=%d ret=%d str=", "WRITE", srt, len, rd[0]);
+			for (i = 0; i < (len <= 30 ? len : 30); i ++) {
+				if (str[i] == 0)
 					break;
-				  if (str[i] < ' ')
+				if (str[i] < ' ')
 					printf("\\%03o", (unsigned char)str[i]);
-				  putchar(str[i]);
-			  }
+				putchar(str[i]);
+			}
 			if (len > 30)
 			  printf(" ...(truncated)");
 			printf("\n");
@@ -974,25 +954,21 @@ int dos_call( UChar code )
 			printf("%-10s\n", code == 0x4C ? "EXIT2" : "EXIT");
 		}
 		Mfree( 0 );
-		for( i = 5; i < FILE_MAX; i ++ )
-		  {
-			  if (finfo[i].nest == nest_cnt)
-				{
-					if (finfo [i].fh != NULL)
-					  {
-						  CloseHandle(finfo [i].fh);
-						  finfo[i].fh = NULL;
-					  }
+		for( i = 5; i < FILE_MAX; i ++ ) {
+			if (finfo[i].nest == nest_cnt) {
+				if (finfo [i].fh != NULL) {
+					CloseHandle(finfo [i].fh);
+					finfo[i].fh = NULL;
 				}
-		  }
-		if (nest_cnt <= 0)
-		  {
-			  if (code == 0x00)
+			}
+		}
+		if (nest_cnt <= 0) {
+			if (code == 0x00)
 				rd[0] = 0;
-			  else
+			else
 				rd[0] = (UShort)srt;
-			  return TRUE;
-		  }
+			return TRUE;
+		}
 		sr = (short)mem_get( psp [ nest_cnt ] + 0x44, S_WORD );
 		Mfree( psp [ nest_cnt ] + MB_SIZE );
 		nest_cnt --;
