@@ -199,24 +199,24 @@ Restart:
 #else
 		strcpy( fname, "run68w.exe" );
 #endif
-		fprintf(stderr, "X68000エミュレータ Ver.%s %s (for ", RUN68VERSION, fname);
+		fprintf(stderr, "X68000 console emulator Ver.%s (for ", RUN68VERSION);
 #if defined(WIN32)
-		fprintf(stderr, "Windows 95/98/NT/2000/XP/Vista");
+		fprintf(stderr, "Windows Vista/7/8");
 #elif defined(DOSX)
 		fprintf(stderr, "32bitDOS");
 #else
 		fprintf(stderr, "Win95");
 #endif
-		fprintf(stderr, ")\n");
+        fprintf(stderr, ")\n");
         fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
-        fprintf(stderr, "          %s\n", "Created in 1996 by Ｙｏｋｋｏ");
+        fprintf(stderr, "          %s\n", "Created in 1996 by Yokko");
         fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
     }
 	if ( argc - argbase == 0 ) {
-		fprintf(stderr, "使用法： %s {オプション} 実行ファイル名 [コマンドライン]\n", fname);
-		fprintf(stderr, "　           -f         ファンクションコールトレース\n");
-        fprintf(stderr, "             -debug     run68簡易デバッガ起動\n");
-		fprintf(stderr, "　           -S  size   実行時スタックサイズ指定(単位KB、未実装)\n");
+		fprintf(stderr, "Usage： %s {options} execute file name [command line]\n", fname);
+		fprintf(stderr, "             -f         function call trace\n");
+        fprintf(stderr, "             -debug     run with debugger\n");
+//		fprintf(stderr, "             -S  size   実行時スタックサイズ指定(単位KB、未実装)\n");
 		return( 1 );
 	}
 
