@@ -1292,11 +1292,10 @@ static long Dskfre( short drv, long buf )
 	long disksize;
 #if defined(WIN32)
 	BOOL b;
-	char RootPathName[] = "A:\\";
 	unsigned long SectorsPerCluster, BytesPerSector,
 	NumberOfFreeClusters, TotalNumberOfClusters;
 	b = GetDiskFreeSpaceA(
-		RootPathName,
+		NULL,
 		(LPDWORD)&SectorsPerCluster,
 		(LPDWORD)&BytesPerSector,
 		(LPDWORD)&NumberOfFreeClusters,
