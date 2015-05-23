@@ -54,7 +54,7 @@ int iocs_call()
 	int	x, y;
 	short	save_s;
 
-	no = rd [ 0 ];
+	no = rd [ 0 ] & 0xff;
 
     if (func_trace_f)
     {
