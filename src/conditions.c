@@ -33,7 +33,7 @@
 
 #include "run68.h"
 
-void ccr2bitmap(short ccr, char *bitmap) {
+static void ccr2bitmap(short ccr, char *bitmap) {
 	int  i;
 	int  flag;
 	int  j = 0;
@@ -59,7 +59,6 @@ void check(char *mode, long src, long dest, long result, int size, short before)
 	ccr2bitmap((short)(sr & 0x1f), aftstr);
 
 	printf("%s: 0x%08x 0x%08x 0x%08x %1d %8s %8s\n", mode, src, dest, result, size, befstr, aftstr);
-
 }
 
 long getMSB(long num, int size) {
