@@ -296,7 +296,7 @@ L2:
         *next_addr = addr + 2;
         size = ' ';  /* Data registers are long only. Others are byte only. */
         goto AddEA;
-    } else if (code & 0x0038 == 0x0008)
+    } else if ((code & 0x0038) == 0x0008)
     {
         /* MOVEP–½—ß */
         strcat(mnemonic, "movep");

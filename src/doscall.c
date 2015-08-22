@@ -130,7 +130,7 @@ long Getenv_common(const char *name_p, char *buf_p);
  */
 int dos_call( UChar code )
 {
-	char    *data_ptr;
+	char *data_ptr = 0;
 	long stack_adr;
 	long data;
 	long env;
@@ -2333,8 +2333,8 @@ static long Filedate( short hdl, long dt )
 #if defined(WIN32)
 	hFile = finfo [ hdl ].fh;
 	GetFileTime(hFile, &ctime, &atime, &wtime);
-	ll_wtime = ((__int64)wtime.dwLowDateTime) << 32 + (__int64)wtime.dwLowDateTime;
-	return (long)((ll_wtime / 86400 / 10000000) << 16
+	ll_wtime = (((__int64)wtime.dwLowDateTime) << 32) + (__int64)wtime.dwLowDateTime;
+	return (long)(((ll_wtime / 86400 / 10000000) << 16)
 					+ (ll_wtime / 10000000) % 86400);
 #else
 	if ( dos_getftime( dosfh, &fd, &ft ) != 0 )
