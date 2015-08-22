@@ -158,13 +158,13 @@ void mem_set( long adr, long d, char size )
 */
 static int mem_red_chk( long adr )
 {
-    char message[256];
+	char message[256];
 
-    adr &= 0x00FFFFFF;
+	adr &= 0x00FFFFFF;
 	if ( adr >= 0xC00000 ) {
 		if ( ini_info.io_through == TRUE )
 			return( FALSE );
-        sprintf(message, "I/OポートorROM($%06X)から読み込もうとしました。", adr);
+		sprintf(message, "I/OポートorROM($%06X)から読み込もうとしました。", adr);
 		err68(message);
 		run68_abort( adr );
 	}
@@ -183,9 +183,9 @@ static int mem_red_chk( long adr )
 */
 static int mem_wrt_chk( long adr )
 {
-    char message[256];
+	char message[256];
 
-    adr &= 0x00FFFFFF;
+	adr &= 0x00FFFFFF;
 	if ( adr >= 0xC00000 ) {
 		if ( ini_info.io_through == TRUE )
 			return( FALSE );
@@ -193,12 +193,12 @@ static int mem_wrt_chk( long adr )
 		if ( adr == 0xE8A01F )	/# RESET CONTROLLER #/
 			return( FALSE );
 */
-        sprintf(message, "I/OポートorROM($%06X)に書き込もうとしました。", adr);
+		sprintf(message, "I/OポートorROM($%06X)に書き込もうとしました。", adr);
 		err68(message);
 		run68_abort(adr);
 	}
 	if ( SR_S_REF() == 0 || adr >= mem_aloc ) {
-        sprintf(message, "不正アドレスへの書き込みです", adr);
+		sprintf(message, "不正アドレスへの書き込みです", adr);
 		err68(message);
 		run68_abort( adr );
 	}

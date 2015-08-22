@@ -338,9 +338,10 @@ int	make_psp( char *fname, long prev_adr, long end_adr, long process_id,
 
 	mem_ptr = prog_ptr + ra [ 0 ];
 	memset( mem_ptr, 0, PSP_SIZE );
-	mem_set( ra [ 0 ],        prev_adr,   S_LONG );	/* 前 */
-	mem_set( ra [ 0 ] + 0x04, process_id, S_LONG );	/* 確保プロセス */
-	mem_set( ra [ 0 ] + 0x08, end_adr,   S_LONG );		/* 終わり+1 */
+	mem_set( ra [ 0 ],        prev_adr,   S_LONG );		/* 前 */
+	mem_set( ra [ 0 ] + 0x04, process_id, S_LONG );		/* 確保プロセス */
+	mem_set( ra [ 0 ] + 0x08, end_adr,    S_LONG );		/* 終わり+1 */
+	mem_set( ra [ 0 ] + 0x0c, 0,          S_LONG );		/* 次 */
 
 	mem_set( ra [ 0 ] + 0x10, ra [ 3 ], S_LONG );
 	mem_set( ra [ 0 ] + 0x20, ra [ 2 ], S_LONG );

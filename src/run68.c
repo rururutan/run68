@@ -115,11 +115,11 @@ int main( int argc, char *argv[], char *envp[] )
 	long	prog_size2;		/* プログラムサイズ(bss除く) */
 	int	arg_len = 0;		/* コマンドラインの長さ */
 	int	i, j;
-    int argbase = 0;        /* アプリケーションコマンドラインの開始位置 */
-    int ret;
-    BOOL restart;
+	int argbase = 0;        /* アプリケーションコマンドラインの開始位置 */
+	int ret;
+	BOOL restart;
 
-    debug_flag = FALSE;
+	debug_flag = FALSE;
 Restart:
     arg_len = 0;
     argbase = 0;
@@ -201,28 +201,29 @@ Restart:
 #endif
 		fprintf(stderr, "X68000 console emulator Ver.%s (for ", RUN68VERSION);
 #if defined(WIN32)
-		fprintf(stderr, "Windows Vista/7/8");
+		fprintf(stderr, "Windows Vista/7/8/10");
 #elif defined(DOSX)
 		fprintf(stderr, "32bitDOS");
 #else
 		fprintf(stderr, "Win95");
 #endif
-        fprintf(stderr, ")\n");
-        fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
-        fprintf(stderr, "          %s\n", "Created in 1996 by Yokko");
-        fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
-    }
+		fprintf(stderr, ")\n");
+		fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
+		fprintf(stderr, "          %s\n", "Created in 1996 by Yokko");
+		fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
+	}
 	if ( argc - argbase == 0 ) {
 		fprintf(stderr, "Usage： %s {options} execute file name [command line]\n", fname);
 		fprintf(stderr, "             -f         function call trace\n");
-        fprintf(stderr, "             -debug     run with debugger\n");
+		fprintf(stderr, "             -t         mpu trace\n");
+		fprintf(stderr, "             -debug     run with debugger\n");
 //		fprintf(stderr, "             -S  size   実行時スタックサイズ指定(単位KB、未実装)\n");
 		return( 1 );
 	}
 
 	/* iniファイルの情報を読み込む */
-    strcpy(ini_file_name, argv[0]);
-    /* iniファイルのフルパス名が得られる。*/
+	strcpy(ini_file_name, argv[0]);
+	/* iniファイルのフルパス名が得られる。*/
 	read_ini(ini_file_name, fname);
 
 	/* メモリを確保する */
@@ -236,12 +237,12 @@ Restart:
 	ra [ 2 ] = STACK_TOP;			/* コマンドラインのアドレス */
 	ra [ 3 ] = ENV_TOP;			/* 環境のアドレス */
 
-    /* 環境の設定 */
+	/* 環境の設定 */
 #if defined(ENV_FROM_INI)
-    /* 環境変数はiniファイルに記述する。(getini.c参照) */
-    readenv_from_ini(ini_file_name);
+	/* 環境変数はiniファイルに記述する。(getini.c参照) */
+	readenv_from_ini(ini_file_name);
 #else
-    /* Windowsの環境変数を複製する。*/
+	/* Windowsの環境変数を複製する。*/
 	mem_set( ra [ 3 ], ENV_SIZE, S_LONG );
 	mem_set( ra [ 3 ] + 4, 0, S_BYTE );
 	for( i = 0; envp [ i ] != NULL; i++ ) {
@@ -345,8 +346,8 @@ Restart:
 	finfo [ 0 ].fh   = GetStdHandle(STD_INPUT_HANDLE);
 	finfo [ 1 ].fh   = GetStdHandle(STD_OUTPUT_HANDLE);
 	finfo [ 2 ].fh   = GetStdHandle(STD_ERROR_HANDLE);
-    /* 標準入力のハンドルを記録しておく */
-    stdin_handle = finfo[0].fh;
+	/* 標準入力のハンドルを記録しておく */
+	stdin_handle = finfo[0].fh;
 #else
 	finfo [ 0 ].fh   = stdin;
 	finfo [ 1 ].fh   = stdout;
@@ -367,25 +368,25 @@ Restart:
 		ret = exec_notrap(&restart);
 
 	/* 終了 */
-    if (trace_f || func_trace_f)
-    {
-    	printf( "d0-7=%08lx" , rd [ 0 ] );
-	    for ( i = 1; i < 8; i++ ) {
-		    printf( ",%08lx" , rd [ i ] );
-    	}
-	    printf("\n");
-    	printf( "a0-7=%08lx" , ra [ 0 ] );
-	    for ( i = 1; i < 8; i++ ) {
-		    printf( ",%08lx" , ra [ i ] );
-    	}
-	    printf("\n");
-    	printf( "  pc=%08lx    sr=%04x\n" , pc, sr );
-    }
+	if (trace_f || func_trace_f)
+	{
+		printf( "d0-7=%08lx" , rd [ 0 ] );
+		for ( i = 1; i < 8; i++ ) {
+			printf( ",%08lx" , rd [ i ] );
+		}
+		printf("\n");
+		printf( "a0-7=%08lx" , ra [ 0 ] );
+		for ( i = 1; i < 8; i++ ) {
+			printf( ",%08lx" , ra [ i ] );
+		}
+		printf("\n");
+		printf( "  pc=%08lx    sr=%04x\n" , pc, sr );
+	}
 	term( TRUE );
-    if (restart == TRUE)
-    {
-        goto Restart;
-    }
+	if (restart == TRUE)
+	{
+		goto Restart;
+	}
 	return ret;
 }
 
@@ -398,26 +399,26 @@ static int exec_trap(BOOL *restart)
 	UChar	*trap_mem1;
 	UChar	*trap_mem2;
 	long	trap_adr;
-    long    prev_pc = 0; /* 1サイクル前に実行した命令のPC */
-    RUN68_COMMAND cmd;
-    BOOL    cont_flag = TRUE;
-    int     ret;
-    BOOL    running = TRUE;
+	long    prev_pc = 0; /* 1サイクル前に実行した命令のPC */
+	RUN68_COMMAND cmd;
+	BOOL    cont_flag = TRUE;
+	int     ret;
+	BOOL    running = TRUE;
 
 	trap_count = 1;
 	trap_mem1 = (UChar *)prog_ptr + 0x118;
 	trap_mem2 = (UChar *)prog_ptr + 0x138;
-    OPBuf_clear();
+	OPBuf_clear();
 	do {
-        BOOL ecode;
-        /* 実行した命令の情報を保存しておく */
-        OP_info.pc    = 0;
-        OP_info.code  = 0;
-        OP_info.rmem  = 0;
-        OP_info.rsize = 'N';
-        OP_info.wmem  = 0;
-        OP_info.wsize = 'N';
-        OP_info.mnemonic[0] = 0;
+		BOOL ecode;
+		/* 実行した命令の情報を保存しておく */
+		OP_info.pc    = 0;
+		OP_info.code  = 0;
+		OP_info.rmem  = 0;
+		OP_info.rsize = 'N';
+		OP_info.wmem  = 0;
+		OP_info.wsize = 'N';
+		OP_info.mnemonic[0] = 0;
 		if ( superjsr_ret == pc ) {
 			SR_S_OFF();
 			superjsr_ret = 0;
@@ -501,7 +502,7 @@ static int exec_trap(BOOL *restart)
             }
         }
 		if ( (pc & 0xFF000001) != 0 ) {
-            err68b( "アドレスエラーが発生しました", pc, OPBuf_getentry(0)->pc);
+			err68b( "アドレスエラーが発生しました", pc, OPBuf_getentry(0)->pc);
 			break;
 		}
 NextInstruction:
@@ -539,23 +540,23 @@ EndOfFunc:
 */
 static int exec_notrap(BOOL *restart)
 {
-    RUN68_COMMAND cmd;
-    BOOL    cont_flag = TRUE;
-    int     ret;
-    BOOL    running = TRUE;
+	RUN68_COMMAND cmd;
+	BOOL    cont_flag = TRUE;
+	int     ret;
+	BOOL    running = TRUE;
 
-    *restart = FALSE;
-    OPBuf_clear();
+	*restart = FALSE;
+	OPBuf_clear();
 	do {
-        BOOL ecode;
-        /* 実行した命令の情報を保存しておく */
-        OP_info.pc    = 0;
-        OP_info.code  = 0;
-        OP_info.rmem  = 0;
-        OP_info.rsize = 'N';
-        OP_info.wmem  = 0;
-        OP_info.wsize = 'N';
-        OP_info.mnemonic[0] = 0;
+		BOOL ecode;
+		/* 実行した命令の情報を保存しておく */
+		OP_info.pc    = 0;
+		OP_info.code  = 0;
+		OP_info.rmem  = 0;
+		OP_info.rsize = 'N';
+		OP_info.wmem  = 0;
+		OP_info.wsize = 'N';
+		OP_info.mnemonic[0] = 0;
 		if ( superjsr_ret == pc ) {
 			SR_S_OFF();
 			superjsr_ret = 0;
@@ -580,7 +581,7 @@ static int exec_notrap(BOOL *restart)
                 fprintf(stderr, "(run68) breakpoint:%d counts left.\n", stepcount);
                 stepcount = 0;
             }
-        }
+		}
         if (debug_on)
         {
             debug_on = FALSE;
@@ -602,8 +603,7 @@ static int exec_notrap(BOOL *restart)
                 cont_flag = FALSE;
                 goto NextInstruction;
             }
-        } else if (stepcount != 0)
-        {
+        } else if (stepcount != 0) {
             stepcount --;
             if (stepcount == 0)
             {
@@ -611,31 +611,29 @@ static int exec_notrap(BOOL *restart)
             }
         }
 		if ( (pc & 0xFF000001) != 0 ) {
-            err68b( "アドレスエラーが発生しました", pc, OPBuf_getentry(0)->pc);
+			err68b( "アドレスエラーが発生しました", pc, OPBuf_getentry(0)->pc);
 			break;
 		}
 NextInstruction:
-        /* PCの値とニーモニックを保存する */
-        OP_info.pc = pc;
-        OP_info.code = *((unsigned short*)(prog_ptr + pc));
-        if ((ret = setjmp(jmp_when_abort)) != 0)
-        {
-            debug_on = TRUE;
-            continue;
-        }
-        ecode = prog_exec();
-        if (ecode == TRUE)
-        {
-            running = FALSE;
-            if (debug_flag)
-            {
-                debug_on = TRUE;
-            } else
-            {
-                cont_flag = FALSE;
-            }
-        }
-        OPBuf_insert(&OP_info);
+		/* PCの値とニーモニックを保存する */
+		OP_info.pc = pc;
+		OP_info.code = *((unsigned short*)(prog_ptr + pc));
+		if ((ret = setjmp(jmp_when_abort)) != 0)
+		{
+			debug_on = TRUE;
+			continue;
+		}
+		ecode = prog_exec();
+		if (ecode == TRUE) {
+			running = FALSE;
+			if (debug_flag)
+			{
+				debug_on = TRUE;
+			} else {
+				cont_flag = FALSE;
+			}
+		}
+		OPBuf_insert(&OP_info);
 	} while (cont_flag);
 EndOfFunc:
 	return rd[0];
@@ -686,7 +684,7 @@ static void trap_table_make()
 }
 
 /*
- 　機能：終了処理をする
+   機能：終了処理をする
  戻り値：なし
 */
 void term( int flag )
