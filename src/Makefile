@@ -33,6 +33,10 @@ OBJS =	calc.o doscall.o exec.o getini.o iocscall.o key.o \
 CC = gcc
 
 #LDFLAGS = -lc -lcygwin -lm -lg -lmsvcrt40
+# for MinGW
+#LDFLAGS = -lmsvcrt40
+# for MSYS
+#LDFLAGS =
 LDFLAGS = -lcygwin -lmsvcrt40
 DEFS = -DFNC_TRACE -DENV_FROM_INI
 CFLAGS = -g $(DEFS)
