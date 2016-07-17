@@ -615,7 +615,7 @@ static	void	Dtos( long d0, long d1, long a0 )
 	To_dbl( &arg1, d0, d1 );
 
 	p = prog_ptr + a0;
-	gcvt( arg1.dbl, 14, p);
+	_gcvt( arg1.dbl, 14, p);
 	len = strlen( p );
 	if ( p [ len - 1 ] == '.' )
 		p [ len - 1 ] = '\0';
@@ -1090,7 +1090,7 @@ static	void	Fcvt( long d0, long d1, long keta, long adr )
 	p = prog_ptr + adr;
 	keta &= 0xFF;
 
-	strcpy( p, (char *)fcvt( arg.dbl, keta, &loc, &sign ) );
+	strcpy( p, (char *)_fcvt( arg.dbl, keta, &loc, &sign ) );
 
 	rd [ 0 ] = loc;
 	if ( sign == 0 )

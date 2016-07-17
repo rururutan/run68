@@ -57,7 +57,7 @@ static char *GetAPath(char **path_p, char *buf);
 FILE    *prog_open(char *fname, int mes_flag)
 {
     char    dir[MAX_PATH], fullname[MAX_PATH], cwd[MAX_PATH];
-    FILE    *fp;
+    FILE    *fp = 0;
     char    *exp = strrchr(fname, '.');
     char    env_p[4096], *p;
 
@@ -77,7 +77,7 @@ FILE    *prog_open(char *fname, int mes_flag)
         // ‚±‚±‚Ü‚Å’Ç‰Á(by Yokko)
         goto ErrorRet;
     }
-    if (exp != NULL && !stricmp(exp, ".x") && !stricmp(exp, ".r"))
+    if (exp != NULL && !_stricmp(exp, ".x") && !_stricmp(exp, ".r"))
         goto ErrorRet; /* Šg’£q‚ªˆá‚¤ */
     GetCurrentDirectory(sizeof(cwd), cwd);
     /* PATHŠÂ‹«•Ï”‚ğæ“¾‚·‚é */

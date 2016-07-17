@@ -287,7 +287,7 @@ int dos_call( UChar code )
 		if (func_trace_f) {
 			printf("%-10s\n", "KEYSNS");
 		}
-		if ( kbhit() != 0 )
+		if ( _kbhit() != 0 )
 		  rd [ 0 ] = -1;
 		else
 		  rd [ 0 ] = 0;
@@ -2493,7 +2493,7 @@ long Getenv_common(const char *name_p, char *buf_p)
 			ename[i] = *(mem_ptr ++);
 		}
 		ename[i] = '\0';
-		if (stricmp(name_p, ename) == 0) {
+		if (_stricmp(name_p, ename) == 0) {
 			/* ŠÂ‹«•Ï”‚ªŒ©‚Â‚©‚Á‚½B*/
 			while (*mem_ptr == '=' || *mem_ptr == ' ') {
 				mem_ptr ++;
@@ -2833,7 +2833,7 @@ static long Keyctrl( short mode, long stack_adr )
 		//#if defined(WIN32)
 		//#elif defined(DOSX)
 	case 1:        /* ƒL[‚Ìæ“Ç‚İ */
-		if ( kbhit() == 0 )
+		if ( _kbhit() == 0 )
 		  return( 0 );
 		c = _getch();
 		if ( c == 0x00 ) {
@@ -2844,7 +2844,7 @@ static long Keyctrl( short mode, long stack_adr )
 			if ( ini_info.pc98_key == TRUE )
 				c = cnv_key98( c );
 		}
-		ungetch( c );
+		_ungetch( c );
 		return( c );
 #endif
 	default:

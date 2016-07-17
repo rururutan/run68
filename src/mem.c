@@ -198,7 +198,7 @@ static int mem_wrt_chk( long adr )
 		run68_abort(adr);
 	}
 	if ( SR_S_REF() == 0 || adr >= mem_aloc ) {
-		sprintf(message, "不正アドレスへの書き込みです", adr);
+		sprintf(message, "不正アドレスへの書き込みです($%06X)", adr);
 		err68(message);
 		run68_abort( adr );
 	}

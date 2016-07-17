@@ -557,6 +557,6 @@ static unsigned short watchcode(int argc, char **argv)
         fprintf(stderr, "run68-watchcode:Instruction code expression error.\n");
         return 0x4afc;
     }
-    sscanf(&argv[1][1], "%x", &wcode);
+    sscanf(&argv[1][1], "%hx", &wcode);
     return wcode;
 }

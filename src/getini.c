@@ -63,7 +63,7 @@ void	read_ini(char *path, char *prog)
     {
         /* 拡張子がついていない時は単に付加する。*/
         strcat(buf, ".ini");
-    } else if (stricmp(p, ".exe") == 0)
+    } else if (_stricmp(p, ".exe") == 0)
     {
         strcpy(p, ".ini");
     } else
@@ -96,17 +96,17 @@ void	read_ini(char *path, char *prog)
 		return;
 	}
 	sprintf( sec_name, "[%s]\n", &(prog [ i ]) );
-	strlwr( sec_name );
+	_strlwr( sec_name );
 	/* 内容を調べる */
 	while( fgets(buf, 1023, fp) != NULL ) {
-		strlwr(buf);
+		_strlwr(buf);
 
 		/* セクションを見る */
 		if ( buf[ 0 ] == '[' ) {
             flag = FALSE;
-            if ( stricmp( buf, "[all]\n" ) == 0 )
+            if ( _stricmp( buf, "[all]\n" ) == 0 )
 				flag = TRUE;
-			else if ( stricmp( buf, sec_name ) == 0 )
+			else if ( _stricmp( buf, sec_name ) == 0 )
 				flag = TRUE;
 			continue;
 		}
@@ -114,13 +114,13 @@ void	read_ini(char *path, char *prog)
 		/* キーワードを見る */
 		if (flag == TRUE)
         {
-			if ( stricmp( buf, "envlower\n" ) == 0 )
+			if ( _stricmp( buf, "envlower\n" ) == 0 )
 	    		ini_info.env_lower = TRUE;
-			else if ( stricmp( buf, "trapemulate\n" ) == 0 )
+			else if ( _stricmp( buf, "trapemulate\n" ) == 0 )
 			    ini_info.trap_emulate = TRUE;
-			else if ( stricmp( buf, "pc98\n" ) == 0 )
+			else if ( _stricmp( buf, "pc98\n" ) == 0 )
 	    		ini_info.pc98_key = TRUE;
-			else if ( stricmp( buf, "iothrough\n" ) == 0 )
+			else if ( _stricmp( buf, "iothrough\n" ) == 0 )
 			    ini_info.io_through = TRUE;
 			else if ( strncmp( buf, "mainmemory=", 11 ) == 0 ) {
 				if (strlen(buf) < 13 || 14 < strlen(buf))
@@ -171,7 +171,7 @@ void	readenv_from_ini(char *path)
    	mem_set( ra [ 3 ] + 4, 0, S_BYTE );
 	/* 内容を調べる */
 	while( fgets( buf, 1023, fp ) != NULL ) {
-		strlwr( buf );
+		_strlwr( buf );
         if (strlen(buf) != 0 && buf[strlen(buf)-1] == '\n')
             buf[strlen(buf)-1] = '\0';
 
@@ -194,7 +194,7 @@ void	readenv_from_ini(char *path)
 		        strcpy( mem_ptr, buf);
 			    if ( ini_info.env_lower == TRUE ) {
                     strcpy( buf, buf);
-		            strlwr(buf);
+		            _strlwr(buf);
                     read_ptr = buf;
         			while( *mem_ptr != '\0' && *mem_ptr != '=' )
 		        		*(mem_ptr ++) = *(read_ptr ++);
