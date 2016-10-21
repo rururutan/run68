@@ -216,7 +216,11 @@ void run68_abort( long adr )
 
 	for ( i = 5; i < FILE_MAX; i ++ ) {
 		if ( finfo [ i ].fh != NULL )
+#if defined(WIN32)
 			CloseHandle(finfo [ i ].fh);
+#else
+			fclose(finfo [ i ].fh);
+#endif
 	}
 
 #ifdef	TRACE

@@ -121,7 +121,11 @@ int	linef( char *pc_ptr )
 
 	/* DOSコールの処理 */
 	if ( code == (char)0xFF )
+#if defined(WIN32)
 		return( dos_call( *pc_ptr ) );
+#else
+		{ printf( "DOS CALL: $%02x\n", *pc_ptr ); return -1; }
+#endif
 
 	/* FLOATコールの処理 */
 	if ( code == (char)0xFE )
