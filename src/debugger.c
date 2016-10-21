@@ -133,7 +133,7 @@ RUN68_COMMAND debugger(BOOL running)
         char *argv[MAX_LINE];
         int argc;
         fprintf(stderr, "%s", PROMPT);
-        gets(line);
+        fgets(line, MAX_LINE, stdin);
         cmd = analyze(line, &argc, argv);
         if (argc == 0)
         {

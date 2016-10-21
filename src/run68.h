@@ -101,7 +101,10 @@
 #if !defined(DOSX)
 #include <limits.h>
 #define MAX_PATH	PATH_MAX
+#define _fcvt		fcvt
+#define _gcvt		gcvt
 #define _stricmp	strcasecmp
+#define _strlwr(p)	{ char *s; for (s = p; *s; s++) *s = tolower(*s); }
 #define _ltoa(v, p, n)	snprintf(p, n, "%l", v)
 #define BOOL    	int
 #endif
