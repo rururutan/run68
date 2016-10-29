@@ -27,7 +27,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#if defined(WIN32)
 #include <direct.h>
+#endif
 #include "run68.h"
 
 static	UChar	xhead [ XHEAD_SIZE ];
@@ -79,10 +81,18 @@ FILE    *prog_open(char *fname, int mes_flag)
     }
     if (exp != NULL && !_stricmp(exp, ".x") && !_stricmp(exp, ".r"))
         goto ErrorRet; /* Šg’£q‚ªˆá‚¤ */
+#if defined(WIN32)
     GetCurrentDirectory(sizeof(cwd), cwd);
+#else
+    getcwd(cwd, sizeof(cwd));
+#endif
     /* PATHŠÂ‹«•Ï”‚ğæ“¾‚·‚é */
+#if defined(WIN32)
     Getenv_common("PATH", env_p);
     p = env_p;
+#else
+    p = getenv("PATH");
+#endif
     for (strcpy(dir, cwd); strlen(dir) != 0; GetAPath(&p, dir))
     {
         if (exp != NULL)
@@ -421,9 +431,11 @@ static	int	set_fname( char *p, long psp_adr )
         b = GetCurrentDirectoryA(sizeof(cpath), cpath);
         mem_ptr[0] = cpath[0];
         }
-#else
+#elif defined(DOSX)
         dos_getdrive( &drv );
 		mem_ptr [ 0 ] = drv - 1 + 'A';
+#else
+	mem_ptr [ 0 ] = 'A';
 #endif
         mem_ptr [ 1 ] = ':';
 	} else {

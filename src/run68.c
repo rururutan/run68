@@ -91,8 +91,10 @@ long trap_pc = 0;
 unsigned short cwatchpoint = 0x4afc;
 extern unsigned long stepcount;
 char ini_file_name[MAX_PATH];
+#if defined(WIN32)
 /* 標準入力のハンドル */
 HANDLE stdin_handle;
+#endif
 
 /* アボート処理のためのジャンプバッファ */
 jmp_buf jmp_when_abort;
@@ -197,7 +199,7 @@ Restart:
 #if defined(WIN32) || defined(DOSX)
 		strcpy( fname, "run68.exe" );
 #else
-		strcpy( fname, "run68w.exe" );
+		strcpy( fname, "run68" );
 #endif
 		fprintf(stderr, "X68000 console emulator Ver.%s (for ", RUN68VERSION);
 #if defined(WIN32)
@@ -205,7 +207,7 @@ Restart:
 #elif defined(DOSX)
 		fprintf(stderr, "32bitDOS");
 #else
-		fprintf(stderr, "Win95");
+		fprintf(stderr, "POSIX");
 #endif
 		fprintf(stderr, ")\n");
 		fprintf(stderr, "          %s%s\n", "Build Date: ", __DATE__);
@@ -213,7 +215,7 @@ Restart:
 		fprintf(stderr, "          %s\n", "Maintained since Oct. 1999 by masamic and Chack'n");
 	}
 	if ( argc - argbase == 0 ) {
-		fprintf(stderr, "Usage： %s {options} execute file name [command line]\n", fname);
+		fprintf(stderr, "Usage: %s {options} execute file name [command line]\n", fname);
 		fprintf(stderr, "             -f         function call trace\n");
 		fprintf(stderr, "             -t         mpu trace\n");
 		fprintf(stderr, "             -debug     run with debugger\n");

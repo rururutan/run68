@@ -70,6 +70,7 @@ void	read_ini(char *path, char *prog)
     {
         return; /* .exe以外の拡張子はないと思う。*/
     }
+#if defined(WIN32)
     /* 次に、フルパス名を得る。*/
     l = SearchPath(
         NULL,       // address of search path 
@@ -79,6 +80,9 @@ void	read_ini(char *path, char *prog)
         path,       // address of buffer for found filename 
         &p          // address of pointer to file component 
     );
+#else
+    snprintf(path, MAX_PATH, "%s", buf);
+#endif
 #if defined(_DEBUG)
     printf("INI:%s\n", path);
 #endif

@@ -39,7 +39,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "run68.h"
-#if !defined(WIN32)
+#if defined(DOSX)
 #include <dos.h>
 #endif
 

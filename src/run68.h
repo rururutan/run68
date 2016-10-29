@@ -98,6 +98,13 @@
 #include <stdio.h>
 #include <setjmp.h>
 #if !defined(WIN32)              /* Win32 APIでDOSコールをエミュレートする。*/
+#if !defined(DOSX)
+#include <limits.h>
+#define MAX_PATH	PATH_MAX
+#define _stricmp	strcasecmp
+#define _ltoa(v, p, n)	snprintf(p, n, "%l", v)
+#define BOOL    	int
+#endif
 #define	TRUE		-1
 #define	FALSE		0
 #endif
@@ -239,7 +246,9 @@ extern long trap_pc;
 extern jmp_buf jmp_when_abort;
 extern unsigned short cwatchpoint;
 /* 標準入力のハンドル */
+#if defined(WIN32)
 extern HANDLE stdin_handle;
+#endif
 
 /* 命令実行情報 */
 extern EXEC_INSTRUCTION_INFO OP_info;
