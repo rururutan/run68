@@ -62,8 +62,15 @@ FILE    *prog_open(char *fname, int mes_flag)
     FILE    *fp = 0;
     char    *exp = strrchr(fname, '.');
     char    env_p[4096], *p;
+#if defined(WIN32) || defined(DOSX)
+    char    sep_chr = '\\';
+    char    sep_str[] = "\\";
+#else
+    char    sep_chr = '/';
+    char    sep_str[] = "/";
+#endif
 
-    if (strchr(fname, '\\') != NULL || strchr(fname, ':') != NULL)
+    if (strchr(fname, sep_chr) != NULL || strchr(fname, ':') != NULL)
     {
         strcpy(fullname, fname);
         if ((fp=fopen(fullname, "rb")) != NULL)
@@ -98,23 +105,23 @@ FILE    *prog_open(char *fname, int mes_flag)
         if (exp != NULL)
         {
             strcpy(fullname, dir);
-            if (dir[strlen(dir)-1] != '\\')
-                strcat(fullname, "\\");
+            if (dir[strlen(dir)-1] != sep_chr)
+                strcat(fullname, sep_str);
             strcat(fullname, fname);
             if ((fp = fopen(fullname, "rb")) != NULL)
 	        	goto EndOfFunc;
         } else
         {
             strcpy(fullname, dir);
-            if (fullname[strlen(fullname)-1] != '\\')
-                strcat(fullname, "\\");
+            if (fullname[strlen(fullname)-1] != sep_chr)
+                strcat(fullname, sep_str);
 	        strcat(fullname, fname);
 	        strcat(fullname, ".r");
     	    if ((fp=fopen(fullname, "rb")) != NULL)
 	        	goto EndOfFunc;
             strcpy(fullname, dir);
-            if (fullname[strlen(fullname)-1] != '\\')
-                strcat(fullname, "\\");
+            if (fullname[strlen(fullname)-1] != sep_chr)
+                strcat(fullname, sep_str);
 	        strcat(fullname, fname);
             strcat(fullname, ".x");
             if ((fp=fopen(fullname, "rb")) != NULL)

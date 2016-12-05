@@ -21,9 +21,9 @@ RELEASE_DIR = ../Release
 ARCHIVE_DIR = ../archives
 .c.o: $(CC) $(CFLAGS) $<
 
-all: run68.exe
+all: run68
 clean:
-	rm -f *.o run68.exe
+	rm -f *.o run68
 archive:
 	tar cvfz $(ARCHIVE_DIR)/run68src`date +%G%m%d-%0k`.tar.gz *.c *.h Makefile *.txt *.ini
 
@@ -31,7 +31,7 @@ release:
 	tar cvfz $(RELEASE_DIR)/run68src`date +%G%m%d`.tar.gz *.c *.h Makefile *.txt *.ini
 	cp *.ini $(RELEASE_DIR); cp *.txt $(RELEASE_DIR)
 
-run68.exe: $(OBJS)
-	gcc -o run68.exe $(OBJS) $(LDFLAGS) && echo "*** doscall.c is not implemented yet. this binary should be still useless ***"
+run68: $(OBJS)
+	gcc -o run68 $(OBJS) $(LDFLAGS) && echo "*** doscall.c is not implemented yet. this binary should be still useless ***"
 
 $(OBJS): run68.h

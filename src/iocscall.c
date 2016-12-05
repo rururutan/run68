@@ -21,10 +21,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "run68.h"
-#ifdef	DOSX
+#if !defined(WIN32)
+#if defined(DOSX)
 #include <dos.h>
-#include <time.h>
 #else
+#include <sys/sysinfo.h>
+#endif
+#include <time.h>
+#elif defined(WIN32)
 #include <windows.h>
 #endif
 
@@ -150,9 +154,13 @@ int iocs_call()
 			rd [ 0 ] = (ul % (60 * 60 * 24)) * 100;
 			rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF);
 #else
-			ul = GetTickCount() / 10;
-			rd [ 0 ] = (ul % 0x83D600);
-			rd [ 1 ] = (ul / 0x83D600);
+            {
+				struct sysinfo info;
+				sysinfo(&info);
+				ul = info.uptime;
+				rd [ 0 ] = (ul % (60 * 60 * 24)) * 100; 
+				rd [ 1 ] = ((ul / (60 * 60 * 24)) & 0xFFFF);
+            }
 #endif
 			break;
 		case 0x80:	/* B_INTVCS */
@@ -297,7 +305,7 @@ static long Dateget()
 	ret |= ((st.wMonth % 10) << 8);
 	ret |= ((st.wDay / 10) << 4);
 	ret |= (st.wDay % 10);
-#else
+#elif defined(DOSX)
 	struct dos_date_t ddate;
 	dos_getdate( &ddate );
 	ret = (ddate.dayofweek << 24);
@@ -307,6 +315,16 @@ static long Dateget()
 	ret |= ((ddate.month % 10) << 8);
 	ret |= ((ddate.day / 10) << 4);
 	ret |= (ddate.day % 10);
+#else
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	ret = (t->tm_wday << 24);
+	ret |= (((t->tm_year - 80) / 10) << 20);
+	ret |= (((t->tm_year - 80) % 10) << 16);
+	ret |= ((t->tm_mon / 10) << 12);
+	ret |= ((t->tm_mon % 10) << 8);
+	ret |= ((t->tm_mday / 10) << 4);
+	ret |= (t->tm_mday % 10);
 #endif
 	return( ret );
 }
@@ -327,7 +345,7 @@ static long Timeget()
 	ret |= ((st.wMinute % 10) << 8);
 	ret |= ((st.wSecond / 10) << 4);
 	ret |= (st.wSecond % 10);
-#else
+#elif defined(DOSX)
 	struct dos_time_t dtime;
 	dos_gettime( &dtime );
 	ret  = ((dtime.hour / 10) << 20);
@@ -336,6 +354,15 @@ static long Timeget()
 	ret |= ((dtime.minute % 10) << 8);
 	ret |= ((dtime.second / 10) << 4);
 	ret |= (dtime.second % 10);
+#else
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+	ret  = ((t->tm_hour / 10) << 20);
+	ret |= ((t->tm_hour % 10) << 16);
+	ret |= ((t->tm_min / 10) << 12);
+	ret |= ((t->tm_min % 10) << 8);
+	ret |= ((t->tm_sec / 10) << 4);
+	ret |= (t->tm_sec % 10);
 #endif
 	return( ret );
 }
